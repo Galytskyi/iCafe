@@ -14,7 +14,7 @@ namespace Provider
 {
 	// ==============================================================================================
 
-	const int				INVALID_ID	= -1;
+	const quint32			INVALID_ID	= -1;
 
 	// ==============================================================================================
 
@@ -118,7 +118,7 @@ namespace Provider
 		void					clear();
 		int						count() const;
 
-		bool					isExist(quint16 orderID) const;
+		bool					isExist(quint32 providerID) const;
 
 		int						append(const Item &provider);
 		void					append(const QVector<Item>& list);
@@ -162,7 +162,7 @@ namespace Provider
 
 	private:
 
-		int					m_id = INVALID_ID;
+		quint32				m_id = INVALID_ID;
 
 		QString				m_name;
 

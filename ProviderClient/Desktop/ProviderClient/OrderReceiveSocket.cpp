@@ -153,7 +153,8 @@ void OrderReceiveSocket::replyGetOrder(const Udp::Request& request)
 
 void OrderReceiveSocket::requestSetOrderState(const Order::Item& order)
 {
-	sendRequest(CLIENT_SET_ORDER_STATE, order.toProtoWrap());
+	Order::wrapOrder wo = order.toProtoWrap();
+	sendRequest(CLIENT_SET_ORDER_STATE, wo);
 }
 
 // -------------------------------------------------------------------------------------------------------------------

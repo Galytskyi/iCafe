@@ -239,7 +239,7 @@ namespace Provider
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	bool Base::isExist(quint16 providerID) const
+	bool Base::isExist(quint32 providerID) const
 	{
 		QMutexLocker locker(&m_mutex);
 
@@ -565,7 +565,7 @@ namespace Provider
 		{
 			case 1:
 
-				result &= xml.readIntAttribute("TypeID", &m_id);
+				result &= xml.readUInt32Attribute("TypeID", &m_id);
 				result &= xml.readStringAttribute("Name", &m_name);
 
 				break;
@@ -596,7 +596,7 @@ namespace Provider
 
 				xml.writeStartElement(xmlTagProviderType);
 				{
-					xml.writeIntAttribute("TypeID", typeID());
+					xml.writeUInt32Attribute("TypeID", typeID(), false);
 					xml.writeStringAttribute("Name", name());
 				}
 

@@ -7,5 +7,5 @@ win32:SUBDIRS += Protobuf
 SUBDIRS += qtservice \
     qtpropertybrowser \
 	OrderServer \
-	ProviderClient\Desktop\ProviderClient \
-	CustomerClient\Desktop\CustomerClient
+	ProviderClient/Desktop/ProviderClient \
+	CustomerClient/Desktop/CustomerClient

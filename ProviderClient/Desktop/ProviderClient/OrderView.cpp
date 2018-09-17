@@ -510,7 +510,7 @@ void OrderView::onClick(const QModelIndex& index)
 		return;
 	}
 
-	Order::Item& order = m_table.order(i);
+	Order::Item order = m_table.order(i);
 
 	switch (order.state())
 	{

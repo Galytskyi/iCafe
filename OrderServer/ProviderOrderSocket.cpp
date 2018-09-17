@@ -76,7 +76,8 @@ void ProviderOrderSocket::replyGetOrder(const Udp::Request& request)
 
 	Order::Item order = theOrderBase.hasOrderForProvider(providerID);
 
-	sendReply(request, order.toProtoWrap());
+	Order::wrapOrder wo = order.toProtoWrap();
+	sendReply(request, wo);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -100,13 +101,13 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 	if (pOrder == nullptr)
 	{
 		wo.set_state(Order::STATE_ORDER_NOT_FOUND);
-		sendReply(request, pOrder->toProtoWrap());
+		sendReply(request, wo);
 	}
 
 	qDebug() << "ProviderOrderSocket::replySetOrderState : " << wo.state();
 
 	pOrder->setState(wo.state());
-	sendReply(request, pOrder->toProtoWrap());
+	sendReply(request, wo);
 }
 
 // -------------------------------------------------------------------------------------------------------------------

@@ -138,7 +138,8 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 	emit appendOrderToBase(order);
 	qDebug() << "CustomerOrderSocket::replyCreateOrder - appendOrderToBase";
 
-	sendReply(request, order.toProtoWrap());
+	wo = order.toProtoWrap();
+	sendReply(request, wo);
 }
 
 // -------------------------------------------------------------------------------------------------------------------

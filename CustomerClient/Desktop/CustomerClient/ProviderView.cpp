@@ -551,7 +551,7 @@ void ProviderView::orderStateChanged(const Order::Item& order)
 	int count = m_table.count();
 	for(int i = 0; i < count; i++)
 	{
-		ProviderItem& item = m_table.at(i);
+		ProviderItem item = m_table.at(i);
 
 		Provider::Item provider = item.provider();
 

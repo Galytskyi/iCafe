@@ -152,8 +152,8 @@ void ConfigSocket::replyGetConfigXmlInfo(Udp::Request request)
 
 void ConfigSocket::replyGetConfigXml(Udp::Request request)
 {
-	quint32 partIndex = request.readDword();
-	if (partIndex < 0 || partIndex >=  m_rcxi.partCount)
+	int partIndex = (int) request.readDword();
+	if (partIndex < 0 || partIndex >= (int) m_rcxi.partCount)
 	{
 		// error part index
 		return;
@@ -162,7 +162,7 @@ void ConfigSocket::replyGetConfigXml(Udp::Request request)
 	int offer = partIndex * m_rcxi.bytesPerPart;
 	int dataSize = m_rcxi.bytesPerPart;
 
-	if (partIndex == m_rcxi.partCount - 1)
+	if (partIndex == (int) m_rcxi.partCount - 1)
 	{
 		dataSize = m_rcxi.dataSize - offer;
 	}

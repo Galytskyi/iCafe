@@ -117,7 +117,8 @@ void OrderStateSocket::requestCreateOrder(const Order::Item& order)
 		return;
 	}
 
-	sendRequest(CLIENT_CREATE_ORDER, order.toProtoWrap());
+	Order::wrapOrder wo = order.toProtoWrap();
+	sendRequest(CLIENT_CREATE_ORDER, wo);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -180,7 +181,8 @@ void OrderStateSocket::requestGetOrderState()
 
 		m_getOrderStateIndex++;
 
-		sendRequest(CLIENT_GET_ORDER_STATE, order.toProtoWrap());
+		Order::wrapOrder wo = order.toProtoWrap();
+		sendRequest(CLIENT_GET_ORDER_STATE, wo);
 	}
 	else
 	{
@@ -255,7 +257,8 @@ void OrderStateSocket::requestRemoveOrder(const Order::Item& order)
 		return;
 	}
 
-	sendRequest(CLIENT_REMOVE_ORDER, order.toProtoWrap());
+	Order::wrapOrder wo = order.toProtoWrap();
+	sendRequest(CLIENT_REMOVE_ORDER, wo);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
