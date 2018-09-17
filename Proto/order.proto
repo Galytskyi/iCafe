@@ -1,0 +1,21 @@
+package Order;
+
+message wrapOrder
+{
+	required int32 version		= 1 [default = 0];
+
+	optional int32 state		= 2 [default = 0];
+	optional int32 type			= 3 [default = 0];
+
+	optional int64 order_id		= 4 [default = 0];
+	optional int32 order_time	= 5 [default = 0];
+	optional int32 people		= 6 [default = 0];
+
+	optional int32 cancel_code	= 7 [default = 0];
+}
+
+
+message wrapOrders
+{
+	repeated wrapOrder orders	= 1;				// Limited to CUSTOMER_GET_ORDER_STATE_MAX (10)
+}
