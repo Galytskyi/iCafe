@@ -128,7 +128,7 @@ void OrderStateSocket::requestGetOrderState()
 
 	m_getOrderStateIndex++;
 
-	Order::wrapOrder wo = order.toProtoWrap();
+	orderWrap wo = order.toWrap();
 	sendRequest(CLIENT_GET_ORDER_STATE, wo);
 }
 
@@ -136,23 +136,23 @@ void OrderStateSocket::requestGetOrderState()
 
 void OrderStateSocket::replyGetOrderState(const Udp::Request& request)
 {
-	Order::wrapOrder wo;
+	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
 
-	bool result = wo.ParseFromArray(reinterpret_cast<const void*>(request.data()), request.dataSize());
+	bool result = wo.isValid();
 	if (result == false)
 	{
-		qDebug() << "OrderStateSocket::replyGetOrderState - incorrect Order::wrapOrder" << wo.state();
+		qDebug() << "OrderStateSocket::replyGetOrderState - incorrect orderWrap" << wo.state;
 		assert(0);
 		return;
 	}
 
-	switch(wo.state())
+	switch(wo.state)
 	{
 		case Order::STATE_ORDER_NOT_FOUND:
 			{
 				qDebug() << "OrderStateSocket::replyGetOrderState - Order::STATE_ORDER_NOT_FOUND";
 
-				bool result = theOrderBase.remove(wo.order_id());
+				bool result = theOrderBase.remove(wo.orderID);
 				if (result == true)
 				{
 					emit orderRemoved(wo);
@@ -166,7 +166,7 @@ void OrderStateSocket::replyGetOrderState(const Udp::Request& request)
 			{
 				qDebug() << "OrderStateSocket::replyGetOrderState - Order::STATE_ORDER_CANCEL";
 
-				wo.set_state(Order::STATE_CUSTOMER_REMOVING_ORDER);
+				wo.state = Order::STATE_CUSTOMER_REMOVING_ORDER;
 				requestRemoveOrder(wo);
 			}
 			break;
@@ -189,7 +189,7 @@ void OrderStateSocket::requestRemoveOrder(const Order::Item& order)
 		return;
 	}
 
-	Order::wrapOrder wo = order.toProtoWrap();
+	orderWrap wo = order.toWrap();
 	sendRequest(CLIENT_REMOVE_ORDER, wo);
 }
 
@@ -197,17 +197,17 @@ void OrderStateSocket::requestRemoveOrder(const Order::Item& order)
 
 void OrderStateSocket::replyRemoveOrder(const Udp::Request& request)
 {
-	Order::wrapOrder wo;
+	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
 
-	bool result = wo.ParseFromArray(reinterpret_cast<const void*>(request.data()), request.dataSize());
+	bool result = wo.isValid();
 	if (result == false)
 	{
-		qDebug() << "OrderStateSocket::replyRemoveOrder - incorrect Order::wrapOrder" << wo.state();
+		qDebug() << "OrderStateSocket::replyRemoveOrder - incorrect orderWrap" << wo.state;
 		assert(0);
 		return;
 	}
 
-	switch(wo.state())
+	switch(wo.state)
 	{
 		case Order::STATE_ORDER_NOT_FOUND:
 			qDebug() << "OrderStateSocket::replyRemoveOrder - Order::STATE_ORDER_NOT_FOUND";
@@ -217,7 +217,7 @@ void OrderStateSocket::replyRemoveOrder(const Udp::Request& request)
 			{
 				qDebug() << "OrderStateSocket::replyRemoveOrder - Order::STATE_SERVER_REMOVED_ORDER";
 
-				bool result = theOrderBase.remove(wo.order_id());
+				bool result = theOrderBase.remove(wo.orderID);
 				if (result == true)
 				{
 					qDebug() << "OrderStateSocket::replyRemoveOrder - theOrderBase.remove(w1->orderID)";
@@ -228,7 +228,7 @@ void OrderStateSocket::replyRemoveOrder(const Udp::Request& request)
 			break;
 
 		default:
-			qDebug() << "OrderStateSocket::replyRemoveOrder - state:" << wo.state();
+			qDebug() << "OrderStateSocket::replyRemoveOrder - state:" << wo.state;
 			break;
 	}
 }

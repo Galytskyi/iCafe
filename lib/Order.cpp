@@ -33,10 +33,10 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	Item::Item(const wrapOrder& wo, QObject *parent)
+	Item::Item(const orderWrap& wo, QObject *parent)
 		: QObject(parent)
 	{
-		this->fromProtoWrap(wo);
+		this->fromWrap(wo);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------
@@ -166,27 +166,27 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	Order::wrapOrder Item::toProtoWrap() const
+	orderWrap Item::toWrap() const
 	{
-		Order::wrapOrder wo;
+		orderWrap wo;
 
-		wo.set_version(ORDER_PROTO_WRAP_VERSION);
+		wo.version = ORDER_WRAP_VERSION;
 
-		switch (wo.version())
+		switch(wo.version)
 		{
 			case 1:
 
-				wo.set_state(m_state);
-				wo.set_type(m_type);
-				wo.set_order_id(m_handle.ID);
-				wo.set_order_time(m_orderTime.time);
-				wo.set_people(m_people);
-				wo.set_cancel_code(m_cancelCode);
+				wo.state = m_state;
+				wo.type = m_type;
+				wo.orderID = m_handle.ID;
+				wo.orderTime = m_orderTime.time;
+				wo.people = m_people;
+				wo.cancelCode = m_cancelCode;
 
 				break;
 
 			default:
-				qDebug() << "Item::toWrap_proto - Undefined version:" << wo.version();
+				qDebug() << "Item::toWrap_proto - Undefined version:" << wo.version;
 				assert(0);
 				break;
 		}
@@ -196,30 +196,30 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Item::toProtoWrap(Order::wrapOrder* pWo)
+	void Item::toWrap(orderWrap* pWo)
 	{
 		if (pWo == nullptr)
 		{
 			return;
 		}
 
-		pWo->set_version(ORDER_PROTO_WRAP_VERSION);
+		pWo->version = ORDER_WRAP_VERSION;
 
-		switch (pWo->version())
+		switch (pWo->version)
 		{
 			case 1:
 
-				pWo->set_state(m_state);
-				pWo->set_type(m_type);
-				pWo->set_order_id(m_handle.ID);
-				pWo->set_order_time(m_orderTime.time);
-				pWo->set_people(m_people);
-				pWo->set_cancel_code(m_cancelCode);
+				pWo->state = m_state;
+				pWo->type = m_type;
+				pWo->orderID = m_handle.ID;
+				pWo->orderTime = m_orderTime.time;
+				pWo->people = m_people;
+				pWo->cancelCode = m_cancelCode;
 
 				break;
 
 			default:
-				qDebug() << "Item::toWrap_proto - Undefined version:" << pWo->version();
+				qDebug() << "Item::toWrap_proto - Undefined version:" << pWo->version;
 				assert(0);
 				break;
 		}
@@ -227,23 +227,23 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Item::fromProtoWrap(const Order::wrapOrder& wo)
+	void Item::fromWrap(const orderWrap& wo)
 	{
-		switch (wo.version())
+		switch (wo.version)
 		{
 			case 1:
 
-				m_state = wo.state();
-				m_type = wo.type();
-				m_handle = wo.order_id();
-				m_orderTime.time = wo.order_time();
-				m_people = wo.people();
-				m_cancelCode = wo.cancel_code();
+				m_state = wo.state;
+				m_type = wo.type;
+				m_handle = wo.orderID;
+				m_orderTime.time = wo.orderTime;
+				m_people = wo.people;
+				m_cancelCode = wo.cancelCode;
 
 				break;
 
 			default:
-				qDebug() << "Item::fromWrap_proto - Undefined version:" << wo.version();
+				qDebug() << "Item::fromWrap_proto - Undefined version:" << wo.version;
 				assert(0);
 				break;
 		}
@@ -251,28 +251,28 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Item::fromProtoWrap(Order::wrapOrder* pWo)
+	void Item::fromWrap(orderWrap* pWo)
 	{
 		if (pWo == nullptr)
 		{
 			return;
 		}
 
-		switch (pWo->version())
+		switch (pWo->version)
 		{
 			case 1:
 
-				m_state = pWo->state();
-				m_type = pWo->type();
-				m_handle = pWo->order_id();
-				m_orderTime = pWo->order_time();
-				m_people = pWo->people();
-				m_cancelCode = pWo->cancel_code();
+				m_state = pWo->state;
+				m_type = pWo->type;
+				m_handle = pWo->orderID;
+				m_orderTime = pWo->orderTime;
+				m_people = pWo->people;
+				m_cancelCode = pWo->cancelCode;
 
 				break;
 
 			default:
-				qDebug() << "Item::fromWrap_proto - Undefined version:" << pWo->version();
+				qDebug() << "Item::fromWrap_proto - Undefined version:" << pWo->version;
 				assert(0);
 				break;
 		}

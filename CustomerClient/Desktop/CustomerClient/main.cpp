@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
 
 	int result = a.exec();
 
-	google::protobuf::ShutdownProtobufLibrary();
-
 	return result;
 }
 

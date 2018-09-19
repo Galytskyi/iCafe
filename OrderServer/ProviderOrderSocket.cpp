@@ -76,7 +76,7 @@ void ProviderOrderSocket::replyGetOrder(const Udp::Request& request)
 
 	Order::Item order = theOrderBase.hasOrderForProvider(providerID);
 
-	Order::wrapOrder wo = order.toProtoWrap();
+	orderWrap wo = order.toWrap();
 	sendReply(request, wo);
 }
 
@@ -84,29 +84,29 @@ void ProviderOrderSocket::replyGetOrder(const Udp::Request& request)
 
 void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 {
-	Order::wrapOrder wo;
+	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
 
-	bool result = wo.ParseFromArray(reinterpret_cast<const void*>(request.data()), request.dataSize());
+	bool result = wo.isValid();
 	if (result == false)
 	{
 
-		wo.set_state(Order::STATE_INCORRECT_PARSE_PROTOWRAP);
+		wo.state = Order::STATE_INCORRECT_PARSE_ORDERWRAP;
 		sendReply(request, wo);
 
 		assert(0);
 		return;
 	}
 
-	Order::Item* pOrder = theOrderBase.orderPtr(wo.order_id());
+	Order::Item* pOrder = theOrderBase.orderPtr(wo.orderID);
 	if (pOrder == nullptr)
 	{
-		wo.set_state(Order::STATE_ORDER_NOT_FOUND);
+		wo.state = Order::STATE_ORDER_NOT_FOUND;
 		sendReply(request, wo);
 	}
 
-	qDebug() << "ProviderOrderSocket::replySetOrderState : " << wo.state();
+	qDebug() << "ProviderOrderSocket::replySetOrderState : " << wo.state;
 
-	pOrder->setState(wo.state());
+	pOrder->setState(wo.state);
 	sendReply(request, wo);
 }
 

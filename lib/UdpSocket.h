@@ -10,7 +10,6 @@
 
 #include "../lib/SocketIO.h"
 //#include "../lib/Crc32.h"
-#include "../Proto/order.pb.h"
 
 namespace Udp
 {
@@ -130,7 +129,7 @@ namespace Udp
 		bool writeDword(quint32 dw);
 		bool writeData(const char* data, quint32 dataSize);
 		bool writeData(const QByteArray& data);
-		bool writeData(google::protobuf::Message& protobufMessage);
+		//bool writeData(google::protobuf::Message& protobufMessage);
 
 		// read data
 		//
@@ -240,7 +239,8 @@ namespace Udp
 		void				sendRequest(const Request& udpRequest);
 		void				sendRequest(quint32 requestID);
 		void				sendRequest(quint32 requestID, const char* pData, quint32 dataSize);
-		void				sendRequest(quint32 requestID, google::protobuf::Message& protobufMessage);
+		void				sendRequest(quint32 requestID, const orderWrap& wo);
+		//void				sendRequest(quint32 requestID, google::protobuf::Message& protobufMessage);
 		void				retryRequest();
 
 		virtual void		onThreadStarted();
@@ -303,7 +303,10 @@ namespace Udp
 	public slots:
 
 		void			sendAck(Request m_request);
-		void			sendReply(Udp::Request request, google::protobuf::Message& protobufMessage);
+
+		void			sendReply(Udp::Request request, const char* pData, quint32 dataSize);
+		void			sendReply(const Request& request, const orderWrap& wo);
+		//void			sendReply(Udp::Request request, google::protobuf::Message& protobufMessage);
 
 	private slots:
 

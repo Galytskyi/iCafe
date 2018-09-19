@@ -95,6 +95,49 @@ struct replyCfgXml
 
 #pragma pack(pop)
 
+// ----------------------------------------------------------------------------------------------
+// WRAP_ORDER
+//
+const quint32	ORDER_WRAP_VERSION = 1;
+
+#pragma pack(push, 1)
+
+struct orderWrap
+{
+	quint32 version = ORDER_WRAP_VERSION;
+
+	quint32 state = 0;
+	quint32 type = 0;
+
+	quint64 orderID = 0;
+
+	quint32 orderTime = 0;
+	quint32 people = 0;
+
+	quint32 cancelCode = 0;
+
+	bool isValid() const { return true; }
+};
+
+#pragma pack(pop)
+
+// ----------------------------------------------------------------------------------------------
+// CLIENT_GET_ORDER
+//
+const quint32	REQUEST_GET_ORDER_VERSION = 1;
+
+#pragma pack(push, 1)
+
+struct requestGetOrder
+{
+	quint32 version = REQUEST_GET_ORDER_VERSION;
+
+	quint32 providerID = -1;
+	quint32 wrapVersion = 0;
+};
+
+#pragma pack(pop)
+
 // ==============================================================================================
 // xml tags
 //

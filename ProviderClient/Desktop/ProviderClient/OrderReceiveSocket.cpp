@@ -113,12 +113,12 @@ void OrderReceiveSocket::requestGetOrder()
 
 void OrderReceiveSocket::replyGetOrder(const Udp::Request& request)
 {
-	Order::wrapOrder wo;
+	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
 
-	bool result = wo.ParseFromArray(reinterpret_cast<const void*>(request.data()), request.dataSize());
+	bool result = wo.isValid();
 	if (result == false)
 	{
-		qDebug() << "OrderReceiveSocket::replyGetOrder - incorrect Order::wrapOrder" << wo.state();
+		qDebug() << "OrderReceiveSocket::replyGetOrder - incorrect orderWrap" << wo.state;
 		assert(0);
 		return;
 	}
@@ -129,9 +129,9 @@ void OrderReceiveSocket::replyGetOrder(const Udp::Request& request)
 		return;
 	}
 
-	qDebug() << "OrderReceiveSocket::replyGetOrder " << wo.state();
+	qDebug() << "OrderReceiveSocket::replyGetOrder " << wo.state;
 
-	if (wo.state() != Order::STATE_SERVER_SEND_TO_PROVIDER)
+	if (wo.state != Order::STATE_SERVER_SEND_TO_PROVIDER)
 	{
 		qDebug() << "OrderReceiveSocket::replyGetOrder - wo.state() != Order::STATE_SERVER_SEND_TO_PROVIDER";
 		assert(0);
@@ -153,7 +153,7 @@ void OrderReceiveSocket::replyGetOrder(const Udp::Request& request)
 
 void OrderReceiveSocket::requestSetOrderState(const Order::Item& order)
 {
-	Order::wrapOrder wo = order.toProtoWrap();
+	orderWrap wo = order.toWrap();
 	sendRequest(CLIENT_SET_ORDER_STATE, wo);
 }
 

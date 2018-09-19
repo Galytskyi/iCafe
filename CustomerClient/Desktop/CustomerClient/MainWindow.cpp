@@ -445,7 +445,6 @@ void MainWindow::onOptions()
 
 	theOptions.setCustomerData(dialog.customerData());
 	theOptions.save();
-
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -469,7 +468,6 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 	}
 
 	ProviderItem item = m_pView->table().at(i);
-
 
 	Order::Item order = item.order();
 
@@ -495,7 +493,7 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 	QPoint pt = QCursor::pos();
 	QPoint pt1 = mapToGlobal(QPoint(width(), QCursor::pos().y()));
 
-	pt.setX(pt1.x() - 200);
+	pt.setX(pt1.x() - 220);
 
 	pContextMenu->exec(pt);
 }

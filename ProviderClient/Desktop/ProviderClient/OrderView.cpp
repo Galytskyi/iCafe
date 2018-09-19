@@ -42,6 +42,9 @@ void OrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 	QPixmap infoPixmap(":/icons/MenuBlack.png");
 	QPixmap clockPixmap(":/icons/Clock.png");
 
+	QPixmap tablePixmap(":/icons/Table.png");
+	QPixmap dinnerPixmap(":/icons/Dinner.png");
+
 	int midInfo_x = option.rect.right() - ORDER_ICON_SIZE - 20;
 	int midInfo_y = option.rect.top() + 10;
 
@@ -138,7 +141,12 @@ void OrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
 			QString orderTime1 = QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute);
 
-			painter->drawPixmap(option.rect.x() + 10, option.rect.y() + 10 , 32, 32, clockPixmap);
+			switch (order.type())
+			{
+				case Order::TYPE_TABLE:		painter->drawPixmap(option.rect.x() + 10, option.rect.y() + 10 , 32, 32, tablePixmap);	break;
+				case Order::TYPE_DINNER:	painter->drawPixmap(option.rect.x() + 10, option.rect.y() + 10 , 32, 32, dinnerPixmap);	break;
+				default:					painter->drawPixmap(option.rect.x() + 10, option.rect.y() + 10 , 32, 32, clockPixmap);	break;
+			}
 
 			timeOrder.adjust(10, 45, 0, 0);
 			timeOrder.setRight( timeOrder.right() - 25 );

@@ -9,7 +9,6 @@
 
 #include "../lib/SocketIO.h"
 #include "../lib/XmlHelper.h"
-#include "../Proto/order.pb.h"
 
 namespace Order
 {
@@ -23,15 +22,16 @@ namespace Order
 						STATE_ORDER_ALREADY_EXIST			= 5,
 						STATE_ORDER_NOT_REMOVED				= 6,
 						STATE_INCORRECT_REQUEST				= 7,
-						STATE_INCORRECT_PARSE_PROTOWRAP		= 8,
-						STATE_PROVIDER_IS_NOT_CONNECTED		= 9,
-						STATE_CUSTOMER_CREATING_ORDER		= 10,
-						STATE_CUSTOMER_REMOVING_ORDER		= 11,
-						STATE_SERVER_CREATED_ORDER			= 12,
-						STATE_SERVER_REMOVED_ORDER			= 13,
-						STATE_SERVER_SEND_TO_PROVIDER		= 14;
+						STATE_INCORRECT_PARSE_ORDERWRAP		= 8,
+						STATE_INCORRECT_PARSE_PROTOWRAP		= 9,
+						STATE_PROVIDER_IS_NOT_CONNECTED		= 10,
+						STATE_CUSTOMER_CREATING_ORDER		= 11,
+						STATE_CUSTOMER_REMOVING_ORDER		= 12,
+						STATE_SERVER_CREATED_ORDER			= 13,
+						STATE_SERVER_REMOVED_ORDER			= 14,
+						STATE_SERVER_SEND_TO_PROVIDER		= 15;
 
-	const int			STATE_COUNT							= 15;
+	const int			STATE_COUNT							= 16;
 
 	// ----------------------------------------------------------------------------------------------
 
@@ -40,10 +40,6 @@ namespace Order
 						TYPE_DINNER							= 2;
 
 	const int			TYPE_COUNT							= 3;
-
-	// ==============================================================================================
-
-	const int			ORDER_PROTO_WRAP_VERSION			= 1;
 
 	// ==============================================================================================
 
@@ -127,7 +123,7 @@ namespace Order
 
 		explicit Item(QObject *parent = 0);
 		Item(const Item& order, QObject *parent = 0);
-		Item(const wrapOrder& wo, QObject *parent = 0);
+		Item(const orderWrap& wo, QObject *parent = 0);
 		virtual ~Item();
 
 	private:
@@ -187,10 +183,10 @@ namespace Order
 		void				setCancelCode(int code) { m_cancelCode = code; }
 		int					createCancelCode();
 
-		Order::wrapOrder	toProtoWrap() const;
-		void				toProtoWrap(Order::wrapOrder* pWo);
-		void				fromProtoWrap(const Order::wrapOrder& wo);
-		void				fromProtoWrap(Order::wrapOrder* pWo);
+		orderWrap			toWrap() const;
+		void				toWrap(orderWrap* pWo);
+		void				fromWrap(const orderWrap& wo);
+		void				fromWrap(orderWrap* pWo);
 
 		bool				readFromXml(XmlReadHelper& xml, int version);
 		void				writeToXml(XmlWriteHelper& xml, int version);

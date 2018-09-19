@@ -38,7 +38,6 @@ void ConfigSocket::onSocketThreadStarted()
 
 void ConfigSocket::onSocketThreadFinished()
 {
-
 }
 
 // -------------------------------------------------------------------------------------------------------------------

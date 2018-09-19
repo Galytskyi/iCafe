@@ -44,7 +44,6 @@ SOURCES += \
 	../../../lib/Provider.cpp \
 	../../../lib/XmlHelper.cpp \
 	../../../lib/Order.cpp \
-	../../../Proto/order.pb.cc \
 	main.cpp \
 	MainWindow.cpp \
 	ProviderView.cpp \
@@ -62,7 +61,6 @@ HEADERS += \
 	../../../lib/XmlHelper.h \
 	../../../lib/Order.h \
 	../../../lib/Crc32.h \
-	../../../Proto/order.pb.h \
 	MainWindow.h \
 	ProviderView.h \
 	ConfigSocket.h \
@@ -74,26 +72,3 @@ HEADERS += \
 
 RESOURCES += \
     resources.qrc
-
-
-DISTFILES += \
-	../../../Proto/order.proto
-
-
-# Remove Protobuf 4996 warning, Can't remove it in sources, don't know why
-#
-win32:QMAKE_CXXFLAGS += -D_SCL_SECURE_NO_WARNINGS
-
-#protobuf
-#
-win32 {
-		LIBS += -L$$DESTDIR -lprotobuf
-
-		INCLUDEPATH += ./../../../Protobuf
-}
-unix {
-		LIBS += -lprotobuf
-}
-
-
-

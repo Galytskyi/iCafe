@@ -38,8 +38,12 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	Provider::Item		provider = item.provider();
 	Order::Item			order  = item.order();
 
+	QPixmap infoPixmapG(":/icons/MenuGreen.png");
 	QPixmap infoPixmap(":/icons/MenuBlack.png");
 	QPixmap clockPixmap(":/icons/Clock.png");
+
+	QPixmap tablePixmap(":/icons/Table.png");
+	QPixmap dinnerPixmap(":/icons/Dinner.png");
 
 	int midInfo_x = option.rect.right() - PROVIDER_ICON_SIZE - 20;
 	int midInfo_y = option.rect.top() + 10;
@@ -70,7 +74,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 			case Order::STATE_SERVER_CREATED_ORDER:				painter->fillRect(option.rect, QColor(0xff, 0xf4, 0xc4));	break;
 		}
 
-	painter->drawPixmap(midInfo_x, midInfo_y, PROVIDER_ICON_SIZE, PROVIDER_ICON_SIZE, infoPixmap);
+	painter->drawPixmap(midInfo_x, midInfo_y, PROVIDER_ICON_SIZE, PROVIDER_ICON_SIZE, infoPixmapG);
 
 	painter->setFont(*m_providerNameFont);
 	painter->setPen(QColor(0x0, 0x0, 0x0));
@@ -130,7 +134,12 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 			QString orderTime1 = QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute);
 
-			painter->drawPixmap(option.rect.x() + 10, option.rect.y() + 10 , 32, 32, clockPixmap);
+			switch (order.type())
+			{
+				case Order::TYPE_TABLE:		painter->drawPixmap(option.rect.x() + 10, option.rect.y() + 10 , 32, 32, tablePixmap);	break;
+				case Order::TYPE_DINNER:	painter->drawPixmap(option.rect.x() + 10, option.rect.y() + 10 , 32, 32, dinnerPixmap);	break;
+				default:					painter->drawPixmap(option.rect.x() + 10, option.rect.y() + 10 , 32, 32, clockPixmap);	break;
+			}
 
 			timeOrder.adjust(10, 45, 0, 0);
 			timeOrder.setRight( timeOrder.right() - 25 );

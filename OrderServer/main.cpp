@@ -3,8 +3,6 @@
 #include "MainWindow.h"
 #include "Options.h"
 
-#include "../Proto/order.pb.h"
-
 // -------------------------------------------------------------------------------------------------------------------
 //
 // main
@@ -29,8 +27,6 @@ int main(int argc, char *argv[])
 	theOptions.unload();
 
 	int result = a.exec();
-
-	google::protobuf::ShutdownProtobufLibrary();
 
 	return result;
 }

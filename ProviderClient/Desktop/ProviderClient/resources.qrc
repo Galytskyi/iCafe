@@ -42,5 +42,7 @@
         <file>icons/Table.ico</file>
         <file>icons/Clock.png</file>
         <file>icons/MenuBlack.png</file>
+        <file>icons/Dinner.png</file>
+        <file>icons/Table.png</file>
     </qresource>
 </RCC>

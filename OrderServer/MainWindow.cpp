@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QMessageBox>
 #include <QThread>
 
 #include "Database.h"

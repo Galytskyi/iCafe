@@ -125,26 +125,26 @@ namespace Udp
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	bool Request::writeData(google::protobuf::Message& protobufMessage)
-	{
-		int messageSize = protobufMessage.ByteSize();
+//	bool Request::writeData(google::protobuf::Message& protobufMessage)
+//	{
+//		int messageSize = protobufMessage.ByteSize();
 
-		if (m_rawDataSize + messageSize > MAX_UDP_DATAGRAM_SIZE)
-		{
-			assert(m_rawDataSize + messageSize <= MAX_UDP_DATAGRAM_SIZE);
-			return false;
-		}
+//		if (m_rawDataSize + messageSize > MAX_UDP_DATAGRAM_SIZE)
+//		{
+//			assert(m_rawDataSize + messageSize <= MAX_UDP_DATAGRAM_SIZE);
+//			return false;
+//		}
 
-		protobufMessage.SerializeWithCachedSizesToArray(reinterpret_cast<google::protobuf::uint8*>(writeDataPtr()));
+//		protobufMessage.SerializeWithCachedSizesToArray(reinterpret_cast<google::protobuf::uint8*>(writeDataPtr()));
 
-		m_writeDataIndex += messageSize;
+//		m_writeDataIndex += messageSize;
 
-		header()->dataSize += messageSize;
+//		header()->dataSize += messageSize;
 
-		m_rawDataSize += messageSize;
+//		m_rawDataSize += messageSize;
 
-		return true;
-	}
+//		return true;
+//	}
 
 	// -------------------------------------------------------------------------------------------------------------------
 
@@ -368,14 +368,15 @@ namespace Udp
 
 	void ClientSocket::sendRequest(quint32 requestID, const char* pData, quint32 dataSize)
 	{
+		Request request;
+		request.setID(requestID);
+
 		if (pData == nullptr || dataSize == 0)
 		{
+			emit sendRequestSignal(request);
 			return;
 		}
 
-		Request request;
-
-		request.setID(requestID);
 		request.writeData(pData, dataSize);
 
 		emit sendRequestSignal(request);
@@ -383,16 +384,23 @@ namespace Udp
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void ClientSocket::sendRequest(quint32 requestID, google::protobuf::Message& protobufMessage)
+	void ClientSocket::sendRequest(quint32 requestID, const orderWrap& wo)
 	{
-
-		Request request;
-
-		request.setID(requestID);
-		request.writeData(protobufMessage);
-
-		emit sendRequestSignal(request);
+		sendRequest(requestID, (const char*) &wo, sizeof(orderWrap));
 	}
+
+	// -------------------------------------------------------------------------------------------------------------------
+
+//	void ClientSocket::sendRequest(quint32 requestID, google::protobuf::Message& protobufMessage)
+//	{
+
+//		Request request;
+
+//		request.setID(requestID);
+//		request.writeData(protobufMessage);
+
+//		emit sendRequestSignal(request);
+//	}
 
 	// -------------------------------------------------------------------------------------------------------------------
 
@@ -568,13 +576,30 @@ namespace Udp
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void ServerSocket::sendReply(Udp::Request request, google::protobuf::Message& protobufMessage)
+	void ServerSocket::sendReply(Udp::Request request, const char* pData, quint32 dataSize)
 	{
 		request.initWrite();
-		request.writeData(protobufMessage);
+		request.writeData(pData, dataSize);
 
 		sendAck(request);
 	}
+
+	// -------------------------------------------------------------------------------------------------------------------
+
+	void ServerSocket::sendReply(const Udp::Request& request, const orderWrap& wo)
+	{
+		sendReply(request, (const char*) &wo, sizeof(orderWrap));
+	}
+
+	// -------------------------------------------------------------------------------------------------------------------
+
+//	void ServerSocket::sendReply(Udp::Request request, google::protobuf::Message& protobufMessage)
+//	{
+//		request.initWrite();
+//		request.writeData(protobufMessage);
+
+//		sendAck(request);
+//	}
 
 	// -------------------------------------------------------------------------------------------------------------------
 
