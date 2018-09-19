@@ -28,8 +28,8 @@ void ConfigSocket::onSocketThreadStarted()
 {
 	qDebug() << "ConfigSocket::onSocketThreadStarted()";
 
-	connect(this, &Udp::ClientSocket::ackReceived, this, &ConfigSocket::processAck, Qt::QueuedConnection);
-	connect(this, &Udp::ClientSocket::ackTimeout, this, &ConfigSocket::failAck, Qt::QueuedConnection);
+	connect(this, &Udp::ClientSocket::ackReceived, this, &ConfigSocket::processReply, Qt::QueuedConnection);
+	connect(this, &Udp::ClientSocket::ackTimeout, this, &ConfigSocket::failReply, Qt::QueuedConnection);
 
 	connect(&m_requestGetXmlInfoTimer, &QTimer::timeout, this, &ConfigSocket::requestGetConfigXmlCrc, Qt::QueuedConnection);
 
@@ -58,7 +58,7 @@ void ConfigSocket::onSocketThreadFinished()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-CRC32 ConfigSocket::getConfigFileCrc()
+quint32 ConfigSocket::getConfigFileCrc()
 {
 	m_cfgXmlData.clear();
 
@@ -86,7 +86,7 @@ CRC32 ConfigSocket::getConfigFileCrc()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void ConfigSocket::processAck(const Udp::Request& request)
+void ConfigSocket::processReply(const Udp::Request& request)
 {
 	switch(request.ID())
 	{
@@ -133,7 +133,7 @@ void ConfigSocket::replyGetConfigXmlCrc(const Udp::Request& request)
 {
 	//const char * pBuffer = const_cast<const UdpRequest&>(udpRequest).data();
 
-	CRC32 cfgXmlCrc32 = *(CRC32*) request.data();
+	quint32 cfgXmlCrc32 = *(quint32*) request.data();
 	if (cfgXmlCrc32 == 0xFFFFFFFF)
 	{
 		assert(0);
@@ -272,7 +272,7 @@ void ConfigSocket::replyGetConfigXml(const Udp::Request& request)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void ConfigSocket::failAck(const Udp::Request& request)
+void ConfigSocket::failReply(const Udp::Request& request)
 {
 	switch(request.ID())
 	{

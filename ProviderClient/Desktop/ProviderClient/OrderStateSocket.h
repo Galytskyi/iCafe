@@ -52,8 +52,8 @@ public slots:
 	void            requestGetOrderState();										// CLIENT_GET_ORDER_STATE
 	void            requestRemoveOrder(const Order::Item& order);				// CLIENT_REMOVE_ORDER
 
-	void			processAck(const Udp::Request& request);
-	void			failAck(const Udp::Request& request);
+	void			processReply(const Udp::Request& request);
+	void			failReply(const Udp::Request& request);
 };
 
 // ==============================================================================================

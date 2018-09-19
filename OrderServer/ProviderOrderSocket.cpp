@@ -46,6 +46,12 @@ void ProviderOrderSocket::onSocketThreadFinished()
 
 void ProviderOrderSocket::processRequest(Udp::Request request)
 {
+	if(request.headerCrcOk() == false)
+	{
+		request.setErrorCode(SIO_ERROR_INCCORECT_CRC32);
+		sendAck(request);
+	}
+
 	switch(request.ID())
 	{
 		case CLIENT_GET_ORDER:
@@ -57,8 +63,13 @@ void ProviderOrderSocket::processRequest(Udp::Request request)
 			break;
 
 		default:
+
+			request.setErrorCode(SIO_ERROR_INCCORECT_REQUEST_ID);
+			sendAck(request);
+
 			qDebug() << "ProviderOrderSocket::processRequest - Unknown request.ID() : " << request.ID();
 			assert(false);
+
 			break;
 	}
 }

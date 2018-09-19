@@ -56,8 +56,8 @@ public slots:
 	void            requestGetOrder();											// PROVIDER_GET_ORDER
 	void            requestSetOrderState(const Order::Item& order);				// PROVIDER_SET_ORDER_STATE
 
-	void			processAck(const Udp::Request& request);
-	void			failAck(const Udp::Request& request);
+	void			processReply(const Udp::Request& request);
+	void			failReply(const Udp::Request& request);
 };
 
 // ==============================================================================================

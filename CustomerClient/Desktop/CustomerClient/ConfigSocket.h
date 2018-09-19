@@ -38,7 +38,7 @@ private:
 	virtual void	onSocketThreadStarted();
 	virtual void	onSocketThreadFinished();
 
-	CRC32			getConfigFileCrc();
+	quint32			getConfigFileCrc();
 
 	QTimer			m_requestGetXmlInfoTimer;
 
@@ -66,8 +66,8 @@ private slots:
 	void            requestGetConfigXmlInfo();											// CLIENT_GET_CONFIG_XML_INFO
 	void            requestGetConfigXml(quint32 partIndex);								// CLIENT_GET_CONFIG_XML
 
-	void			processAck(const Udp::Request& request);
-	void			failAck(const Udp::Request& request);
+	void			processReply(const Udp::Request& request);
+	void			failReply(const Udp::Request& request);
 
 };
 

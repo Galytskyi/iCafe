@@ -51,7 +51,8 @@ SOURCES += \
 	OrderDialog.cpp \
 	Options.cpp \
     OrderStateSocket.cpp \
-    OptionsDialog.cpp
+    OptionsDialog.cpp \
+    ../../../lib/Crc32.cpp
 
 
 HEADERS += \

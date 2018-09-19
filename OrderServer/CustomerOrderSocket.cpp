@@ -44,6 +44,12 @@ void CustomerOrderSocket::onSocketThreadFinished()
 
 void CustomerOrderSocket::processRequest(Udp::Request request)
 {
+	if(request.headerCrcOk() == false)
+	{
+		request.setErrorCode(SIO_ERROR_INCCORECT_CRC32);
+		sendAck(request);
+	}
+
 	switch(request.ID())
 	{
 		case CLIENT_CREATE_ORDER:
@@ -59,8 +65,13 @@ void CustomerOrderSocket::processRequest(Udp::Request request)
 			break;
 
 		default:
+
+			request.setErrorCode(SIO_ERROR_INCCORECT_REQUEST_ID);
+			sendAck(request);
+
 			qDebug() << "CustomerOrderSocket::processRequest - Unknown request.ID() : " << request.ID();
 			assert(false);
+
 			break;
 	}
 }
@@ -144,9 +155,7 @@ void CustomerOrderSocket::replyGetOrderState(const Udp::Request& request)
 		return;
 	}
 
-	int state = theOrderBase.orderState(wo.orderID);
-
-	wo.state = state;
+	wo.state = theOrderBase.orderState(wo.orderID);
 	sendReply(request, wo);
 }
 

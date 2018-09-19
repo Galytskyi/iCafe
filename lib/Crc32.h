@@ -1,17 +1,21 @@
+#pragma once
+
+#include <QObject>
+
 /*
 
-	Функции быстрого (табличного) вычисления CRC32
+	пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ) пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ CRC32
 	Name	:	CRC-32
 	Poly	:	0x04C11DB7		x^32 + x^26 + x^23 + x^22 + x^16 + x^12 + x^11 + x^10 + x^8 + x^7 + x^5 + x^4 + x^2 + x + 1
 	Init	:	0xFFFFFFFF
 	Revert	:	true
 	XorOut	:	0xFFFFFFFF
 	Check	:	0xCBF43926		("123456789")
-	MaxLen	:	268 435 455 байт (2 147 483 647 бит) - обнаружение одинарных, двойных, пакетных и всех нечетных ошибок
+	MaxLen	:	268 435 455 пїЅпїЅпїЅпїЅ (2 147 483 647 пїЅпїЅпїЅ) - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
 */
 
-const unsigned int Crc32Table[256] =
+const quint32 Crc32Table[256] =
 {
 	0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA,
 	0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
@@ -79,85 +83,5 @@ const unsigned int Crc32Table[256] =
 	0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
 };
 
+quint32 CalcCRC32(const void* pBuf, int bufSize);
 
-typedef unsigned int CRC32;
-
-
-// Функция вычисления CRC32 для буфера
-//
-inline CRC32 CalcCRC32(const void* pBuf, int bufSize)
-{
-	unsigned char* ptr = (unsigned char*)pBuf;
-
-	CRC32 crc32 = 0xFFFFFFFF;
-
-	while (bufSize > 0)
-	{
-		crc32 = (crc32 >> 8) ^ Crc32Table[(crc32 & 0xFF) ^ *ptr];
-
-		ptr++;
-		bufSize--;
-	}
-
-	return crc32 ^ 0xFFFFFFFF;
-}
-
-
-/*
-
-	Функции распределенного вычисления CRC32: BeginCalcCRC32, ContinueCalcCRC32, EndCalcCRC32.
-
-	Для распределенного вычисления CRC32 должна быть обеспечена следующая последовательность вызовов:
-
-	CRC32 crc32;										// результирующее значение CRC32
-
-	BeginCalcCRC32(crc32);								// начало вычислений, инициализация crc32
-
-	ContinueCalcCRC32(crc32, pBuf, bufSize);			// и/или ContinueCalcCRC32(crc32, byteVal), продолжение вычислений
-	.
-	.
-	ContinueCalcCRC32(crc32, pBuf, bufSize);			// и/или ContinueCalcCRC32(crc32, byteVal), продолжение вычислений
-
-	EndCalcCRC32(crc32);								// завершение вычислений, получение результата  crc32
-
-*/
-
-
-// Функция начала распределенного вычисления CRC32.
-//
-inline void BeginCalcCRC32(CRC32& crc32)
-{
-	crc32 = 0xFFFFFFFF;
-}
-
-
-// Функция продолжения распределенного вычисления CRC32 для буфера
-//
-inline void ContinueCalcCRC32(CRC32& crc32, const void* pBuf, int bufSize)
-{
-	unsigned char* ptr = (unsigned char*)pBuf;
-
-	while (bufSize > 0)
-	{
-		crc32 = (crc32 >> 8) ^ Crc32Table[(crc32 & 0xFF) ^ *ptr];
-
-		ptr++;
-		bufSize--;
-	}
-}
-
-
-// Функция продолжения распределенного вычисления CRC32 для байта.
-//
-inline void ContinueCalcCRC32(CRC32& crc32, unsigned char byteVal)
-{
-	crc32 = (crc32 >> 8) ^ Crc32Table[(crc32 & 0xFF) ^ byteVal];
-}
-
-
-// Функция окончания распределенного вычисления CRC32.
-//
-inline void EndCalcCRC32(CRC32& crc32)
-{
-	crc32 ^= 0xFFFFFFFF;
-}

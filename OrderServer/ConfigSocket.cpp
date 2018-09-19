@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "../lib/Provider.h"
+#include "../lib/Crc32.h"
 
 // -------------------------------------------------------------------------------------------------------------------
 //
@@ -106,6 +107,12 @@ void ConfigSocket::updateCfgXmlInfo()
 
 void ConfigSocket::processRequest(Udp::Request request)
 {
+	if(request.headerCrcOk() == false)
+	{
+		request.setErrorCode(SIO_ERROR_INCCORECT_CRC32);
+		sendAck(request);
+	}
+
 	switch(request.ID())
 	{
 		case CLIENT_GET_CONFIG_XML_CRC:
@@ -121,8 +128,13 @@ void ConfigSocket::processRequest(Udp::Request request)
 			break;
 
 		default:
-			assert(false);
+
+			request.setErrorCode(SIO_ERROR_INCCORECT_REQUEST_ID);
+			sendAck(request);
+
 			qDebug() << "ConfigSocket::processRequest - Unknown request.ID() : " << request.ID();
+			assert(false);
+
 			break;
 	}
 }
@@ -167,9 +179,9 @@ void ConfigSocket::replyGetConfigXml(Udp::Request request)
 	}
 
 	request.initWrite();
-	request.writeDword(REPLY_CONFIG_XML_VERSION);
-	request.writeDword(partIndex);
-	request.writeDword(dataSize);
+	request.writeData((const char*) &REPLY_CONFIG_XML_VERSION, sizeof(quint32));
+	request.writeData((const char*) &partIndex, sizeof(quint32));
+	request.writeData((const char*) &dataSize, sizeof(quint32));
 	request.writeData(m_cfgXmlData.data() + offer, dataSize);
 
 	sendAck(request);

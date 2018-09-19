@@ -64,7 +64,8 @@ SOURCES += \
 	ConfigSocket.cpp \
 	ProviderOrderSocket.cpp \
 	CustomerOrderSocket.cpp \
-    RemoveOrderThread.cpp
+    RemoveOrderThread.cpp \
+    ../lib/Crc32.cpp
 
 HEADERS += \
 	../lib/SocketIO.h \

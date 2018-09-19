@@ -1,10 +1,12 @@
 #pragma once
 
-#include <QString>
+#include <QObject>
 
 // ==============================================================================================
 
 const int		MAX_UDP_DATAGRAM_SIZE = 4096;
+
+const int		UDP_REQUEST_HEADER_VERSION = 1;
 
 // ==============================================================================================
 // ports
@@ -33,6 +35,18 @@ const quint32	CLIENT_REMOVE_ORDER = 1202;
 				//
 const quint32	CLIENT_GET_ORDER = 1300;
 const quint32	CLIENT_SET_ORDER_STATE = 1301;
+
+// ==============================================================================================
+// Errors
+//
+
+const int		SIO_ERROR_NONE = 0,
+				SIO_ERROR_INCCORECT_CRC32 = 1,
+				SIO_ERROR_INCCORECT_REQUEST_ID = 2,
+				SIO_ERROR_INCORRECT_PARSE_ORDERWRAP = 3,
+				SIO_ERROR_INCORRECT_PARSE_PROTOWRAP = 4;
+
+const int		SIO_ERROR_COUNT = 5;
 
 // ==============================================================================================
 // Limiters

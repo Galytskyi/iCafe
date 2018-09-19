@@ -53,7 +53,8 @@ SOURCES += \
 	OptionsDialog.cpp \
 	Database.cpp \
 	OrderStateSocket.cpp \
-	OrderReceiveSocket.cpp
+	OrderReceiveSocket.cpp \
+    ../../../lib/Crc32.cpp
 
 
 HEADERS += \
@@ -68,7 +69,8 @@ HEADERS += \
 	OptionsDialog.h \
 	Database.h \
 	OrderStateSocket.h \
-	OrderReceiveSocket.h
+	OrderReceiveSocket.h \
+    ../../../lib/Crc32.h
 
 
 RESOURCES += \

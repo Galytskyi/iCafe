@@ -30,8 +30,8 @@ void OrderStateSocket::onSocketThreadStarted()
 {
 	qDebug() << "OrderStateSocket::onSocketThreadStarted()";
 
-	connect(this, &Udp::ClientSocket::ackReceived, this, &OrderStateSocket::processAck, Qt::QueuedConnection);
-	connect(this, &Udp::ClientSocket::ackTimeout, this, &OrderStateSocket::failAck, Qt::QueuedConnection);
+	connect(this, &Udp::ClientSocket::ackReceived, this, &OrderStateSocket::processReply, Qt::QueuedConnection);
+	connect(this, &Udp::ClientSocket::ackTimeout, this, &OrderStateSocket::failReply, Qt::QueuedConnection);
 
 	connect(&m_requestGetOrderStateTimer, &QTimer::timeout, this, &OrderStateSocket::requestGetOrderState, Qt::QueuedConnection);
 
@@ -81,7 +81,7 @@ void OrderStateSocket::setConnectState(bool connect)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void OrderStateSocket::processAck(const Udp::Request& request)
+void OrderStateSocket::processReply(const Udp::Request& request)
 {
 	switch(request.ID())
 	{
@@ -256,7 +256,7 @@ void OrderStateSocket::replyRemoveOrder(const Udp::Request& request)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void OrderStateSocket::failAck(const Udp::Request& request)
+void OrderStateSocket::failReply(const Udp::Request& request)
 {
 	switch(request.ID())
 	{

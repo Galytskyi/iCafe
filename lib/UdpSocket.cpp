@@ -17,6 +17,16 @@ namespace Udp
 
 	// -------------------------------------------------------------------------------------------------------------------
 
+	Request::Request(quint32 id)
+	{
+		memset(header(), 0, sizeof(RequestHeader)); // clear header of request
+
+		header()->id = id;
+		header()->calcCRC();
+	}
+
+	// -------------------------------------------------------------------------------------------------------------------
+
 	Request::Request(const QHostAddress& senderAddress, qint16 senderPort, char* receivedData, quint32 receivedDataSize) :
 		m_address(senderAddress),
 		m_port(senderPort)
@@ -70,48 +80,27 @@ namespace Udp
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	bool Request::writeDword(quint32 dw)
-	{
-		if (m_rawDataSize + sizeof(quint32) > MAX_UDP_DATAGRAM_SIZE)
-		{
-			assert(m_rawDataSize + sizeof(quint32) <= MAX_UDP_DATAGRAM_SIZE);
-			return false;
-		}
-
-		*reinterpret_cast<quint32*>(writeDataPtr()) = dw;
-
-		m_writeDataIndex += sizeof(quint32);
-
-		header()->dataSize += sizeof(quint32);
-
-		m_rawDataSize += sizeof(quint32);
-
-		return true;
-	}
-
-	// -------------------------------------------------------------------------------------------------------------------
-
 	bool Request::writeData(const char* data, quint32 dataSize)
 	{
-		if (data == nullptr)
+		if (data == nullptr || dataSize == 0)
 		{
-			assert(data != nullptr);
+			assert(0);
 			return false;
 		}
 
 		if (m_rawDataSize + dataSize > MAX_UDP_DATAGRAM_SIZE)
 		{
-			assert(m_rawDataSize + dataSize <= MAX_UDP_DATAGRAM_SIZE);
+			assert(0);
 			return false;
 		}
 
 		memcpy(writeDataPtr(), data, dataSize);
 
 		m_writeDataIndex += dataSize;
+		m_rawDataSize += dataSize;
 
 		header()->dataSize += dataSize;
-
-		m_rawDataSize += dataSize;
+		header()->calcCRC();
 
 		return true;
 	}
@@ -139,9 +128,10 @@ namespace Udp
 
 //		m_writeDataIndex += messageSize;
 
-//		header()->dataSize += messageSize;
-
 //		m_rawDataSize += messageSize;
+
+//		header()->dataSize += messageSize;
+//		header()->calcCRC();
 
 //		return true;
 //	}
@@ -319,7 +309,7 @@ namespace Udp
 		m_request.setID(request.ID());
 
 		m_request.setVersion(m_protocolVersion);
-		m_request.setNo(m_requestNo);
+		m_request.setNumerator(m_requestNo);
 		m_request.setErrorCode(0);
 
 		m_request.initWrite();
@@ -357,9 +347,7 @@ namespace Udp
 
 	void ClientSocket::sendRequest(quint32 requestID)
 	{
-		Request request;
-
-		request.setID(requestID);
+		Request request(requestID);
 
 		emit sendRequestSignal(request);
 	}
@@ -368,8 +356,7 @@ namespace Udp
 
 	void ClientSocket::sendRequest(quint32 requestID, const char* pData, quint32 dataSize)
 	{
-		Request request;
-		request.setID(requestID);
+		Request request(requestID);
 
 		if (pData == nullptr || dataSize == 0)
 		{
@@ -429,7 +416,7 @@ namespace Udp
 		if (m_state != State::WaitingForAck)
 		{
 			qint64 skipedDataSize = m_socket.readDatagram(m_ack.rawData(), m_socket.pendingDatagramSize(), &clientAddress, &port);
-			qDebug() << "skipped" << skipedDataSize << ", no" << m_ack.no();
+			qDebug() << "skipped" << skipedDataSize << ", no" << m_ack.numerator();
 
 			//assert(m_state == State::WaitingForAck);
 			return;
@@ -459,7 +446,7 @@ namespace Udp
 
 		bool unknownAck = true;
 
-		if (m_request.ID() == m_ack.ID() &&	m_request.no() == m_ack.no())
+		if (m_request.ID() == m_ack.ID() &&	m_request.numerator() == m_ack.numerator())
 		{
 			unknownAck = false;
 		}
@@ -501,7 +488,7 @@ namespace Udp
 
 		   emit ackTimeout(m_request);
 
-		   qDebug() << "Ack timeout: server " << m_request.address().toString() << " : " << m_request.port() << ", no" << m_request.no();
+		   qDebug() << "Ack timeout: server " << m_request.address().toString() << " : " << m_request.port() << ", no" << m_request.numerator();
 		}
 	}
 

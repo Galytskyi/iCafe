@@ -8,8 +8,8 @@
 #include <QTimer>
 #include <QMutex>
 
+#include "../lib/Crc32.h"
 #include "../lib/SocketIO.h"
-//#include "../lib/Crc32.h"
 
 namespace Udp
 {
@@ -20,22 +20,21 @@ namespace Udp
 	struct RequestHeader
 	{
 		quint32 id = 0;
-		quint32 version = 0;
-		quint32 no = 0;
-		quint32 errorCode = 0;
+		quint32 version = UDP_REQUEST_HEADER_VERSION;
+		quint32 numerator = 0;
+		quint32 errorCode = SIO_ERROR_NONE;
 		quint32 dataSize = 0;
+		quint32 crc32 = 0xFFFFFFFF;
 
-//		quint32 CRC32 = 0;
+		void calcCRC()
+		{
+			crc32 = ::CalcCRC32(reinterpret_cast<const char*>(this), sizeof(RequestHeader) - sizeof(quint32));
+		}
 
-//		void calcCRC()
-//		{
-//			this->CRC32 = CalcCRC32(reinterpret_cast<const char*>(this), sizeof(RequestHeader) - sizeof(quint32));
-//		}
-
-//		bool checkCRC()
-//		{
-//			return CalcCRC32(reinterpret_cast<const char*>(this), sizeof(RequestHeader) - sizeof(quint32)) == this->CRC32;
-//		}
+		bool checkCRC()
+		{
+			return ::CalcCRC32(reinterpret_cast<const char*>(this), sizeof(RequestHeader) - sizeof(quint32)) == crc32;
+		}
 	};
 
 	#pragma pack(pop)
@@ -54,6 +53,7 @@ namespace Udp
 	public:
 
 		Request();
+		explicit Request(quint32 id);
 		Request(const QHostAddress& senderAddress, qint16 senderPort, char* receivedData, quint32 receivedDataSize);
 		virtual ~Request();
 
@@ -68,6 +68,8 @@ namespace Udp
 		unsigned int	m_writeDataIndex = 0;
 		unsigned int	m_readDataIndex = 0;
 
+		quint32			m_crc32 = 0;
+
 	private:
 
 		RequestHeader*	header() { return reinterpret_cast<RequestHeader*>(m_rawData); }
@@ -79,8 +81,8 @@ namespace Udp
 
 		void			setRawDataSize(quint32 rawDataSize) { m_rawDataSize = rawDataSize; }
 
-		friend class ClientSocket;
-		friend class ServerSocket;
+		friend class	ClientSocket;
+		friend class	ServerSocket;
 
 	public:
 
@@ -109,24 +111,29 @@ namespace Udp
 		quint32			version() const { return header()->version; }
 		void			setVersion(quint32 version) { header()->version = version; }
 
-		quint32			no() const { return header()->no; }
-		void			setNo(quint32 no) { header()->no = no; }
+		quint32			numerator() const { return header()->numerator; }
+		void			setNumerator(quint32 numerator) { header()->numerator = numerator; }
 
 		quint32			errorCode() const { return header()->errorCode; }
 		void			setErrorCode(quint32 errorCode) { header()->errorCode = errorCode; }
 
 		quint32			headerDataSize() const { return header()->dataSize; }
 
+		quint32			headerCrc() const { return header()->crc32; }
+
+		bool			headerCrcOk() { return header()->checkCRC(); }
+
 		// append to data
 		//
 		void initWrite()
 		{
 			m_writeDataIndex = 0;
-			header()->dataSize = 0;
 			m_rawDataSize = sizeof(RequestHeader);
+
+			header()->dataSize = 0;
+			header()->calcCRC();
 		}
 
-		bool writeDword(quint32 dw);
 		bool writeData(const char* data, quint32 dataSize);
 		bool writeData(const QByteArray& data);
 		//bool writeData(google::protobuf::Message& protobufMessage);
