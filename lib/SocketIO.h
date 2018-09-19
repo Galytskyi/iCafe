@@ -64,6 +64,8 @@ struct replyCfgXmlInfo
 	quint32 bytesPerPart = 0;
 	quint32 partCount = 0;
 
+	quint32	crc32 = 0xFFFFFFFF;
+
 	void clear()
 	{
 		version = REPLY_CONFIG_XML_INFO_VERSION;
@@ -71,6 +73,8 @@ struct replyCfgXmlInfo
 		dataSize = 0;
 		bytesPerPart = 0;
 		partCount = 0;
+
+		crc32 = 0xFFFFFFFF;
 	}
 };
 
@@ -96,7 +100,7 @@ struct replyCfgXml
 #pragma pack(pop)
 
 // ----------------------------------------------------------------------------------------------
-// WRAP_ORDER
+// ORDER_WRAP
 //
 const quint32	ORDER_WRAP_VERSION = 1;
 

@@ -37,8 +37,8 @@ void ConfigSocket::onSocketThreadStarted()
 	connect(this, &ConfigSocket::cfgXmlReceived, &theProviderTypeBase, &Provider::TypeBase::readFromXml, Qt::QueuedConnection);
 
 	m_rcxi.clear();
+	m_rcxi.crc32 = getConfigFileCrc();
 	m_cfgXmlData.clear();
-	m_cfgXmlCrc32 = getConfigFileCrc();
 
 	requestGetConfigXmlCrc();
 
@@ -127,14 +127,16 @@ void ConfigSocket::replyGetConfigXmlCrc(const Udp::Request& request)
 	if (cfgXmlCrc32 == 0xFFFFFFFF)
 	{
 		assert(0);
+
 		m_rcxi.clear();
+		m_rcxi.crc32 = getConfigFileCrc();
 
 	   // timer call requestGetConfigXmlCrc()
 
 		return;
 	}
 
-	if (cfgXmlCrc32 == m_cfgXmlCrc32)
+	if (cfgXmlCrc32 == m_rcxi.crc32)
 	{
 		m_rcxi.dataSize = m_cfgXmlData.size();
 
@@ -190,6 +192,7 @@ void ConfigSocket::replyGetConfigXmlInfo(const Udp::Request& request)
 		 assert(m_rcxi.partCount == 0);
 
 		 m_rcxi.clear();
+		 m_rcxi.crc32 = getConfigFileCrc();
 
 		// timer call requestGetConfigXmlCrc()
 
@@ -243,6 +246,7 @@ void ConfigSocket::replyGetConfigXml(const Udp::Request& request)
 	if (rcx->partIndex < 0 || rcx->partIndex >= m_rcxi.partCount)
 	{
 		m_rcxi.clear();
+		m_rcxi.crc32 = getConfigFileCrc();
 		m_cfgXmlData.clear();
 
 		// timer call requestGetConfigXmlCrc()

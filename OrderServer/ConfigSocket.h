@@ -17,7 +17,6 @@ public:
 
 private:
 
-	CRC32			m_cfgXmlCrc32 = 0xFFFFFFFF;
 	QByteArray		m_cfgXmlData;
 	replyCfgXmlInfo m_rcxi;
 

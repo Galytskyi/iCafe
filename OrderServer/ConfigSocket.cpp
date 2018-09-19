@@ -64,8 +64,6 @@ bool ConfigSocket::createCfgXml()
 	}
 	xml.writeEndDocument();
 
-	m_cfgXmlCrc32 = CalcCRC32(m_cfgXmlData, m_cfgXmlData.size());
-
 	updateCfgXmlInfo();
 
 	return true;
@@ -100,6 +98,8 @@ void ConfigSocket::updateCfgXmlInfo()
 
 			break;
 	}
+
+	m_rcxi.crc32 = CalcCRC32(m_cfgXmlData, m_cfgXmlData.size());
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ void ConfigSocket::processRequest(Udp::Request request)
 void ConfigSocket::replyGetConfigXmlCrc(Udp::Request request)
 {
 	request.initWrite();
-	request.writeData((const char*) &m_cfgXmlCrc32, sizeof(m_cfgXmlCrc32));
+	request.writeData((const char*) &m_rcxi.crc32, sizeof(m_rcxi.crc32));
 
 	sendAck(request);
 }
