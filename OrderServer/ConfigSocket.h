@@ -17,8 +17,8 @@ public:
 
 private:
 
+	sio_ReplyCfgXmlInfo m_rcxi;
 	QByteArray		m_cfgXmlData;
-	replyCfgXmlInfo m_rcxi;
 
 	virtual void	onSocketThreadStarted();
 	virtual void	onSocketThreadFinished();

@@ -56,7 +56,7 @@ const quint32	REPLY_CONFIG_XML_INFO_VERSION = 1;
 
 #pragma pack(push, 1)
 
-struct replyCfgXmlInfo
+struct sio_ReplyCfgXmlInfo
 {
 	quint32 version = REPLY_CONFIG_XML_INFO_VERSION;
 
@@ -87,7 +87,7 @@ const quint32	REPLY_CONFIG_XML_VERSION = 1;
 
 #pragma pack(push, 1)
 
-struct replyCfgXml
+struct sio_ReplyCfgXml
 {
 	quint32 version = REPLY_CONFIG_XML_VERSION;
 
@@ -106,7 +106,7 @@ const quint32	ORDER_WRAP_VERSION = 1;
 
 #pragma pack(push, 1)
 
-struct orderWrap
+struct sio_OrderWrap
 {
 	quint32 version = ORDER_WRAP_VERSION;
 
@@ -132,7 +132,7 @@ const quint32	REQUEST_GET_ORDER_VERSION = 1;
 
 #pragma pack(push, 1)
 
-struct requestGetOrder
+struct sio_RequestGetOrder
 {
 	quint32 version = REQUEST_GET_ORDER_VERSION;
 

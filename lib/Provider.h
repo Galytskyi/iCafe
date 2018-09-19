@@ -88,8 +88,8 @@ namespace Provider
 
 	signals:
 
-		void				providerConnected(quint16 providerID);
-		void				providerDisconnected(quint16 providerID);
+		void				providerConnected(quint32 providerID);
+		void				providerDisconnected(quint32 providerID);
 
 	private slots:
 
@@ -145,7 +145,7 @@ namespace Provider
 		bool					readFromXml(const QByteArray& cfgXmlData, int version);
 		void					writeToXml(XmlWriteHelper& xml, int version);
 
-		void					setProviderConnected(quint16 providerID);
+		void					setProviderConnected(quint32 providerID, quint32 wrapVersion);
 	};
 
 	// ==============================================================================================

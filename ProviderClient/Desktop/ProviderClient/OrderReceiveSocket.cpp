@@ -104,16 +104,20 @@ void OrderReceiveSocket::requestGetOrder()
 		return;
 	}
 
-	quint32 providerID = theOptions.providerData().providerID();
+	sio_RequestGetOrder rgo;
 
-	sendRequest(CLIENT_GET_ORDER, (const char*) &providerID, sizeof(providerID));
+	rgo.version = REQUEST_GET_ORDER_VERSION;
+	rgo.providerID = theOptions.providerData().providerID();
+	rgo.wrapVersion = ORDER_WRAP_VERSION;
+
+	sendRequest(CLIENT_GET_ORDER, (const char*) &rgo, sizeof(sio_RequestGetOrder));
 }
 
 // -------------------------------------------------------------------------------------------------------------------
 
 void OrderReceiveSocket::replyGetOrder(const Udp::Request& request)
 {
-	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
+	sio_OrderWrap wo = *(sio_OrderWrap*) const_cast<const Udp::Request&>(request).data();
 
 	bool result = wo.isValid();
 	if (result == false)
@@ -153,7 +157,7 @@ void OrderReceiveSocket::replyGetOrder(const Udp::Request& request)
 
 void OrderReceiveSocket::requestSetOrderState(const Order::Item& order)
 {
-	orderWrap wo = order.toWrap();
+	sio_OrderWrap wo = order.toWrap();
 	sendRequest(CLIENT_SET_ORDER_STATE, wo);
 }
 

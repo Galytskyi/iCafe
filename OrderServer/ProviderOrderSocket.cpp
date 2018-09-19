@@ -70,13 +70,18 @@ void ProviderOrderSocket::replyGetOrder(const Udp::Request& request)
 	//const char * pBuffer = const_cast<const Udp::Request&>(request).data();
 	//OrderItem* order = (OrderItem*) const_cast<const Udp::Request&>(request).data();
 
-	quint32 providerID = *(quint32*) const_cast<const Udp::Request&>(request).data();
+	sio_RequestGetOrder rgo = *(sio_RequestGetOrder*) const_cast<const Udp::Request&>(request).data();
 
-	emit setProviderConnected(providerID);
+	if (rgo.version != 1)
+	{
+		assert(0);
+	}
 
-	Order::Item order = theOrderBase.hasOrderForProvider(providerID);
+	emit setProviderConnected(rgo.providerID, rgo.wrapVersion);
 
-	orderWrap wo = order.toWrap();
+	Order::Item order = theOrderBase.hasOrderForProvider(rgo.providerID);
+
+	sio_OrderWrap wo = order.toWrap();
 	sendReply(request, wo);
 }
 
@@ -84,7 +89,7 @@ void ProviderOrderSocket::replyGetOrder(const Udp::Request& request)
 
 void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 {
-	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
+	sio_OrderWrap wo = *(sio_OrderWrap*) const_cast<const Udp::Request&>(request).data();
 
 	bool result = wo.isValid();
 	if (result == false)

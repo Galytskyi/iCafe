@@ -33,7 +33,7 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	Item::Item(const orderWrap& wo, QObject *parent)
+	Item::Item(const sio_OrderWrap& wo, QObject *parent)
 		: QObject(parent)
 	{
 		this->fromWrap(wo);
@@ -166,9 +166,9 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	orderWrap Item::toWrap() const
+	sio_OrderWrap Item::toWrap() const
 	{
-		orderWrap wo;
+		sio_OrderWrap wo;
 
 		wo.version = ORDER_WRAP_VERSION;
 
@@ -196,7 +196,7 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Item::toWrap(orderWrap* pWo)
+	void Item::toWrap(sio_OrderWrap* pWo)
 	{
 		if (pWo == nullptr)
 		{
@@ -227,7 +227,7 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Item::fromWrap(const orderWrap& wo)
+	void Item::fromWrap(const sio_OrderWrap& wo)
 	{
 		switch (wo.version)
 		{
@@ -251,7 +251,7 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Item::fromWrap(orderWrap* pWo)
+	void Item::fromWrap(sio_OrderWrap* pWo)
 	{
 		if (pWo == nullptr)
 		{

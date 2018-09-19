@@ -123,7 +123,7 @@ namespace Order
 
 		explicit Item(QObject *parent = 0);
 		Item(const Item& order, QObject *parent = 0);
-		Item(const orderWrap& wo, QObject *parent = 0);
+		Item(const sio_OrderWrap& wo, QObject *parent = 0);
 		virtual ~Item();
 
 	private:
@@ -183,10 +183,10 @@ namespace Order
 		void				setCancelCode(int code) { m_cancelCode = code; }
 		int					createCancelCode();
 
-		orderWrap			toWrap() const;
-		void				toWrap(orderWrap* pWo);
-		void				fromWrap(const orderWrap& wo);
-		void				fromWrap(orderWrap* pWo);
+		sio_OrderWrap		toWrap() const;
+		void				toWrap(sio_OrderWrap* pWo);
+		void				fromWrap(const sio_OrderWrap& wo);
+		void				fromWrap(sio_OrderWrap* pWo);
 
 		bool				readFromXml(XmlReadHelper& xml, int version);
 		void				writeToXml(XmlWriteHelper& xml, int version);

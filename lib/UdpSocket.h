@@ -239,7 +239,7 @@ namespace Udp
 		void				sendRequest(const Request& udpRequest);
 		void				sendRequest(quint32 requestID);
 		void				sendRequest(quint32 requestID, const char* pData, quint32 dataSize);
-		void				sendRequest(quint32 requestID, const orderWrap& wo);
+		void				sendRequest(quint32 requestID, const sio_OrderWrap& wo);
 		//void				sendRequest(quint32 requestID, google::protobuf::Message& protobufMessage);
 		void				retryRequest();
 
@@ -305,7 +305,7 @@ namespace Udp
 		void			sendAck(Request m_request);
 
 		void			sendReply(Udp::Request request, const char* pData, quint32 dataSize);
-		void			sendReply(const Request& request, const orderWrap& wo);
+		void			sendReply(const Request& request, const sio_OrderWrap& wo);
 		//void			sendReply(Udp::Request request, google::protobuf::Message& protobufMessage);
 
 	private slots:

@@ -27,7 +27,7 @@ public:
 
 signals:
 
-	void			setProviderConnected(quint16 providerID);
+	void			setProviderConnected(quint32 providerID, quint32 wrapVersion);
 
 private slots:
 

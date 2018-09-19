@@ -8,7 +8,7 @@
 
 // ==============================================================================================
 
-const int			AUTO_REMOVE_ORDER_TIMEOUT = 5 * 60 * 1000; // 5 min
+const int			AUTO_REMOVE_ORDER_TIMEOUT = 30 * 60 * 1000; // 30 min
 
 //const int			AUTO_REMOVE_ORDER_TIMEOUT = 3000;
 

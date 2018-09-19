@@ -128,32 +128,32 @@ public:
 private:
 
 	QString				m_serverIP;
-	quint16				m_serverProviderPort = PORT_PROVIDER_ORDER_REQUEST;
-	quint16				m_serverCustomerPort = PORT_CUSTOMER_ORDER_REQUEST;
+	int					m_serverProviderPort = PORT_PROVIDER_ORDER_REQUEST;
+	int					m_serverCustomerPort = PORT_CUSTOMER_ORDER_REQUEST;
 
-	quint16				m_providerID = -1;
-	quint16				m_requestProviderTime = 1000;
-	quint16				m_requestCustomerTime = 1000;
+	quint32				m_providerID = -1;
+	int					m_requestProviderTime = 1000;
+	int					m_requestCustomerTime = 1000;
 
 public:
 
 	QString				serverIP() const { return m_serverIP; }
 	void				setServerIP(const QString& ip) { m_serverIP = ip; }
 
-	quint16				serveProviderPort() const { return m_serverProviderPort; }
-	void				setServerProviderPort(quint16 port) { m_serverProviderPort = port; }
+	int					serveProviderPort() const { return m_serverProviderPort; }
+	void				setServerProviderPort(int port) { m_serverProviderPort = port; }
 
-	quint16				serverCustomerPort() const { return m_serverCustomerPort; }
-	void				setServerCustomerPort(quint16 port) { m_serverCustomerPort = port; }
+	int					serverCustomerPort() const { return m_serverCustomerPort; }
+	void				setServerCustomerPort(int port) { m_serverCustomerPort = port; }
 
-	quint16				providerID() const { return m_providerID; }
-	void				setProviderID(quint16 id) { m_providerID = id; }
+	quint32				providerID() const { return m_providerID; }
+	void				setProviderID(quint32 id) { m_providerID = id; }
 
-	quint16				requestProviderTime() const { return m_requestProviderTime; }
-	void				setRequestProviderTime(quint16  time) { m_requestProviderTime = time; }
+	int					requestProviderTime() const { return m_requestProviderTime; }
+	void				setRequestProviderTime(int time) { m_requestProviderTime = time; }
 
-	quint16				requestCustomerTime() const { return m_requestCustomerTime; }
-	void				setRequestCustomerTime(quint16  time) { m_requestCustomerTime = time; }
+	int					requestCustomerTime() const { return m_requestCustomerTime; }
+	void				setRequestCustomerTime(int time) { m_requestCustomerTime = time; }
 
 	void				load();
 	void				save();

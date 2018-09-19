@@ -128,7 +128,7 @@ void OrderStateSocket::requestGetOrderState()
 
 	m_getOrderStateIndex++;
 
-	orderWrap wo = order.toWrap();
+	sio_OrderWrap wo = order.toWrap();
 	sendRequest(CLIENT_GET_ORDER_STATE, wo);
 }
 
@@ -136,7 +136,7 @@ void OrderStateSocket::requestGetOrderState()
 
 void OrderStateSocket::replyGetOrderState(const Udp::Request& request)
 {
-	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
+	sio_OrderWrap wo = *(sio_OrderWrap*) const_cast<const Udp::Request&>(request).data();
 
 	bool result = wo.isValid();
 	if (result == false)
@@ -189,7 +189,7 @@ void OrderStateSocket::requestRemoveOrder(const Order::Item& order)
 		return;
 	}
 
-	orderWrap wo = order.toWrap();
+	sio_OrderWrap wo = order.toWrap();
 	sendRequest(CLIENT_REMOVE_ORDER, wo);
 }
 
@@ -197,7 +197,7 @@ void OrderStateSocket::requestRemoveOrder(const Order::Item& order)
 
 void OrderStateSocket::replyRemoveOrder(const Udp::Request& request)
 {
-	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
+	sio_OrderWrap wo = *(sio_OrderWrap*) const_cast<const Udp::Request&>(request).data();
 
 	bool result = wo.isValid();
 	if (result == false)

@@ -36,9 +36,10 @@ void ConfigSocket::onSocketThreadStarted()
 	connect(this, &ConfigSocket::cfgXmlReceived, &theProviderBase, &Provider::Base::readFromXml, Qt::QueuedConnection);
 	connect(this, &ConfigSocket::cfgXmlReceived, &theProviderTypeBase, &Provider::TypeBase::readFromXml, Qt::QueuedConnection);
 
+	m_cfgXmlData.clear();
+
 	m_rcxi.clear();
 	m_rcxi.crc32 = getConfigFileCrc();
-	m_cfgXmlData.clear();
 
 	requestGetConfigXmlCrc();
 
@@ -59,6 +60,8 @@ void ConfigSocket::onSocketThreadFinished()
 
 CRC32 ConfigSocket::getConfigFileCrc()
 {
+	m_cfgXmlData.clear();
+
 	// read form file
 	//
 	QFile file(xmlConfigFileName);
@@ -69,6 +72,8 @@ CRC32 ConfigSocket::getConfigFileCrc()
 
 	m_cfgXmlData = file.readAll();
 	file.close();
+
+	qDebug() << "ConfigSocket::getConfigFileCrc - config file size: " << m_cfgXmlData.size();
 
 	if (m_cfgXmlData.size() == 0)
 	{
@@ -109,6 +114,11 @@ void ConfigSocket::processAck(const Udp::Request& request)
 
 void ConfigSocket::requestGetConfigXmlCrc()
 {
+	if (isReadyToSend() == false)
+	{
+		return;
+	}
+
 	if (m_rcxi.dataSize != 0)
 	{
 		return;
@@ -143,7 +153,7 @@ void ConfigSocket::replyGetConfigXmlCrc(const Udp::Request& request)
 		emit cfgXmlReceived(m_cfgXmlData, xmlTagProviderLastVersion);
 		m_cfgXmlData.clear();
 
-		qDebug() << "ConfigSocket::replyGetConfigXmlCrc - loaded from file bytes : " << m_rcxi.dataSize;
+		qDebug() << "ConfigSocket::replyGetConfigXmlCrc - loaded from file by CRC";
 
 		return;
 	}
@@ -174,7 +184,7 @@ void ConfigSocket::replyGetConfigXmlInfo(const Udp::Request& request)
 	{
 		case 1:
 
-			m_rcxi = *(replyCfgXmlInfo*) request.data();
+			m_rcxi = *(sio_ReplyCfgXmlInfo*) request.data();
 
 			break;
 
@@ -241,13 +251,14 @@ void ConfigSocket::replyGetConfigXml(const Udp::Request& request)
 {
 	//const char * pBuffer = const_cast<const UdpRequest&>(udpRequest).data();
 
-	replyCfgXml* rcx = (replyCfgXml*) request.data();
+	sio_ReplyCfgXml* rcx = (sio_ReplyCfgXml*) request.data();
 
 	if (rcx->partIndex < 0 || rcx->partIndex >= m_rcxi.partCount)
 	{
+		m_cfgXmlData.clear();
+
 		m_rcxi.clear();
 		m_rcxi.crc32 = getConfigFileCrc();
-		m_cfgXmlData.clear();
 
 		// timer call requestGetConfigXmlCrc()
 		//

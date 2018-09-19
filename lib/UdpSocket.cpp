@@ -384,9 +384,9 @@ namespace Udp
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void ClientSocket::sendRequest(quint32 requestID, const orderWrap& wo)
+	void ClientSocket::sendRequest(quint32 requestID, const sio_OrderWrap& wo)
 	{
-		sendRequest(requestID, (const char*) &wo, sizeof(orderWrap));
+		sendRequest(requestID, (const char*) &wo, sizeof(sio_OrderWrap));
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------
@@ -586,9 +586,9 @@ namespace Udp
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void ServerSocket::sendReply(const Udp::Request& request, const orderWrap& wo)
+	void ServerSocket::sendReply(const Udp::Request& request, const sio_OrderWrap& wo)
 	{
-		sendReply(request, (const char*) &wo, sizeof(orderWrap));
+		sendReply(request, (const char*) &wo, sizeof(sio_OrderWrap));
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------

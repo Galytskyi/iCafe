@@ -475,8 +475,10 @@ namespace Provider
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Base::setProviderConnected(quint16 providerID)
+	void Base::setProviderConnected(quint32 providerID, quint32 wrapVersion)
 	{
+		Q_UNUSED(wrapVersion);
+
 		QMutexLocker locker(&m_mutex);
 
 		if (m_providerIndexMap.contains(providerID) == false)

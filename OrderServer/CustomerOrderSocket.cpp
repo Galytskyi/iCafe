@@ -71,7 +71,7 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 {
 	//char* pData = (char*) const_cast<const Udp::Request&>(request).data();
 
-	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
+	sio_OrderWrap wo = *(sio_OrderWrap*) const_cast<const Udp::Request&>(request).data();
 
 	bool result = wo.isValid();
 	if (result == false)
@@ -122,7 +122,7 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 
 void CustomerOrderSocket::replyGetOrderState(const Udp::Request& request)
 {
-	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
+	sio_OrderWrap wo = *(sio_OrderWrap*) const_cast<const Udp::Request&>(request).data();
 
 	bool result = wo.isValid();
 	if (result == false)
@@ -154,7 +154,7 @@ void CustomerOrderSocket::replyGetOrderState(const Udp::Request& request)
 
 void CustomerOrderSocket::replyRemoveOrder(const Udp::Request& request)
 {
-	orderWrap wo = *(orderWrap*) const_cast<const Udp::Request&>(request).data();
+	sio_OrderWrap wo = *(sio_OrderWrap*) const_cast<const Udp::Request&>(request).data();
 
 	bool result = wo.isValid();
 	if (result == false)

@@ -180,8 +180,8 @@ bool MainWindow::startConfigUdpThread()
 
 	m_configSocket->moveToThread(pThread);
 
-	connect(pThread, &QThread::started, m_configSocket, &Udp::ServerSocket::slot_onThreadStarted);
-	connect(pThread, &QThread::finished, m_configSocket, &Udp::ServerSocket::slot_onThreadFinished);
+	connect(pThread, &QThread::started, m_configSocket, &ConfigSocket::slot_onThreadStarted);
+	connect(pThread, &QThread::finished, m_configSocket, &ConfigSocket::slot_onThreadFinished);
 
 	pThread->start();
 
