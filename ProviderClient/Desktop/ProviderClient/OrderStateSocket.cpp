@@ -78,6 +78,12 @@ void OrderStateSocket::setConnectState(bool connect)
 
 void OrderStateSocket::processReply(const Udp::Request& request)
 {
+	if (request.errorCode() != SIO_ERROR_NONE)
+	{
+		qDebug() << "OrderStateSocket::processReply - Request has error : " << request.errorCode();
+		assert(false);
+	}
+
 	switch(request.ID())
 	{
 		case CLIENT_GET_ORDER_STATE:
@@ -89,7 +95,7 @@ void OrderStateSocket::processReply(const Udp::Request& request)
 			break;
 
 		default:
-			qDebug() << "OrderStateSocket::processAck - Unknown request.ID() : " << request.ID();
+			qDebug() << "OrderStateSocket::processReply - Unknown request.ID() : " << request.ID();
 			assert(false);
 			break;
 	}

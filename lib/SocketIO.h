@@ -42,11 +42,9 @@ const quint32	CLIENT_SET_ORDER_STATE = 1301;
 
 const int		SIO_ERROR_NONE = 0,
 				SIO_ERROR_INCCORECT_CRC32 = 1,
-				SIO_ERROR_INCCORECT_REQUEST_ID = 2,
-				SIO_ERROR_INCORRECT_PARSE_ORDERWRAP = 3,
-				SIO_ERROR_INCORRECT_PARSE_PROTOWRAP = 4;
+				SIO_ERROR_INCCORECT_REQUEST_ID = 2;
 
-const int		SIO_ERROR_COUNT = 5;
+const int		SIO_ERROR_COUNT = 3;
 
 // ==============================================================================================
 // Limiters

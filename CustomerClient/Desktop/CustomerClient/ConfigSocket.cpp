@@ -88,6 +88,13 @@ quint32 ConfigSocket::getConfigFileCrc()
 
 void ConfigSocket::processReply(const Udp::Request& request)
 {
+	if (request.errorCode() != SIO_ERROR_NONE)
+	{
+		qDebug() << "OrderStateSocket::processReply - Request has error : " << request.errorCode();
+		assert(false);
+	}
+
+
 	switch(request.ID())
 	{
 		case CLIENT_GET_CONFIG_XML_CRC:
@@ -103,8 +110,8 @@ void ConfigSocket::processReply(const Udp::Request& request)
 			break;
 
 		default:
+			qDebug() << "ConfigSocket::processReply - Unknown request.ID() : " << request.ID();
 			assert(false);
-			qDebug() << "ConfigSocket::processAck - Unknown request.ID() : " << request.ID();
 			break;
 	}
 }
