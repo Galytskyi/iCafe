@@ -280,10 +280,7 @@ namespace Udp
 
 			if (m_connect == false) // if old state == false
 			{
-				qDebug() << "ClientSocket::setConnectState - Connected";
-
 				onSocketConnected();
-
 				emit socketConnection(true);
 			}
 		}
@@ -291,10 +288,7 @@ namespace Udp
 		{
 			if (m_connect == true) // if old state == true
 			{
-				qDebug() << "ClientSocket::setConnectState - Discconnected";
-
 				onSocketDisconnected();
-
 				emit socketConnection(false);
 			}
 		}
