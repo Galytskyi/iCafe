@@ -13,7 +13,7 @@ ConfigSocket::ConfigSocket(const QHostAddress &serverAddress, quint16 port)
 	:	Udp::ClientSocket(serverAddress, port)
 	,	m_requestGetXmlInfoTimer(this)
 {
-	qDebug() << serverAddress;
+	qDebug() << "ConfigSocket::ConfigSocket" << serverAddress << port;
 }
 
 // -------------------------------------------------------------------------------------------------------------------

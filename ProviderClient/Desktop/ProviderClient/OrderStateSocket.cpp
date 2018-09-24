@@ -15,6 +15,8 @@ OrderStateSocket::OrderStateSocket(const QHostAddress &serverAddress, quint16 po
 	, m_getOrderStateIndex(0)
 {
 	qDebug() << "OrderStateSocket::OrderStateSocket" << serverAddress << port;
+
+	setMaxFailAckCount(MAX_FAIL_ACK_COUNT);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
