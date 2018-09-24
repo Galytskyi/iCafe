@@ -202,6 +202,7 @@ namespace Udp
 		, m_port(port)
 		, m_connect(false)
 		, m_failAckCount(0)
+		, m_maxFailAckCount(1)
 	{
 	}
 
@@ -496,6 +497,7 @@ namespace Udp
 		else
 		{
 			assert(m_ack.data() == m_ack.readDataPtr());
+			setConnectState(true);
 			emit ackReceived(m_ack);
 		}
 	}
@@ -525,6 +527,11 @@ namespace Udp
 		   m_state = State::ReadyToSend;
 
 		   m_failAckCount++;
+
+		   if (m_failAckCount >= m_maxFailAckCount)
+		   {
+			   setConnectState(false);
+		   }
 
 		   emit ackTimeout(m_request);
 

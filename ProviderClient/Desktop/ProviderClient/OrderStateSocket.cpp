@@ -69,8 +69,6 @@ void OrderStateSocket::processReply(const Udp::Request& request)
 			assert(false);
 			break;
 	}
-
-	setConnectState(true);
 }
 
 
@@ -227,11 +225,6 @@ void OrderStateSocket::failReply(const Udp::Request& request)
 			qDebug() << "OrderStateSocket::failAck - Unknown request.ID() : " << request.ID();
 			assert(false);
 			break;
-	}
-
-	if (failAckCount() >= MAX_FAIL_ACK_COUNT)
-	{
-		setConnectState(false);
 	}
 }
 

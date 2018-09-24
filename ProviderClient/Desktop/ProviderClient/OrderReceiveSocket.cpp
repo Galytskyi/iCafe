@@ -12,6 +12,8 @@ OrderReceiveSocket::OrderReceiveSocket(const QHostAddress &serverAddress, quint1
 	, m_requestGetOrderTimer(this)
 {
 	qDebug() << "OrderReceiveSocket::OrderReceiveSocket" << serverAddress << port;
+
+	setMaxFailAckCount(MAX_FAIL_ACK_COUNT);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -67,8 +69,6 @@ void OrderReceiveSocket::processReply(const Udp::Request& request)
 			assert(false);
 			break;
 	}
-
-	setConnectState(true);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -165,11 +165,6 @@ void OrderReceiveSocket::failReply(const Udp::Request& request)
 			qDebug() << "ConfigSocket::processReply - Unknown request.ID() : " << request.ID();
 			assert(false);
 			break;
-	}
-
-	if (failAckCount() >= MAX_FAIL_ACK_COUNT)
-	{
-		setConnectState(false);
 	}
 }
 
