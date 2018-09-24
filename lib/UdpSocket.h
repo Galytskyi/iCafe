@@ -26,15 +26,8 @@ namespace Udp
 		quint32 dataSize = 0;
 		quint32 crc32 = 0xFFFFFFFF;
 
-		void calcCRC()
-		{
-			crc32 = ::CalcCRC32(reinterpret_cast<const char*>(this), sizeof(RequestHeader) - sizeof(quint32));
-		}
-
-		bool checkCRC()
-		{
-			return ::CalcCRC32(reinterpret_cast<const char*>(this), sizeof(RequestHeader) - sizeof(quint32)) == crc32;
-		}
+		void calcCRC() { crc32 = ::CalcCRC32(reinterpret_cast<const char*>(this), sizeof(RequestHeader) - sizeof(quint32)); }
+		bool checkCRC() { return ::CalcCRC32(reinterpret_cast<const char*>(this), sizeof(RequestHeader) - sizeof(quint32)) == crc32; }
 	};
 
 	#pragma pack(pop)
@@ -118,9 +111,7 @@ namespace Udp
 		void			setErrorCode(quint32 errorCode) { header()->errorCode = errorCode; }
 
 		quint32			headerDataSize() const { return header()->dataSize; }
-
 		quint32			headerCrc() const { return header()->crc32; }
-
 		bool			headerCrcOk() { return header()->checkCRC(); }
 
 		// append to data

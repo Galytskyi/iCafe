@@ -48,6 +48,7 @@ void CustomerOrderSocket::processRequest(Udp::Request request)
 	{
 		request.setErrorCode(SIO_ERROR_INCCORECT_CRC32);
 		sendAck(request);
+		return;
 	}
 
 	switch(request.ID())
