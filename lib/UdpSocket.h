@@ -213,8 +213,6 @@ namespace Udp
 		int					m_retryCtr = 0;
 		quint32				m_ackTimeoutCtr = 0;
 
-	protected:
-
 		bool				m_connect = false;
 		int					m_failAckCount  = 0;
 
@@ -232,6 +230,7 @@ namespace Udp
 		//
 		bool				isConnected() const { return m_connect; }
 		void				setConnectState(bool connect);
+		int					failAckCount() const { return m_failAckCount; }
 
 		//
 		//

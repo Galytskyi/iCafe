@@ -524,6 +524,8 @@ namespace Udp
 		   m_retryCtr = 0;
 		   m_state = State::ReadyToSend;
 
+		   m_failAckCount++;
+
 		   emit ackTimeout(m_request);
 
 		   qDebug() << "Ack timeout: server " << m_request.address().toString() << " : " << m_request.port() << ", no" << m_request.numerator();

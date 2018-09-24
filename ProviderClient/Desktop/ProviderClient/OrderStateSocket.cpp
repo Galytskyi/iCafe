@@ -229,9 +229,7 @@ void OrderStateSocket::failReply(const Udp::Request& request)
 			break;
 	}
 
-	m_failAckCount++;
-
-	if (m_failAckCount >= MAX_FAIL_ACK_COUNT)
+	if (failAckCount() >= MAX_FAIL_ACK_COUNT)
 	{
 		setConnectState(false);
 	}
