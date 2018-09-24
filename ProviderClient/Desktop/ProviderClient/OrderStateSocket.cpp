@@ -13,8 +13,6 @@ OrderStateSocket::OrderStateSocket(const QHostAddress &serverAddress, quint16 po
 	: Udp::ClientSocket(serverAddress, port)
 	, m_requestGetOrderStateTimer(this)
 	, m_getOrderStateIndex(0)
-	, m_connect(false)
-	, m_failAckCount(0)
 {
 	qDebug() << "OrderStateSocket::OrderStateSocket" << serverAddress << port;
 }
@@ -44,34 +42,6 @@ void OrderStateSocket::onSocketThreadStarted()
 void OrderStateSocket::onSocketThreadFinished()
 {
 	m_requestGetOrderStateTimer.stop();
-}
-
-// -------------------------------------------------------------------------------------------------------------------
-
-void OrderStateSocket::setConnectState(bool connect)
-{
-	if (connect == true)
-	{
-		m_failAckCount = 0;
-
-		if (m_connect == false) // if old state == false
-		{
-			emit socketConnection(true);
-
-			qDebug() << "OrderStateSocket::setConnectState - Connected";
-		}
-	}
-	else
-	{
-		if (m_connect == true) // if old state == true
-		{
-			emit socketConnection(false);
-
-			qDebug() << "OrderStateSocket::setConnectState - Discconnected";
-		}
-	}
-
-	m_connect = connect;
 }
 
 // -------------------------------------------------------------------------------------------------------------------

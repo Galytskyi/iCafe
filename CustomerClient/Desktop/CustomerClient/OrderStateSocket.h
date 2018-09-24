@@ -27,9 +27,6 @@ private:
 
 	int				m_getOrderStateIndex = 0;
 
-	bool			m_connect = false;
-	int				m_failAckCount  = 0;
-
 public:
 
 	// functions: Request - Reply
@@ -38,17 +35,11 @@ public:
 	void            replyGetOrderState(const Udp::Request& request);
 	void            replyRemoveOrder(const Udp::Request& request);
 
-	// net connection
-	//
-	bool			isConnected() const { return m_connect; }
-	void			setConnectState(bool connect);
-
 signals:
-
-	void			socketConnection(bool connect);
 
 	void			appendOrderToBase(const Order::Item& order);
 	void			orderChangedState(const Order::Item& order);
+
 	void            failConnection();
 
 public slots:

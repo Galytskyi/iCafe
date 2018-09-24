@@ -29,9 +29,6 @@ private:
 
 	QTimer			m_requestGetOrderTimer;
 
-	bool			m_connect = false;
-	int				m_failAckCount  = 0;
-
 public:
 
 	// functions: Request - Reply
@@ -39,16 +36,10 @@ public:
 	void            replyGetOrder(const Udp::Request& request);					// PROVIDER_GET_ORDER
 	void            replySetOrderState(const Udp::Request& request);			// PROVIDER_SET_ORDER_STATE
 
-	// net connection
-	//
-	bool			isConnected() const { return m_connect; }
-	void			setConnectState(bool connect);
-
 signals:
 
-	void			socketConnection(bool connect);
-
 	void			appendOrderToBase(const Order::Item& order);
+
 	void            failConnection();
 
 public slots:

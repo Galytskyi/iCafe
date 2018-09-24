@@ -224,6 +224,11 @@ namespace Udp
 
 	protected:
 
+		bool				m_connect = false;
+		int					m_failAckCount  = 0;
+
+	protected:
+
 		//
 		//
 		const QHostAddress&	serverAddress() const;
@@ -231,6 +236,11 @@ namespace Udp
 
 		quint16				port() const;
 		void				setPort(quint16 port);
+
+		// net connection
+		//
+		bool				isConnected() const { return m_connect; }
+		void				setConnectState(bool connect);
 
 		//
 		//
@@ -256,7 +266,12 @@ namespace Udp
 		virtual void		onSocketThreadStarted() {}
 		virtual void		onSocketThreadFinished() {}
 
+		virtual void		onSocketConnected() {}
+		virtual void		onSocketDisconnected() {}
+
 	signals:
+
+		void				socketConnection(bool connect);
 
 		void				sendRequestSignal(const Request& udpRequest);
 

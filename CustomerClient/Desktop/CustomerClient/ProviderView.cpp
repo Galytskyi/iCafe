@@ -70,7 +70,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	switch(item.order().state())
 		{
 			case Order::STATE_ORDER_OK:							painter->fillRect(option.rect, QColor(0xA0, 0xF0, 0xA0));	break;
-			case Order::STATE_ORDER_PROCESSING:					painter->fillRect(option.rect, QColor(0xff, 0xf4, 0xc4));	break;
+			case Order::STATE_ORDER_PROCESSING:
 			case Order::STATE_SERVER_CREATED_ORDER:				painter->fillRect(option.rect, QColor(0xff, 0xf4, 0xc4));	break;
 		}
 
@@ -98,7 +98,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	switch(item.order().state())
 	{
 		case Order::STATE_ORDER_OK:							orderState = tr("Wellcome!");	break;
-		case Order::STATE_ORDER_PROCESSING:					orderState = tr("Wait answer");	break;
+		case Order::STATE_ORDER_PROCESSING:
 		case Order::STATE_SERVER_CREATED_ORDER:				orderState = tr("Wait answer");	break;
 	}
 

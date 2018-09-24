@@ -197,9 +197,11 @@ namespace Udp
 	//
 	// -------------------------------------------------------------------------------------------------------------------
 
-	ClientSocket::ClientSocket(const QHostAddress &serverAddress, quint16 port) :
-		m_serverAddress(serverAddress),
-		m_port(port)
+	ClientSocket::ClientSocket(const QHostAddress &serverAddress, quint16 port)
+		: m_serverAddress(serverAddress)
+		, m_port(port)
+		, m_connect(false)
+		, m_failAckCount(0)
 	{
 	}
 
@@ -266,6 +268,39 @@ namespace Udp
 
 		m_port = port;
 	}
+
+	// -------------------------------------------------------------------------------------------------------------------
+
+	void ClientSocket::setConnectState(bool connect)
+	{
+		if (connect == true)
+		{
+			m_failAckCount = 0;
+
+			if (m_connect == false) // if old state == false
+			{
+				qDebug() << "ClientSocket::setConnectState - Connected";
+
+				onSocketConnected();
+
+				emit socketConnection(true);
+			}
+		}
+		else
+		{
+			if (m_connect == true) // if old state == true
+			{
+				qDebug() << "ClientSocket::setConnectState - Discconnected";
+
+				onSocketDisconnected();
+
+				emit socketConnection(false);
+			}
+		}
+
+		m_connect = connect;
+	}
+
 
 	// -------------------------------------------------------------------------------------------------------------------
 

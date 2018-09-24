@@ -58,6 +58,7 @@ public:
 signals:
 
 	void            cfgXmlReceived(const QByteArray& cfgXmlData, int version);
+
 	void            failConnection();
 
 private slots:

@@ -94,7 +94,6 @@ void ConfigSocket::processReply(const Udp::Request& request)
 		assert(false);
 	}
 
-
 	switch(request.ID())
 	{
 		case CLIENT_GET_CONFIG_XML_CRC:
@@ -233,7 +232,6 @@ void ConfigSocket::requestGetConfigXml(quint32 partIndex)
 			 assert(m_rcxi.dataSize != m_cfgXmlData.count());
 		 }
 
-
 		 QFile file(xmlConfigFileName);
 		 if (file.open(QIODevice::WriteOnly) == true)
 		 {
@@ -246,7 +244,7 @@ void ConfigSocket::requestGetConfigXml(quint32 partIndex)
 
 		qDebug() << "ConfigSocket::requestGetConfigXml - received bytes : " << m_rcxi.dataSize;
 
-		 return;
+		return;
 	 }
 
 	 sendRequest(CLIENT_GET_CONFIG_XML, (const char*) &partIndex, sizeof(partIndex));
