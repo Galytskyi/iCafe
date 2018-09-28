@@ -31,6 +31,8 @@ signals:
 	void			appendOrderToBase(const Order::Item& order);
 	void			removeOrderFromBase(const Order::Item& order);
 
+	void			msgBox(const QString &title, const QString& text);
+
 private slots:
 
 	void			processRequest(Udp::Request request);

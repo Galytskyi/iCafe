@@ -24,9 +24,9 @@ int main(int argc, char *argv[])
 	MainWindow w;
 	w.show();
 
-	theOptions.unload();
-
 	int result = a.exec();
+
+	theOptions.unload();
 
 	return result;
 }

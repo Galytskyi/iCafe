@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
 
 #include "ConfigSocket.h"
 #include "CustomerOrderSocket.h"
@@ -20,15 +21,24 @@ public:
 
 private:
 
-	ConfigSocket*			m_configSocket = nullptr;
-	CustomerOrderSocket*	m_customerOrderSocket = nullptr;
-	ProviderOrderSocket*	m_providerOrderSocket = nullptr;
+	// Elements of interface - StatusBar
+	//
+	QLabel*					m_statusEmpty = nullptr;
+	QLabel*					m_statusProviderCount = nullptr;
+	QLabel*					m_statusOrderCount = nullptr;
 
-	RemoveOrderThread*		m_removeOrderThread = nullptr;
+private:
+
+	ConfigSocket*			m_pConfigSocket = nullptr;
+	CustomerOrderSocket*	m_pCustomerOrderSocket = nullptr;
+	ProviderOrderSocket*	m_pProviderOrderSocket = nullptr;
+
+	RemoveOrderThread*		m_pRemoveOrderThread = nullptr;
 
 public:
 
 	bool					createInterface();
+	void					createStatusBar();
 
 	bool					loadBase();
 	bool					saveProviderBase();
@@ -44,6 +54,11 @@ public:
 
 	bool					startRemoveOrderThread();
 	bool					stopRemoveOrderThread();
+
+public slots:
+
+	void					msgBox(const QString &title, const QString& text);
+	void					orderStateChanged(const Order::Item& order);
 };
 
 // ==============================================================================================

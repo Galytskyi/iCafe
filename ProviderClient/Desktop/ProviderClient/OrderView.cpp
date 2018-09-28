@@ -95,7 +95,7 @@ void OrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
 	if (order.state() == Order::STATE_ORDER_OK || order.state() == Order::STATE_ORDER_CANCEL)
 	{
-		orderphone = tr("Phone number: %1").arg(QString::number(order.phone()));
+		orderphone = tr("Phone number: %1").arg("+380"+QString::number(order.phone()));
 	}
 	else
 	{
@@ -527,7 +527,7 @@ void OrderView::onClick(const QModelIndex& index)
 
 				QMessageBox::StandardButton reply;
 
-				reply = QMessageBox::question(this, tr("Cancel order"), tr("Do you want to cancel the order?\n\nTo cancel the order, please, call the client by phone: %1, and ask cancel code").arg(order.phone()).arg(order.phone()), QMessageBox::Yes|QMessageBox::No);
+				reply = QMessageBox::question(this, tr("Cancel order"), tr("Do you want to cancel the order?\n\nTo cancel the order, please, call the client by phone: +380%1, and ask cancel code").arg(order.phone()).arg(order.phone()), QMessageBox::Yes|QMessageBox::No);
 				if (reply == QMessageBox::No)
 				{
 					break;

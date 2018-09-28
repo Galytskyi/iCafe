@@ -2,8 +2,10 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QMessageBox>
+#include <QStatusBar>
 #include <QThread>
+#include <QMessageBox>
+
 
 #include "Database.h"
 
@@ -48,6 +50,7 @@ bool MainWindow::createInterface()
 {
 //	setWindowIcon(QIcon(":/icons/Metrology.ico"));
 	setWindowTitle(tr("Сервер заказов"));
+	setMinimumSize(640, 480);
 	move(QApplication::desktop()->availableGeometry().center() - rect().center());
 
 //	createActions();
@@ -55,15 +58,44 @@ bool MainWindow::createInterface()
 //	createToolBars();
 //	createMeasureViews();
 //	createPanels();
-//	createStatusBar();
+	createStatusBar();
 //	createContextMenu();
 
 //	loadSettings();
 
 //	setMeasureType(MEASURE_TYPE_LINEARITY);
 
+	connect(&theOrderBase, &Order::Base::signal_stateChanged, this, &MainWindow::orderStateChanged, Qt::QueuedConnection);
+
 	return true;
 }
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::createStatusBar()
+{
+	QStatusBar* pStatusBar = statusBar();
+	if (pStatusBar == nullptr)
+	{
+		return;
+	}
+
+	m_statusEmpty = new QLabel(pStatusBar);
+	m_statusProviderCount = new QLabel(pStatusBar);
+	m_statusOrderCount = new QLabel(pStatusBar);
+
+	m_statusProviderCount->setText(tr("Provider count: 0"));
+	m_statusOrderCount->setText(tr("Order count: 0"));
+
+	pStatusBar->addWidget(m_statusOrderCount);
+	pStatusBar->addWidget(m_statusProviderCount);
+	pStatusBar->addWidget(m_statusEmpty);
+
+	pStatusBar->setLayoutDirection(Qt::RightToLeft);
+
+	m_statusEmpty->setText(QString());
+}
+
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -115,6 +147,8 @@ bool MainWindow::loadBase()
 
 	qDebug() << "ProviderBase::load() - Loaded providers: " << theProviderBase.count() << "Loaded provider types: " << theProviderTypeBase.count()  << ", Time for load: " << responseTime.elapsed() << " ms";
 
+	m_statusProviderCount->setText(tr("Provider count: %1").arg(theProviderBase.count()));
+
 	return theProviderBase.count();
 }
 
@@ -163,8 +197,8 @@ bool MainWindow::saveProviderBase()
 
 bool MainWindow::startConfigUdpThread()
 {
-	m_configSocket = new ConfigSocket(QHostAddress::Any, PORT_CONFIG_XML_REQUEST);
-	if (m_configSocket == nullptr)
+	m_pConfigSocket = new ConfigSocket(QHostAddress::Any, PORT_CONFIG_XML_REQUEST);
+	if (m_pConfigSocket == nullptr)
 	{
 		return false;
 	}
@@ -172,16 +206,18 @@ bool MainWindow::startConfigUdpThread()
 	QThread *pThread = new QThread;
 	if (pThread == nullptr)
 	{
-		delete m_configSocket;
-		m_configSocket = nullptr;
+		delete m_pConfigSocket;
+		m_pConfigSocket = nullptr;
 
 		return false;
 	}
 
-	m_configSocket->moveToThread(pThread);
+	connect(m_pConfigSocket, &ConfigSocket::msgBox, this, &MainWindow::msgBox);
 
-	connect(pThread, &QThread::started, m_configSocket, &ConfigSocket::slot_onThreadStarted);
-	connect(pThread, &QThread::finished, m_configSocket, &ConfigSocket::slot_onThreadFinished);
+	m_pConfigSocket->moveToThread(pThread);
+
+	connect(pThread, &QThread::started, m_pConfigSocket, &ConfigSocket::slot_onThreadStarted);
+	connect(pThread, &QThread::finished, m_pConfigSocket, &ConfigSocket::slot_onThreadFinished);
 
 	pThread->start();
 
@@ -192,12 +228,12 @@ bool MainWindow::startConfigUdpThread()
 
 bool MainWindow::stopConfigUdpThread()
 {
-	if (m_configSocket == nullptr)
+	if (m_pConfigSocket == nullptr)
 	{
 		return false;
 	}
 
-	QThread *pThread = m_configSocket->thread();
+	QThread *pThread = m_pConfigSocket->thread();
 	if (pThread == nullptr)
 	{
 		return false;
@@ -214,8 +250,8 @@ bool MainWindow::stopConfigUdpThread()
 
 bool MainWindow::startCustomerOrderUdpThread()
 {
-	m_customerOrderSocket = new CustomerOrderSocket(QHostAddress::Any, PORT_CUSTOMER_ORDER_REQUEST);
-	if (m_customerOrderSocket == nullptr)
+	m_pCustomerOrderSocket = new CustomerOrderSocket(QHostAddress::Any, PORT_CUSTOMER_ORDER_REQUEST);
+	if (m_pCustomerOrderSocket == nullptr)
 	{
 		return false;
 	}
@@ -223,16 +259,18 @@ bool MainWindow::startCustomerOrderUdpThread()
 	QThread *pThread = new QThread;
 	if (pThread == nullptr)
 	{
-		delete m_customerOrderSocket;
-		m_customerOrderSocket = nullptr;
+		delete m_pCustomerOrderSocket;
+		m_pCustomerOrderSocket = nullptr;
 
 		return false;
 	}
 
-	m_customerOrderSocket->moveToThread(pThread);
+	connect(m_pCustomerOrderSocket, &CustomerOrderSocket::msgBox, this, &MainWindow::msgBox);
 
-	connect(pThread, &QThread::started, m_customerOrderSocket, &CustomerOrderSocket::slot_onThreadStarted);
-	connect(pThread, &QThread::finished, m_customerOrderSocket, &CustomerOrderSocket::slot_onThreadFinished);
+	m_pCustomerOrderSocket->moveToThread(pThread);
+
+	connect(pThread, &QThread::started, m_pCustomerOrderSocket, &CustomerOrderSocket::slot_onThreadStarted);
+	connect(pThread, &QThread::finished, m_pCustomerOrderSocket, &CustomerOrderSocket::slot_onThreadFinished);
 
 	pThread->start();
 
@@ -243,12 +281,12 @@ bool MainWindow::startCustomerOrderUdpThread()
 
 bool MainWindow::stopCustomerOrderUdpThread()
 {
-	if (m_customerOrderSocket == nullptr)
+	if (m_pCustomerOrderSocket == nullptr)
 	{
 		return false;
 	}
 
-	QThread *pThread = m_customerOrderSocket->thread();
+	QThread *pThread = m_pCustomerOrderSocket->thread();
 	if (pThread == nullptr)
 	{
 		return false;
@@ -265,8 +303,8 @@ bool MainWindow::stopCustomerOrderUdpThread()
 
 bool MainWindow::startProviderOrderUdpThread()
 {
-	m_providerOrderSocket = new ProviderOrderSocket(QHostAddress::Any, PORT_PROVIDER_ORDER_REQUEST);
-	if (m_providerOrderSocket == nullptr)
+	m_pProviderOrderSocket = new ProviderOrderSocket(QHostAddress::Any, PORT_PROVIDER_ORDER_REQUEST);
+	if (m_pProviderOrderSocket == nullptr)
 	{
 		return false;
 	}
@@ -274,16 +312,16 @@ bool MainWindow::startProviderOrderUdpThread()
 	QThread *pThread = new QThread;
 	if (pThread == nullptr)
 	{
-		delete m_providerOrderSocket;
-		m_providerOrderSocket = nullptr;
+		delete m_pProviderOrderSocket;
+		m_pProviderOrderSocket = nullptr;
 
 		return false;
 	}
 
-	m_providerOrderSocket->moveToThread(pThread);
+	m_pProviderOrderSocket->moveToThread(pThread);
 
-	connect(pThread, &QThread::started, m_providerOrderSocket, &ProviderOrderSocket::slot_onThreadStarted);
-	connect(pThread, &QThread::finished, m_providerOrderSocket, &ProviderOrderSocket::slot_onThreadFinished);
+	connect(pThread, &QThread::started, m_pProviderOrderSocket, &ProviderOrderSocket::slot_onThreadStarted);
+	connect(pThread, &QThread::finished, m_pProviderOrderSocket, &ProviderOrderSocket::slot_onThreadFinished);
 
 	pThread->start();
 
@@ -294,12 +332,12 @@ bool MainWindow::startProviderOrderUdpThread()
 
 bool MainWindow::stopProviderOrderUdpThread()
 {
-	if (m_providerOrderSocket == nullptr)
+	if (m_pProviderOrderSocket == nullptr)
 	{
 		return false;
 	}
 
-	QThread *pThread = m_providerOrderSocket->thread();
+	QThread *pThread = m_pProviderOrderSocket->thread();
 	if (pThread == nullptr)
 	{
 		return false;
@@ -316,8 +354,8 @@ bool MainWindow::stopProviderOrderUdpThread()
 
 bool MainWindow::startRemoveOrderThread()
 {
-	m_removeOrderThread = new RemoveOrderThread;
-	if (m_removeOrderThread == nullptr)
+	m_pRemoveOrderThread = new RemoveOrderThread;
+	if (m_pRemoveOrderThread == nullptr)
 	{
 		return false;
 	}
@@ -325,16 +363,21 @@ bool MainWindow::startRemoveOrderThread()
 	QThread *pThread = new QThread;
 	if (pThread == nullptr)
 	{
-		delete m_removeOrderThread;
-		m_removeOrderThread = nullptr;
+		delete m_pRemoveOrderThread;
+		m_pRemoveOrderThread = nullptr;
 
 		return false;
 	}
 
-	m_removeOrderThread->moveToThread(pThread);
+	m_pRemoveOrderThread->moveToThread(pThread);
 
-	connect(pThread, &QThread::started, m_removeOrderThread, &RemoveOrderThread::slot_onThreadStarted);
-	connect(pThread, &QThread::finished, m_removeOrderThread, &RemoveOrderThread::slot_onThreadFinished);
+	connect(pThread, &QThread::started, m_pRemoveOrderThread, &RemoveOrderThread::slot_onThreadStarted);
+	connect(pThread, &QThread::finished, m_pRemoveOrderThread, &RemoveOrderThread::slot_onThreadFinished);
+
+	if (m_pProviderOrderSocket != nullptr)
+	{
+		connect(m_pProviderOrderSocket, &ProviderOrderSocket::removeFrendlyOrder, m_pRemoveOrderThread, &RemoveOrderThread::removeFrendlyOrder, Qt::QueuedConnection);
+	}
 
 	pThread->start();
 
@@ -345,12 +388,12 @@ bool MainWindow::startRemoveOrderThread()
 
 bool MainWindow::stopRemoveOrderThread()
 {
-	if (m_removeOrderThread == nullptr)
+	if (m_pRemoveOrderThread == nullptr)
 	{
 		return false;
 	}
 
-	QThread *pThread = m_removeOrderThread->thread();
+	QThread *pThread = m_pRemoveOrderThread->thread();
 	if (pThread == nullptr)
 	{
 		return false;
@@ -363,5 +406,20 @@ bool MainWindow::stopRemoveOrderThread()
 	return true;
 }
 
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::msgBox(const QString &title, const QString& text)
+{
+	QMessageBox::information(this, title, text);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::orderStateChanged(const Order::Item& order)
+{
+	Q_UNUSED(order);
+
+	m_statusOrderCount->setText(tr("Orders count: %1").arg(theOrderBase.count()));
+}
 
 // -------------------------------------------------------------------------------------------------------------------

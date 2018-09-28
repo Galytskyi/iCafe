@@ -6,4 +6,6 @@ SUBDIRS += qtservice \
     qtpropertybrowser \
 	OrderServer \
 	ProviderClient/Desktop/ProviderClient \
-	CustomerClient/Desktop/CustomerClient
+	ProviderClient/Mobile/ProviderClient \
+	CustomerClient/Desktop/CustomerClient \
+	CustomerClient/Mobile/CustomerClient

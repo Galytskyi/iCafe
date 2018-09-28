@@ -62,8 +62,6 @@ int SqlFieldBase::init(int objectType, int)
 
 			append("Address",						QVariant::String, 256);
 			append("Phone",							QVariant::String, 16);
-			append("Mail",							QVariant::String, 128);
-			append("Website",						QVariant::String, 128);
 
 			break;
 
@@ -669,8 +667,6 @@ int SqlTable::read(void* pRecord, int* key, int keyCount)
 
 					provider->setAddress(query.value(field++).toString());
 					provider->setPhone(query.value(field++).toString());
-					provider->setMail(query.value(field++).toString());
-					provider->setWebsite(query.value(field++).toString());
 				}
 				break;
 
@@ -822,8 +818,6 @@ int SqlTable::write(void* pRecord, int count, int* key)
 
 					query.bindValue(field++, provider->address());
 					query.bindValue(field++, provider->phone());
-					query.bindValue(field++, provider->mail());
-					query.bindValue(field++, provider->website());
 				}
 				break;
 

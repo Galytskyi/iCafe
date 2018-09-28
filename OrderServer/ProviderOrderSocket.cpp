@@ -119,11 +119,19 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 	{
 		wo.state = Order::STATE_ORDER_NOT_FOUND;
 		sendReply(request, wo);
+
+		return;
+	}
+
+	pOrder->setState(wo.state);
+
+	if (wo.state == Order::STATE_ORDER_OK)
+	{
+		emit removeFrendlyOrder(pOrder->phone());
 	}
 
 	qDebug() << "ProviderOrderSocket::replySetOrderState : " << wo.state;
 
-	pOrder->setState(wo.state);
 	sendReply(request, wo);
 }
 

@@ -31,6 +31,10 @@ public:
 	void			replyGetConfigXmlInfo(Udp::Request request);
 	void			replyGetConfigXml(Udp::Request request);
 
+signals:
+
+	void			msgBox(const QString &title, const QString& text);
+
 private slots:
 
 	void			processRequest(Udp::Request request);

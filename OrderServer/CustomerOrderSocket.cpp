@@ -31,6 +31,9 @@ void CustomerOrderSocket::onSocketThreadStarted()
 	connect(this, &Udp::ServerSocket::requestReceived, this, &CustomerOrderSocket::processRequest, Qt::QueuedConnection);
 
 	connect(this, &CustomerOrderSocket::appendOrderToBase, &theOrderBase, &Order::Base::slot_appendOrder, Qt::QueuedConnection);
+
+	QTime midnight(0,0,0);
+	qsrand(midnight.secsTo(QTime::currentTime()));
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -109,6 +112,7 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 	{
 		qDebug() << "CustomerOrderSocket::replyCreateOrder - Order::STATE_ORDER_ALREADY_EXIST";
 
+		wo = theOrderBase.order(wo.orderID).toWrap();
 		wo.state = Order::STATE_ORDER_ALREADY_EXIST;
 		sendReply(request, wo);
 
@@ -152,7 +156,7 @@ void CustomerOrderSocket::replyGetOrderState(const Udp::Request& request)
 		wo.state = Order::STATE_ORDER_NOT_FOUND;
 		sendReply(request, wo);
 
-		qDebug() << "CustomerOrderSocket::replyCreateOrder - Order::STATE_ORDER_NOT_FOUND";
+		qDebug() << "CustomerOrderSocket::replyGetOrderState - Order::STATE_ORDER_NOT_FOUND";
 		return;
 	}
 

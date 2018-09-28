@@ -65,6 +65,27 @@ void RemoveOrderThread::onThreadFinished()
 
 // -------------------------------------------------------------------------------------------------------------------
 
+void RemoveOrderThread::removeFrendlyOrder(quint32 phone)
+{
+	QList<Order::Item> list = theOrderBase.orderList();
+
+	int count = list.count();
+	for(int i = 0; i < count; i++)
+	{
+		Order::Item& order = list[i];
+
+		if (order.phone() == phone)
+		{
+			if (order.state() == Order::STATE_ORDER_PROCESSING || order.state() == Order::STATE_SERVER_CREATED_ORDER)
+			{
+				emit removeOrder(order);
+			}
+		}
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 void RemoveOrderThread::autoRemoveTimeout()
 {
 //	QTime t;
@@ -75,12 +96,14 @@ void RemoveOrderThread::autoRemoveTimeout()
 	int count = list.count();
 	for(int i = 0; i < count; i++)
 	{
-		if (list[i].removeTime() > QDateTime::currentDateTime())
+		Order::Item& order = list[i];
+
+		if (order.removeTime() > QDateTime::currentDateTime())
 		{
 			continue;
 		}
 
-		emit removeOrder(list[i]);
+		emit removeOrder(order);
 	}
 
 //	qDebug("RemoveOrderThread::Time elapsed: %d ms, count: %d", t.elapsed(), count);

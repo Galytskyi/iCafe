@@ -28,6 +28,9 @@ public:
 signals:
 
 	void			setProviderConnected(quint32 providerID, quint32 wrapVersion);
+	void			removeFrendlyOrder(quint32 phone);
+
+	void			msgBox(const QString &title, const QString& text);
 
 private slots:
 

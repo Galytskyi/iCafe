@@ -126,12 +126,10 @@ namespace Provider
 
 				result &= xml.readBoolAttribute("Active", &m_active);
 				result &= xml.readIntAttribute("Type", &m_type);
-				result &= xml.readStringAttribute("Name", &m_name);
 
+				result &= xml.readStringAttribute("Name", &m_name);
 				result &= xml.readStringAttribute("Address", &m_address);
 				result &= xml.readStringAttribute("Telephone", &m_phone);
-				result &= xml.readStringAttribute("Mail", &m_mail);
-				result &= xml.readStringAttribute("Website", &m_website);
 
 				break;
 
@@ -164,8 +162,6 @@ namespace Provider
 
 				xml.writeStringAttribute("Address", address());
 				xml.writeStringAttribute("Telephone", phone());
-				xml.writeStringAttribute("Mail", mail());
-				xml.writeStringAttribute("Website", website());
 			}
 
 			xml.writeEndElement();
@@ -189,8 +185,8 @@ namespace Provider
 
 		m_active = from.m_active;
 		m_type = from.m_type;
-		m_name = from.m_name;
 
+		m_name = from.m_name;
 		m_address = from.m_address;
 		m_phone = from.m_phone;
 		m_mail = from.m_mail;

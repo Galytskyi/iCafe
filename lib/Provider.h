@@ -38,8 +38,8 @@ namespace Provider
 
 		bool				m_active = false;
 		int					m_type = 0;
-		QString				m_name;
 
+		QString				m_name;
 		QString				m_address;
 		QString				m_phone;
 		QString				m_mail;

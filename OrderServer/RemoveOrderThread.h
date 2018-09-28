@@ -34,10 +34,14 @@ signals:
 
 	void			removeOrder(const Order::Item& order);
 
+	void			msgBox(const QString &title, const QString& text);
+
 public slots:
 
 	void			slot_onThreadStarted();
 	void			slot_onThreadFinished();
+
+	void			removeFrendlyOrder(quint32 phone);
 
 private slots:
 
