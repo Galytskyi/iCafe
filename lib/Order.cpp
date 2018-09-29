@@ -347,6 +347,9 @@ namespace Order
 
 	Item& Item::operator=(const Item& from)
 	{
+		m_address = from.m_address;
+		m_port = from.m_port;
+
 		m_state = from.m_state;
 		m_type = from.m_type;
 

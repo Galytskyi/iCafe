@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLabel>
 
+#include "ArchThread.h"
 #include "ConfigSocket.h"
 #include "CustomerOrderSocket.h"
 #include "ProviderOrderSocket.h"
@@ -29,6 +30,8 @@ private:
 
 private:
 
+	ArchThread*				m_pArchThread = nullptr;
+
 	ConfigSocket*			m_pConfigSocket = nullptr;
 	CustomerOrderSocket*	m_pCustomerOrderSocket = nullptr;
 	ProviderOrderSocket*	m_pProviderOrderSocket = nullptr;
@@ -39,6 +42,9 @@ public:
 
 	bool					createInterface();
 	void					createStatusBar();
+
+	bool					startArchThread();
+	bool					stopArchThread();
 
 	bool					loadBase();
 	bool					saveProviderBase();
@@ -54,6 +60,14 @@ public:
 
 	bool					startRemoveOrderThread();
 	bool					stopRemoveOrderThread();
+
+protected:
+
+	void					closeEvent(QCloseEvent* e);
+
+signals:
+
+	void					appendMessageToArch(int type, const QString& func, const QString& text, const Order::Item& order);
 
 public slots:
 

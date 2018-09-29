@@ -60,6 +60,7 @@ namespace Udp
 	{
 		m_address = request.address();
 		m_port = request.port();
+
 		m_rawDataSize = request.rawDataSize();
 
 		if (m_rawDataSize < sizeof(RequestHeader))

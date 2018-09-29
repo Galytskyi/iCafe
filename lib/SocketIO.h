@@ -42,7 +42,8 @@ const quint32	CLIENT_SET_ORDER_STATE = 1301;
 
 const int		SIO_ERROR_NONE = 0,
 				SIO_ERROR_INCCORECT_CRC32 = 1,
-				SIO_ERROR_INCCORECT_REQUEST_ID = 2;
+				SIO_ERROR_INCCORECT_REQUEST_ID = 2,
+				SIO_ERROR_INCCORECT_PART_NUMBER = 3;
 
 const int		SIO_ERROR_COUNT = 3;
 
@@ -177,6 +178,32 @@ const int			xmlTagOrderFileLastVersion = 1;
 const char* const	xmlTagOrders = "Orders";
 const char* const	xmlTagOrder = "Order";
 const int			xmlTagOrderLastVersion = 1;
+
+// ==============================================================================================
+
+const char* const	ArchTypeStr[] =
+{
+					QT_TRANSLATE_NOOP("ArchThread.h", "Error"),
+					QT_TRANSLATE_NOOP("ArchThread.h", "Warning"),
+					QT_TRANSLATE_NOOP("ArchThread.h", "Event"),
+					QT_TRANSLATE_NOOP("ArchThread.h", "Order"),
+};
+
+const int			ARCH_MSG_TYPE_COUNT						= sizeof(ArchTypeStr)/sizeof(ArchTypeStr[0]);
+
+const int			ARCH_MSG_TYPE_ERROR						= 0,
+					ARCH_MSG_TYPE_WARNING					= 1,
+					ARCH_MSG_TYPE_EVENT						= 2,
+					ARCH_MSG_TYPE_ORDER						= 3;
+
+// ----------------------------------------------------------------------------------------------
+
+const char* const	ArchFileName = "arch.csv";
+
+// ----------------------------------------------------------------------------------------------
+
+const char* const	ArchFileDivider = ";";
+const char* const	ArchFileTerminator = "\r\n";
 
 // ==============================================================================================
 

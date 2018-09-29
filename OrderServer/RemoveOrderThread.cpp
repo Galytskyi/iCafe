@@ -44,6 +44,7 @@ void RemoveOrderThread::slot_onThreadFinished()
 void RemoveOrderThread::onThreadStarted()
 {
 	qDebug() << "RemoveOrderThread::onThreadStarted()";
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started", Order::Item());
 
 	connect(this, &RemoveOrderThread::removeOrder, &theOrderBase, &Order::Base::slot_removeOrder, Qt::QueuedConnection);
 

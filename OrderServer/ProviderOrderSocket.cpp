@@ -29,6 +29,7 @@ ProviderOrderSocket::~ProviderOrderSocket()
 void ProviderOrderSocket::onSocketThreadStarted()
 {
 	qDebug() << "ProviderOrderSocket::onSocketThreadStarted()";
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started", Order::Item());
 
 	connect(this, &Udp::ServerSocket::requestReceived, this, &ProviderOrderSocket::processRequest, Qt::QueuedConnection);
 
@@ -48,6 +49,7 @@ void ProviderOrderSocket::processRequest(Udp::Request request)
 {
 	if(request.headerCrcOk() == false)
 	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "SIO_ERROR_INCCORECT_CRC32", Order::Item());
 		request.setErrorCode(SIO_ERROR_INCCORECT_CRC32);
 		sendAck(request);
 		return;
@@ -68,6 +70,7 @@ void ProviderOrderSocket::processRequest(Udp::Request request)
 			request.setErrorCode(SIO_ERROR_INCCORECT_REQUEST_ID);
 			sendAck(request);
 
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()), Order::Item());
 			qDebug() << "ProviderOrderSocket::processRequest - Unknown request.ID() : " << request.ID();
 			assert(false);
 

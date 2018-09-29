@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
 	//
 	createInterface();
 
+	startArchThread();
+
 	loadBase();
 
 	startConfigUdpThread();
@@ -42,6 +44,8 @@ MainWindow::~MainWindow()
 	stopProviderOrderUdpThread();
 
 	stopRemoveOrderThread();
+
+	stopArchThread();
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -96,6 +100,62 @@ void MainWindow::createStatusBar()
 	m_statusEmpty->setText(QString());
 }
 
+// -------------------------------------------------------------------------------------------------------------------
+
+bool MainWindow::startArchThread()
+{
+	m_pArchThread = new ArchThread;
+	if (m_pArchThread == nullptr)
+	{
+		return false;
+	}
+
+	QThread *pThread = new QThread;
+	if (pThread == nullptr)
+	{
+		delete m_pArchThread;
+		m_pArchThread = nullptr;
+
+		return false;
+	}
+
+	m_pArchThread->moveToThread(pThread);
+
+	connect(pThread, &QThread::started, m_pArchThread, &ArchThread::slot_onThreadStarted);
+	connect(pThread, &QThread::finished, m_pArchThread, &ArchThread::slot_onThreadFinished);
+
+	connect(this, &MainWindow::appendMessageToArch, m_pArchThread, &ArchThread::appendMessage, Qt::QueuedConnection);
+
+	pThread->start();
+
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, QString("App started"), Order::Item());
+
+	return true;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+bool MainWindow::stopArchThread()
+{
+	if (m_pArchThread == nullptr)
+	{
+		return false;
+	}
+
+	QThread *pThread = m_pArchThread->thread();
+	if (pThread == nullptr)
+	{
+		return false;
+	}
+
+	pThread->quit();
+	pThread->wait();
+	pThread->deleteLater();
+
+	return true;
+}
+
+
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -103,6 +163,7 @@ bool MainWindow::loadBase()
 {
 	if (thePtrDB == nullptr)
 	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "thePtrDB == nullptr", Order::Item());
 		return 0;
 	}
 
@@ -142,10 +203,15 @@ bool MainWindow::loadBase()
 		table->close();
 	}
 
+	int rt = responseTime.elapsed();
+
 	theProviderBase.append(providerList);
 	theProviderTypeBase.append(typeList);
 
-	qDebug() << "ProviderBase::load() - Loaded providers: " << theProviderBase.count() << "Loaded provider types: " << theProviderTypeBase.count()  << ", Time for load: " << responseTime.elapsed() << " ms";
+	QString msg = QString("ProviderBase::load() - Loaded providers: %1, Loaded provider types: %2, Time for load: %3 ms" ).arg(theProviderBase.count()).arg(theProviderTypeBase.count()).arg(rt);
+
+	qDebug() << msg;
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, msg, Order::Item());
 
 	m_statusProviderCount->setText(tr("Provider count: %1").arg(theProviderBase.count()));
 
@@ -219,6 +285,8 @@ bool MainWindow::startConfigUdpThread()
 	connect(pThread, &QThread::started, m_pConfigSocket, &ConfigSocket::slot_onThreadStarted);
 	connect(pThread, &QThread::finished, m_pConfigSocket, &ConfigSocket::slot_onThreadFinished);
 
+	connect(m_pConfigSocket, &ConfigSocket::appendMessageToArch, m_pArchThread, &ArchThread::appendMessage, Qt::QueuedConnection);
+
 	pThread->start();
 
 	return true;
@@ -272,6 +340,8 @@ bool MainWindow::startCustomerOrderUdpThread()
 	connect(pThread, &QThread::started, m_pCustomerOrderSocket, &CustomerOrderSocket::slot_onThreadStarted);
 	connect(pThread, &QThread::finished, m_pCustomerOrderSocket, &CustomerOrderSocket::slot_onThreadFinished);
 
+	connect(m_pCustomerOrderSocket, &CustomerOrderSocket::appendMessageToArch, m_pArchThread, &ArchThread::appendMessage, Qt::QueuedConnection);
+
 	pThread->start();
 
 	return true;
@@ -322,6 +392,8 @@ bool MainWindow::startProviderOrderUdpThread()
 
 	connect(pThread, &QThread::started, m_pProviderOrderSocket, &ProviderOrderSocket::slot_onThreadStarted);
 	connect(pThread, &QThread::finished, m_pProviderOrderSocket, &ProviderOrderSocket::slot_onThreadFinished);
+
+	connect(m_pProviderOrderSocket, &ProviderOrderSocket::appendMessageToArch, m_pArchThread, &ArchThread::appendMessage, Qt::QueuedConnection);
 
 	pThread->start();
 
@@ -374,6 +446,8 @@ bool MainWindow::startRemoveOrderThread()
 	connect(pThread, &QThread::started, m_pRemoveOrderThread, &RemoveOrderThread::slot_onThreadStarted);
 	connect(pThread, &QThread::finished, m_pRemoveOrderThread, &RemoveOrderThread::slot_onThreadFinished);
 
+	connect(m_pRemoveOrderThread, &RemoveOrderThread::appendMessageToArch, m_pArchThread, &ArchThread::appendMessage, Qt::QueuedConnection);
+
 	if (m_pProviderOrderSocket != nullptr)
 	{
 		connect(m_pProviderOrderSocket, &ProviderOrderSocket::removeFrendlyOrder, m_pRemoveOrderThread, &RemoveOrderThread::removeFrendlyOrder, Qt::QueuedConnection);
@@ -420,6 +494,15 @@ void MainWindow::orderStateChanged(const Order::Item& order)
 	Q_UNUSED(order);
 
 	m_statusOrderCount->setText(tr("Orders count: %1").arg(theOrderBase.count()));
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::closeEvent(QCloseEvent* e)
+{
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "App finished", Order::Item());
+
+	QMainWindow::closeEvent(e);
 }
 
 // -------------------------------------------------------------------------------------------------------------------

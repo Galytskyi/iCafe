@@ -29,6 +29,7 @@ ConfigSocket::~ConfigSocket()
 void ConfigSocket::onSocketThreadStarted()
 {
 	qDebug() << "ConfigSocket::onSocketThreadStarted()";
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started", Order::Item());
 
 	createCfgXml();
 
@@ -94,6 +95,7 @@ void ConfigSocket::updateCfgXmlInfo()
 
 		default:
 
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Undefined version: %1").arg(m_rcxi.version), Order::Item());
 			qDebug() << tr("ConfigSocket::updateCfgXmlInfo - Undefined version");
 			assert(0);
 
@@ -109,6 +111,7 @@ void ConfigSocket::processRequest(Udp::Request request)
 {
 	if(request.headerCrcOk() == false)
 	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "SIO_ERROR_INCCORECT_CRC32", Order::Item());
 		request.setErrorCode(SIO_ERROR_INCCORECT_CRC32);
 		sendAck(request);
 		return;
@@ -133,7 +136,8 @@ void ConfigSocket::processRequest(Udp::Request request)
 			request.setErrorCode(SIO_ERROR_INCCORECT_REQUEST_ID);
 			sendAck(request);
 
-			qDebug() << "ConfigSocket::processRequest - Unknown request.ID() : " << request.ID();
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()), Order::Item());
+			qDebug() << "ConfigSocket::processRequest - Unknown request.ID(): " << request.ID();
 			assert(false);
 
 			break;
@@ -168,6 +172,11 @@ void ConfigSocket::replyGetConfigXml(Udp::Request request)
 	if (partIndex < 0 || partIndex >= (int) m_rcxi.partCount)
 	{
 		// error part index
+
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("SIO_ERROR_INCCORECT_PART_NUMBER: %1").arg(partIndex), Order::Item());
+		request.setErrorCode(SIO_ERROR_INCCORECT_PART_NUMBER);
+		sendAck(request);
+
 		return;
 	}
 

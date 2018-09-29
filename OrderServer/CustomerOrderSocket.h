@@ -32,6 +32,7 @@ signals:
 	void			removeOrderFromBase(const Order::Item& order);
 
 	void			msgBox(const QString &title, const QString& text);
+	void			appendMessageToArch(int type, const QString& func, const QString& text, const Order::Item& order);
 
 private slots:
 

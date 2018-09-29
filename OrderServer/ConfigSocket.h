@@ -2,6 +2,7 @@
 #define CONFIGSOCKET_H
 
 #include "../lib/UdpSocket.h"
+#include "../lib/Order.h"
 
 // ==============================================================================================
 
@@ -34,6 +35,7 @@ public:
 signals:
 
 	void			msgBox(const QString &title, const QString& text);
+	void			appendMessageToArch(int type, const QString& func, const QString& text, const Order::Item& order);
 
 private slots:
 
