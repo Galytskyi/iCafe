@@ -135,13 +135,14 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 
 	//
 	//
-	QString msgStr = QString("Created OrderID: %1, Customer +380%2, ProviderID %3, order of %4 for %5 people at the %6").
+	QString msgStr = QString("Created OrderID: %1, Customer +380%2, ProviderID %3, order of %4 for %5 people at the %6, cancel code %7").
 					 arg(order.handle().ID).
 					 arg(order.phone()).
 					 arg(order.providerID()).
 					 arg(order.typeStr()).
 					 arg(order.people()).
-					 arg(QString().sprintf("%02d:%02d", order.orderTime().hour, order.orderTime().minute));
+					 arg(QString().sprintf("%02d:%02d", order.orderTime().hour, order.orderTime().minute)).
+					 arg(order.cancelCode());
 	emit appendMessageToArch(ARCH_MSG_TYPE_ORDER, __FUNCTION__, msgStr);
 
 	//

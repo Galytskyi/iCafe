@@ -44,7 +44,7 @@ void ArchThread::slot_onThreadFinished()
 void ArchThread::onThreadStarted()
 {
 	m_archFile.setFileName(ArchFileName);
-	if (m_archFile.open(QIODevice::WriteOnly) == false)
+	if (m_archFile.open(QIODevice::Append) == false)
 	{
 		qDebug() << "ArchThread::onThreadStarted() - arch file was not opened";
 		assert(0);
