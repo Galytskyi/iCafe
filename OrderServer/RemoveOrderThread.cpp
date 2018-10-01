@@ -113,7 +113,11 @@ void RemoveOrderThread::autoRemoveTimeout()
 
 //	qDebug("RemoveOrderThread::Time elapsed: %d ms, count: %d", t.elapsed(), count);
 
-	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, QString("removed: %1").arg(removedCount) );
+	if (removedCount != 0)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, QString("removed: %1").arg(removedCount) );
+	}
+
 	qDebug() << "RemoveOrderThread::autoRemoveTimeout() - removed: " << removedCount;
 }
 
