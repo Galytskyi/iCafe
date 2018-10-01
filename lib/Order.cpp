@@ -141,6 +141,26 @@ namespace Order
 		return m_type;
 	}
 
+	QString Item::typeStr() const
+	{
+		if (m_type < 0 || m_type >= TYPE_COUNT)
+		{
+			assert(0);
+			return QString();
+		}
+
+		QString str;
+
+		switch(m_type)
+		{
+			case Order::TYPE_TABLE:		str.insert(0, tr("Table"));		break;
+			case Order::TYPE_DINNER:	str.insert(0, tr("Dinner"));	break;
+			default:					assert(0);						break;
+		}
+
+		return str;
+	}
+
 	bool Item::setType(int type)
 	{
 		if (type < 0 || type >= TYPE_COUNT)
@@ -153,6 +173,17 @@ namespace Order
 		m_type = type;
 
 		return true;
+	}
+
+	// -------------------------------------------------------------------------------------------------------------------
+
+	void Item::updateOrderDate()
+	{
+		QDateTime cdt = QDateTime::currentDateTime();
+
+		m_orderTime.year = cdt.date().year() - 2000;
+		m_orderTime.month = cdt.date().month();
+		m_orderTime.day = cdt.date().day();
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------

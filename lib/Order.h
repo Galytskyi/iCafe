@@ -158,6 +158,7 @@ namespace Order
 		bool				setState(int state);
 
 		int					type() const;
+		QString				typeStr() const;
 		bool				setType(int type);
 
 		Handle				handle() const { return m_handle; }
@@ -172,8 +173,10 @@ namespace Order
 		Time32				orderTime() const { return m_orderTime.time; }
 		void				setOrderTime(Time32 time) { m_orderTime = time; }
 		void				setOrderTime(quint32 time) { m_orderTime.time = time; }
+		void				updateOrderDate();
 
 		QDateTime			removeTime() const { return m_removeTime; }
+		void				setRemoveTime(const QDateTime& removeTime) { m_removeTime = removeTime; }
 		void				setRemoveTime() { m_removeTime = QDateTime::currentDateTime().addSecs(MAX_SECONDS_ORDER_LIVE); }
 
 		int					people() const { return m_people; }

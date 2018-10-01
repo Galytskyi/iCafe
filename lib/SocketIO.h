@@ -51,13 +51,15 @@ const int		SIO_ERROR_COUNT = 3;
 // Limiters
 //
 
-const int		MAX_FAIL_ACK_COUNT = 5;
+const int		MAX_FAIL_ACK_COUNT				= 5;
 
-const int		MAX_CUSTOMER_ORDER_COUNT = 5;
+const int		MAX_CUSTOMER_ORDER_COUNT		= 5;
 
-const int		MAX_SECONDS_ORDER_LIVE = 60 * 60; // in seconds
+const int		MAX_SECONDS_AUTO_REMOVE_ORDER	= 10 * 60 * 1000;	// 10 min
+const int		MAX_SECONDS_ORDER_LIVE			= 60 * 60;			// 60 min in seconds
+const int		MAX_SECONDS_ORDER_LIVE_AFTER_OK	= 20 * 60;			// 20 min in seconds
 
-const int		CUSTOMER_GET_ORDER_STATE_MAX = 10;
+const int		CUSTOMER_GET_ORDER_STATE_MAX	= 10;
 
 // ==============================================================================================
 // request struct

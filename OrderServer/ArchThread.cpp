@@ -68,7 +68,7 @@ void ArchThread::onThreadFinished()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void ArchThread::appendMessage(int type, const QString& func, const QString& text, const Order::Item& order)
+void ArchThread::appendMessage(int type, const QString& func, const QString& text)
 {
 	QMutexLocker locker(&m_mutex);
 
@@ -103,35 +103,6 @@ void ArchThread::appendMessage(int type, const QString& func, const QString& tex
 
 	msgStr.append(text);
 	msgStr.append(ArchFileDivider);
-
-	if (order.isEmpty() == true)
-	{
-		msgStr.append(QString());
-		msgStr.append(ArchFileDivider);
-
-		msgStr.append(QString());
-		msgStr.append(ArchFileDivider);
-
-		msgStr.append(QString());
-		msgStr.append(ArchFileDivider);
-
-		msgStr.append(QString());
-		msgStr.append(ArchFileDivider);
-	}
-	else
-	{
-		msgStr.append(QString::number(order.providerID()));
-		msgStr.append(ArchFileDivider);
-
-		msgStr.append(QString::number(order.phone()));
-		msgStr.append(ArchFileDivider);
-
-		msgStr.append(order.address().toString());
-		msgStr.append(ArchFileDivider);
-
-		msgStr.append(QString::number(order.port()));
-		msgStr.append(ArchFileDivider);
-	}
 
 	msgStr.append(ArchFileTerminator);
 

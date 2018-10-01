@@ -37,7 +37,7 @@ public slots:
 
 public slots:
 
-	void			appendMessage(int type, const QString& func, const QString& text, const Order::Item& order);
+	void			appendMessage(int type, const QString& func, const QString& text);
 };
 
 // ==============================================================================================

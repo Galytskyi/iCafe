@@ -128,7 +128,7 @@ bool MainWindow::startArchThread()
 
 	pThread->start();
 
-	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, QString("App started"), Order::Item());
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, QString("App started"));
 
 	return true;
 }
@@ -163,7 +163,7 @@ bool MainWindow::loadBase()
 {
 	if (thePtrDB == nullptr)
 	{
-		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "thePtrDB == nullptr", Order::Item());
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "thePtrDB == nullptr");
 		return 0;
 	}
 
@@ -211,7 +211,7 @@ bool MainWindow::loadBase()
 	QString msg = QString("ProviderBase::load() - Loaded providers: %1, Loaded provider types: %2, Time for load: %3 ms" ).arg(theProviderBase.count()).arg(theProviderTypeBase.count()).arg(rt);
 
 	qDebug() << msg;
-	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, msg, Order::Item());
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, msg);
 
 	m_statusProviderCount->setText(tr("Provider count: %1").arg(theProviderBase.count()));
 
@@ -500,7 +500,7 @@ void MainWindow::orderStateChanged(const Order::Item& order)
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "App finished", Order::Item());
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "App finished");
 
 	QMainWindow::closeEvent(e);
 }

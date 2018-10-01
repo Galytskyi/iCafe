@@ -67,7 +67,7 @@ protected:
 
 signals:
 
-	void					appendMessageToArch(int type, const QString& func, const QString& text, const Order::Item& order);
+	void					appendMessageToArch(int type, const QString& func, const QString& text);
 
 public slots:
 

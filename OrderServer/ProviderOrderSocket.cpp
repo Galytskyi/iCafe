@@ -29,7 +29,7 @@ ProviderOrderSocket::~ProviderOrderSocket()
 void ProviderOrderSocket::onSocketThreadStarted()
 {
 	qDebug() << "ProviderOrderSocket::onSocketThreadStarted()";
-	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started", Order::Item());
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started");
 
 	connect(this, &Udp::ServerSocket::requestReceived, this, &ProviderOrderSocket::processRequest, Qt::QueuedConnection);
 
@@ -49,7 +49,7 @@ void ProviderOrderSocket::processRequest(Udp::Request request)
 {
 	if(request.headerCrcOk() == false)
 	{
-		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "SIO_ERROR_INCCORECT_CRC32", Order::Item());
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "SIO_ERROR_INCCORECT_CRC32");
 		request.setErrorCode(SIO_ERROR_INCCORECT_CRC32);
 		sendAck(request);
 		return;
@@ -70,7 +70,7 @@ void ProviderOrderSocket::processRequest(Udp::Request request)
 			request.setErrorCode(SIO_ERROR_INCCORECT_REQUEST_ID);
 			sendAck(request);
 
-			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()), Order::Item());
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()));
 			qDebug() << "ProviderOrderSocket::processRequest - Unknown request.ID() : " << request.ID();
 			assert(false);
 
@@ -130,8 +130,26 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 
 	if (wo.state == Order::STATE_ORDER_OK)
 	{
+		QDateTime rt = pOrder->removeTime();
+
+		rt.setDate(QDate(pOrder->orderTime().year+2000, pOrder->orderTime().month, pOrder->orderTime().day) );
+		rt.setTime(QTime(pOrder->orderTime().hour, pOrder->orderTime().minute, pOrder->orderTime().second));
+
+		rt = rt.addSecs(MAX_SECONDS_ORDER_LIVE_AFTER_OK);
+
+		pOrder->setRemoveTime(rt);
+
 		emit removeFrendlyOrder(pOrder->phone());
 	}
+
+	//
+	//
+	QString msgStr = QString("SetState OrderID: %1, Customer +380%2, ProviderID %3, set state: %4").
+					 arg(pOrder->handle().ID).
+					 arg(pOrder->phone()).
+					 arg(pOrder->providerID()).
+					 arg(pOrder->state());
+	emit appendMessageToArch(ARCH_MSG_TYPE_ORDER, __FUNCTION__, msgStr);
 
 	qDebug() << "ProviderOrderSocket::replySetOrderState : " << wo.state;
 

@@ -8,12 +8,6 @@
 
 // ==============================================================================================
 
-const int			AUTO_REMOVE_ORDER_TIMEOUT = 30 * 60 * 1000; // 30 min
-
-//const int			AUTO_REMOVE_ORDER_TIMEOUT = 3000;
-
-// ==============================================================================================
-
 class RemoveOrderThread : public QObject
 {
 	Q_OBJECT
@@ -35,7 +29,7 @@ signals:
 	void			removeOrder(const Order::Item& order);
 
 	void			msgBox(const QString &title, const QString& text);
-	void			appendMessageToArch(int type, const QString& func, const QString& text, const Order::Item& order);
+	void			appendMessageToArch(int type, const QString& func, const QString& text);
 
 public slots:
 

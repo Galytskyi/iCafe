@@ -44,13 +44,13 @@ void RemoveOrderThread::slot_onThreadFinished()
 void RemoveOrderThread::onThreadStarted()
 {
 	qDebug() << "RemoveOrderThread::onThreadStarted()";
-	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started", Order::Item());
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started");
 
 	connect(this, &RemoveOrderThread::removeOrder, &theOrderBase, &Order::Base::slot_removeOrder, Qt::QueuedConnection);
 
 	connect(&m_removeTimer, &QTimer::timeout, this, &RemoveOrderThread::autoRemoveTimeout, Qt::QueuedConnection);
 
-	m_removeTimer.start(AUTO_REMOVE_ORDER_TIMEOUT);
+	m_removeTimer.start(MAX_SECONDS_AUTO_REMOVE_ORDER);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -94,6 +94,8 @@ void RemoveOrderThread::autoRemoveTimeout()
 
 	QList<Order::Item> list = theOrderBase.orderList();
 
+	int removedCount = 0;
+
 	int count = list.count();
 	for(int i = 0; i < count; i++)
 	{
@@ -104,10 +106,15 @@ void RemoveOrderThread::autoRemoveTimeout()
 			continue;
 		}
 
+		removedCount++;
+
 		emit removeOrder(order);
 	}
 
 //	qDebug("RemoveOrderThread::Time elapsed: %d ms, count: %d", t.elapsed(), count);
+
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, QString("removed: %1").arg(removedCount) );
+	qDebug() << "RemoveOrderThread::autoRemoveTimeout() - removed: " << removedCount;
 }
 
 // -------------------------------------------------------------------------------------------------------------------
