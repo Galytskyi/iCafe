@@ -57,6 +57,7 @@ SOURCES += \
 	../lib/Provider.cpp \
 	../lib/XmlHelper.cpp \
 	../lib/Order.cpp \
+	../lib/Crc32.cpp \
 	main.cpp \
 	MainWindow.cpp \
 	Options.cpp \
@@ -65,7 +66,6 @@ SOURCES += \
 	ProviderOrderSocket.cpp \
 	CustomerOrderSocket.cpp \
     RemoveOrderThread.cpp \
-    ../lib/Crc32.cpp \
     ArchThread.cpp \
     ProviderView.cpp \
     ProviderDialog.cpp

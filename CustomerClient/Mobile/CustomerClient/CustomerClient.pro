@@ -50,6 +50,7 @@ SOURCES += \
 	../../../lib/Provider.cpp \
 	../../../lib/XmlHelper.cpp \
 	../../../lib/Order.cpp \
+	../../../lib/Crc32.cpp
 	main.cpp \
 	MainWindow.cpp \
 	ProviderView.cpp \
@@ -58,8 +59,6 @@ SOURCES += \
 	Options.cpp \
     OrderStateSocket.cpp \
     OptionsDialog.cpp \
-    ../../../lib/Crc32.cpp
-
 
 HEADERS += \
 	../../../lib/UdpSocket.h \
@@ -88,11 +87,11 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
-    android/res/drawable-hdpi/icon.png \
     android/res/drawable-ldpi/icon.png \
-    android/res/drawable-xhdpi/icon.png \
     android/res/drawable-mdpi/icon.png \
-    android/res/drawable-xxxhdpi/icon.png \
-    android/res/drawable-xxhdpi/icon.png
+	android/res/drawable-hdpi/icon.png \
+	android/res/drawable-xhdpi/icon.png \
+	android/res/drawable-xxhdpi/icon.png \
+	android/res/drawable-xxxhdpi/icon.png
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

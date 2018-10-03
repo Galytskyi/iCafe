@@ -51,6 +51,7 @@ SOURCES += \
 	../../../lib/XmlHelper.cpp \
 	../../../lib/UdpSocket.cpp \
 	../../../lib/SocketIO.cpp \
+	../../../lib/Crc32.cpp \
 	main.cpp \
 	MainWindow.cpp \
 	Options.cpp \
@@ -59,24 +60,23 @@ SOURCES += \
 	Database.cpp \
 	OrderStateSocket.cpp \
 	OrderReceiveSocket.cpp \
-    ../../../lib/Crc32.cpp \
     CancelOrderDialog.cpp
 
 
 HEADERS += \
-	MainWindow.h \
-	Options.h \
 	../../../lib/Order.h \
 	../../../lib/SocketIO.h \
 	../../../lib/Provider.h \
 	../../../lib/XmlHelper.h \
 	../../../lib/UdpSocket.h \
+	../../../lib/Crc32.h \
+	MainWindow.h \
+	Options.h \
 	OrderView.h \
 	OptionsDialog.h \
 	Database.h \
 	OrderStateSocket.h \
 	OrderReceiveSocket.h \
-    ../../../lib/Crc32.h \
     CancelOrderDialog.h
 
 
@@ -91,9 +91,11 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
+	android/res/drawable-ldpi/icon.png \
+	android/res/drawable-mdpi/icon.png \
     android/res/drawable-hdpi/icon.png \
-    android/res/drawable-ldpi/icon.png \
-    android/res/drawable-mdpi/icon.png \
-    android/res/drawable-xxhdpi/icon.png
+	android/res/drawable-xhdpi/icon.png \
+    android/res/drawable-xxhdpi/icon.png \
+    android/res/drawable-xxxhdpi/icon.png
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
