@@ -37,11 +37,9 @@ MainWindow::~MainWindow()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-#include <QVBoxLayout>
-
 bool MainWindow::createInterface()
 {
-	setWindowIcon(QIcon(":/icons/Table.ico"));
+	setWindowIcon(QIcon(":/icons/Logo.png"));
 	setWindowTitle(tr("Клиент заказов"));
 	setMinimumSize(480, 640);
 	move(QApplication::desktop()->availableGeometry().center() - rect().center());
@@ -272,16 +270,18 @@ bool MainWindow::createToolBars()
 		addToolBarBreak(Qt::TopToolBarArea);
 		addToolBar(m_pOrderControlToolBar);
 
-		m_pOrderControlToolBar->addAction(m_pSearchAction);
+		//m_pOrderControlToolBar->addAction(m_pSearchAction);
 
-		QFont* font = new QFont("Arial", 14, 2);
+		//QFont* font = new QFont("Arial", 14, 2);
 
-		m_searchProvider = new QLineEdit(m_pOrderControlToolBar);
-		connect(m_searchProvider, &QLineEdit::textChanged, this, &MainWindow::onSearchTextChanged, Qt::QueuedConnection);
-		m_searchProvider->setFont(*font);
-		m_pOrderControlToolBar->addWidget(m_searchProvider);
+		//m_searchProvider = new QLineEdit(m_pOrderControlToolBar);
+		//connect(m_searchProvider, &QLineEdit::textChanged, this, &MainWindow::onSearchTextChanged, Qt::QueuedConnection);
+		//m_searchProvider->setFont(*font);
+		//m_pOrderControlToolBar->addWidget(m_searchProvider);
 
 		m_pOrderControlToolBar->addAction(m_pOptionsAction);
+
+		m_pOrderControlToolBar->setLayoutDirection(Qt::RightToLeft);
 	}
 
 	return true;

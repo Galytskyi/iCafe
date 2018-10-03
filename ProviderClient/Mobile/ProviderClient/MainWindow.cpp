@@ -38,7 +38,7 @@ MainWindow::~MainWindow()
 
 bool MainWindow::createInterface()
 {
-	setWindowIcon(QIcon(":/icons/Table.ico"));
+	setWindowIcon(QIcon(":/icons/Logo.png"));
 	setWindowTitle(tr("Поставщик заказов"));
 	setMinimumSize(480, 640);
 	move(QApplication::desktop()->availableGeometry().center() - rect().center());
@@ -271,7 +271,7 @@ bool MainWindow::createToolBars()
 		m_connectLabel->setFont(*font);
 		m_connectLabel->setStyleSheet("color: rgb(255, 0, 0);");
 		m_connectLabel->setText(tr(NO_CONNECTION_STR));
-		m_connectLabel->setFixedWidth(300);
+		m_connectLabel->setFixedWidth(450);
 		m_connectLabel->setEnabled(false);
 
 

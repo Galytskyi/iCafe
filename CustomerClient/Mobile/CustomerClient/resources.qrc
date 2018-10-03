@@ -1,14 +1,11 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/About Application.png</file>
         <file>icons/Options.png</file>
         <file>icons/Search.png</file>
-        <file>icons/Info.png</file>
         <file>icons/Dinner.png</file>
         <file>icons/Table.png</file>
-        <file>icons/Cancel.png</file>
-        <file>icons/Clock.png</file>
         <file>icons/MenuGray.png</file>
         <file>icons/MenuBlack.png</file>
+        <file>icons/Logo.png</file>
     </qresource>
 </RCC>

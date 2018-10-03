@@ -87,3 +87,8 @@ HEADERS += \
     ArchThread.h \
     ProviderView.h \
     ProviderDialog.h
+
+DISTFILES += \
+    ../csv/Google.xls \
+    ../csv/Provider.csv \
+    ../csv/ProviderType.csv
