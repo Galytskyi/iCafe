@@ -71,11 +71,14 @@ namespace Provider
 	void Item::clear()
 	{
 		m_id = INVALID_ID;
+		m_googleID.clear();
 
 		m_active = false;
-		m_type = 0;
-		m_name.clear();
+		m_activeTime.clear();
 
+		m_type = 0;
+
+		m_name.clear();
 		m_address.clear();
 		m_phone.clear();
 		m_mail.clear();
@@ -124,7 +127,6 @@ namespace Provider
 
 				result &= xml.readUInt32Attribute("ProviderID", &m_id);
 
-				result &= xml.readBoolAttribute("Active", &m_active);
 				result &= xml.readIntAttribute("Type", &m_type);
 
 				result &= xml.readStringAttribute("Name", &m_name);
@@ -152,19 +154,18 @@ namespace Provider
 		{
 			case 1:
 
-			xml.writeStartElement(xmlTagProvider);
-			{
-				xml.writeUInt32Attribute("ProviderID", providerID(), false);
+				xml.writeStartElement(xmlTagProvider);
+				{
+					xml.writeUInt32Attribute("ProviderID", providerID(), false);
 
-				xml.writeBoolAttribute("Active", active());
-				xml.writeIntAttribute("Type", type());
-				xml.writeStringAttribute("Name", name());
+					xml.writeIntAttribute("Type", type());
 
-				xml.writeStringAttribute("Address", address());
-				xml.writeStringAttribute("Telephone", phone());
-			}
+					xml.writeStringAttribute("Name", name());
+					xml.writeStringAttribute("Address", address());
+					xml.writeStringAttribute("Telephone", phone());
+				}
 
-			xml.writeEndElement();
+				xml.writeEndElement();
 
 			break;
 
@@ -182,8 +183,11 @@ namespace Provider
 	Item& Item::operator=(const Item& from)
 	{
 		m_id = from.m_id;
+		m_googleID = from.m_googleID;
 
 		m_active = from.m_active;
+		m_activeTime = from.m_activeTime;
+
 		m_type = from.m_type;
 
 		m_name = from.m_name;
@@ -326,7 +330,7 @@ namespace Provider
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	Item Base::provider(quint16 providerID) const
+	Item Base::provider(quint32 providerID) const
 	{
 		QMutexLocker locker(&m_mutex);
 
@@ -346,7 +350,7 @@ namespace Provider
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	Item* Base::providerPtr(quint16 providerID)
+	Item* Base::providerPtr(quint32 providerID)
 	{
 		QMutexLocker locker(&m_mutex);
 
@@ -363,6 +367,21 @@ namespace Provider
 
 		return &m_providerList[index];
 	}
+
+	// -------------------------------------------------------------------------------------------------------------------
+
+	int Base::providerIndex(quint32 providerID)
+	{
+		QMutexLocker locker(&m_mutex);
+
+		if (m_providerIndexMap.contains(providerID) == false)
+		{
+			return -1;
+		}
+
+		return m_providerIndexMap[providerID];
+	}
+
 
 	// -------------------------------------------------------------------------------------------------------------------
 
@@ -427,7 +446,7 @@ namespace Provider
 		{
 			qDebug() << "ProviderBase::readFromXml - Providers loading error, loaded: " << count() << " from " << providerCount;
 			assert(false);
-			return false;
+			//return false;
 		}
 
 		qDebug() << "ProviderBase::readFromXml - Providers were loaded: " << count();
@@ -445,9 +464,33 @@ namespace Provider
 		//
 		xml.writeStartElement(xmlTagProviders);
 		{
-			int providerCount = theProviderBase.count();
+			int providerWritenCount = 0;
 
-			xml.writeIntAttribute("Count", providerCount);
+			int providerCount = theProviderBase.count();
+			for(int i = 0; i < providerCount; i++)
+			{
+				Item* provider = theProviderBase.providerPtr(i);
+				if (provider == nullptr)
+				{
+					continue;
+				}
+
+				if (provider->isEmpty() == true)
+				{
+					assert(provider->isEmpty() == false);
+					continue;
+				}
+
+				if (provider->isActive() == false)
+				{
+					continue;
+				}
+
+				providerWritenCount++;
+			}
+
+			xml.writeIntAttribute("Count", providerWritenCount);
+
 
 			for(int i = 0; i < providerCount; i++)
 			{
@@ -463,9 +506,15 @@ namespace Provider
 					continue;
 				}
 
+				if (provider->isActive() == false)
+				{
+					continue;
+				}
+
 				provider->writeToXml(xml, version);
 			}
 		}
+
 		xml.writeEndElement();	// </Providers>
 	}
 

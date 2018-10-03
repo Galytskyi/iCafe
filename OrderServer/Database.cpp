@@ -57,9 +57,11 @@ int SqlFieldBase::init(int objectType, int)
 			append("ProviderID",					QVariant::Int);
 
 			append("Active",						QVariant::Bool);
-			append("TypeID",						QVariant::Int);
-			append("Name",							QVariant::String, 64);
+			append("ActiveTime",					QVariant::String, 32);
 
+			append("TypeID",						QVariant::Int);
+
+			append("Name",							QVariant::String, 64);
 			append("Address",						QVariant::String, 256);
 			append("Phone",							QVariant::String, 16);
 
@@ -662,9 +664,11 @@ int SqlTable::read(void* pRecord, int* key, int keyCount)
 					provider->setProviderID(query.value(field++).toInt());
 
 					provider->setActive(query.value(field++).toBool());
-					provider->setType(query.value(field++).toInt());
-					provider->setName(query.value(field++).toString());
+					provider->setActiveTime(query.value(field++).toString());
 
+					provider->setType(query.value(field++).toInt());
+
+					provider->setName(query.value(field++).toString());
 					provider->setAddress(query.value(field++).toString());
 					provider->setPhone(query.value(field++).toString());
 				}
@@ -808,14 +812,19 @@ int SqlTable::write(void* pRecord, int count, int* key)
 				{
 					Provider::Item* provider = static_cast<Provider::Item*> (pRecord) + r;
 
-					provider->setProviderID(lastKey() + 1);
+					if (key == nullptr) // for insert
+					{
+						provider->setProviderID(lastKey() + 1);
+					}
 
 					query.bindValue(field++, provider->providerID());
 
-					query.bindValue(field++, provider->active());
-					query.bindValue(field++, provider->type());
-					query.bindValue(field++, provider->name());
+					query.bindValue(field++, provider->isActive());
+					query.bindValue(field++, provider->activeTime());
 
+					query.bindValue(field++, provider->type());
+
+					query.bindValue(field++, provider->name());
 					query.bindValue(field++, provider->address());
 					query.bindValue(field++, provider->phone());
 				}
@@ -825,7 +834,10 @@ int SqlTable::write(void* pRecord, int count, int* key)
 				{
 					Provider::Type* type = static_cast<Provider::Type*> (pRecord) + r;
 
-					type->setTypeID(lastKey() + 1);
+					if (key == nullptr)	// for insert
+					{
+						type->setTypeID(lastKey() + 1);
+					}
 
 					query.bindValue(field++, type->typeID());
 					query.bindValue(field++, type->name());

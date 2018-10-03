@@ -4,6 +4,9 @@
 #
 #-------------------------------------------------
 
+TARGET = OrderServer
+TEMPLATE = app
+
 QT += core
 QT += gui
 QT += network
@@ -11,9 +14,6 @@ QT += sql
 QT += xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-TARGET = OrderServer
-TEMPLATE = app
 
 # DESTDIR
 #
@@ -66,7 +66,9 @@ SOURCES += \
 	CustomerOrderSocket.cpp \
     RemoveOrderThread.cpp \
     ../lib/Crc32.cpp \
-    ArchThread.cpp
+    ArchThread.cpp \
+    ProviderView.cpp \
+    ProviderDialog.cpp
 
 HEADERS += \
 	../lib/SocketIO.h \
@@ -82,4 +84,6 @@ HEADERS += \
 	ProviderOrderSocket.h \
 	CustomerOrderSocket.h \
     RemoveOrderThread.h \
-    ArchThread.h
+    ArchThread.h \
+    ProviderView.h \
+    ProviderDialog.h

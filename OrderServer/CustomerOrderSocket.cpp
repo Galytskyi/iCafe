@@ -129,7 +129,7 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 	order.setAddress(request.address());
 	order.setPort(request.port());
 	order.setState(Order::STATE_SERVER_CREATED_ORDER);
-	order.updateOrderDate();
+	order.orderTime().fillCurrentDate();
 	order.setRemoveTime();
 	order.createCancelCode();
 

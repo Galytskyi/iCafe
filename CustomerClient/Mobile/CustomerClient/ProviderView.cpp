@@ -12,7 +12,7 @@
 
 // -------------------------------------------------------------------------------------------------------------------
 //
-// ProviderItem
+// ProviderDelegate
 //
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -280,47 +280,11 @@ QVariant ProviderTable::data(const QModelIndex &index, int role) const
 		return QVariant();
 	}
 
-	if (role == Qt::TextAlignmentRole)
-	{
-		return Qt::AlignLeft;
-	}
-
-	if (role == Qt::TextColorRole)
-	{
-		if (item.provider().active() == false)
-		{
-			return QColor(0xA0, 0xA0, 0xA0);
-		}
-
-		return QVariant();
-	}
-
-	if (role == Qt::BackgroundColorRole)
-	{
-		QVariant result = QVariant();
-
-		switch(item.order().state())
-		{
-			case Order::STATE_ORDER_OK:							result = QColor(0xA0, 0xFF, 0xA0);	break;
-			case Order::STATE_ORDER_CANCEL:						result = QColor(0xFF, 0xA0, 0xA0);	break;
-			case Order::STATE_ORDER_PROCESSING:					result = QColor(0xFF, 0xFF, 0xA0);	break;
-			case Order::STATE_SERVER_CREATED_ORDER:				result = QColor(0xA0, 0xA0, 0xA0);	break;
-			default:											result = QVariant();		break;
-		}
-
-		return result;
-	}
-
 	if (role == Qt::UserRole)
 	{
 		QVariant var;
 		var.setValue(item);
 		return var;
-	}
-
-	if (role == Qt::DisplayRole || role == Qt::EditRole)
-	{
-		return text(row, column, item);
 	}
 
 	return QVariant();
@@ -507,7 +471,7 @@ void ProviderView::updateList()
 	for(int i = 0; i < count; i++)
 	{
 		Provider::Item provider = theProviderBase.provider(i);
-		if (provider.isEmpty() == true || provider.active()== false)
+		if (provider.isEmpty() == true)
 		{
 			continue;
 		}

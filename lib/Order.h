@@ -65,17 +65,26 @@ namespace Order
 			quint32 year : 6;
 		};
 
-		void fillCurrentTime()
+		void fillCurrentDateTime()
 		{
-			QDateTime lt = QDateTime::currentDateTime();
+			QDateTime ct = QDateTime::currentDateTime();
 
-			second = lt.time().second();
-			minute = lt.time().minute();
-			hour = lt.time().hour();
+			year = ct.date().year() - 2000;
+			month = ct.date().month();
+			day = ct.date().day();
 
-			day = lt.date().day();
-			month = lt.date().month();
-			year = lt.date().year() - 2000;
+			hour = ct.time().hour();
+			minute = ct.time().minute();
+			second = ct.time().second();
+		}
+
+		void fillCurrentDate()
+		{
+			QDateTime ct = QDateTime::currentDateTime();
+
+			year = ct.date().year() - 2000;
+			month = ct.date().month();
+			day = ct.date().day();
 		}
 
 		QString str()
@@ -173,7 +182,6 @@ namespace Order
 		Time32				orderTime() const { return m_orderTime.time; }
 		void				setOrderTime(Time32 time) { m_orderTime = time; }
 		void				setOrderTime(quint32 time) { m_orderTime.time = time; }
-		void				updateOrderDate();
 
 		QDateTime			removeTime() const { return m_removeTime; }
 		void				setRemoveTime(const QDateTime& removeTime) { m_removeTime = removeTime; }

@@ -44,8 +44,10 @@ void ConfigSocket::onSocketThreadFinished()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-bool ConfigSocket::createCfgXml()
+void ConfigSocket::createCfgXml()
 {
+	QMutexLocker locker(&m_mutex);
+
 	m_cfgXmlData.clear();
 	XmlWriteHelper xml(&m_cfgXmlData);
 
@@ -60,15 +62,13 @@ bool ConfigSocket::createCfgXml()
 
 			theProviderBase.writeToXml(xml, xmlTagProviderLastVersion);	// Writing providers
 
-			theProviderTypeBase.writeToXml(xml, xmlTagProviderTypeLastVersion); // Writing provider types
+			//theProviderTypeBase.writeToXml(xml, xmlTagProviderTypeLastVersion); // Writing provider types
 		}
 		xml.writeEndElement();	// <ConfigFile>
 	}
 	xml.writeEndDocument();
 
 	updateCfgXmlInfo();
-
-	return true;
 }
 
 // -------------------------------------------------------------------------------------------------------------------

@@ -35,8 +35,11 @@ namespace Provider
 	private:
 
 		quint32				m_id = INVALID_ID;
+		QString				m_googleID;
 
 		bool				m_active = false;
+		QString				m_activeTime;
+
 		int					m_type = 0;
 
 		QString				m_name;
@@ -57,8 +60,14 @@ namespace Provider
 		quint32				providerID() const { return m_id; }
 		void				setProviderID(quint32 id) { m_id = id; }
 
-		bool				active() const { return m_active; }
+		QString				googleID() const { return m_googleID; }
+		void				setGoogleID(const QString& id) { m_googleID = id; }
+
+		bool				isActive() const { return m_active; }
 		void				setActive(bool active) { m_active = active; }
+
+		QString				activeTime() const { return m_activeTime; }
+		void				setActiveTime(const QString& time) { m_activeTime = time; }
 
 		int					type() const { return m_type; }
 		void				setType(int type) { m_type = type; }
@@ -111,7 +120,7 @@ namespace Provider
 
 		mutable QMutex			m_mutex;
 		QVector<Item>			m_providerList;
-		QMap<quint16, int>		m_providerIndexMap;
+		QMap<quint32, int>		m_providerIndexMap;
 
 	public:
 
@@ -127,8 +136,9 @@ namespace Provider
 		Item					provider(int index) const;
 		Item*					providerPtr(int index);
 
-		Item					provider(quint16 providerID) const;
-		Item*					providerPtr(quint16 providerID);
+		Item					provider(quint32 providerID) const;
+		Item*					providerPtr(quint32 providerID);
+		int						providerIndex(quint32 providerID);
 
 		void					setProvider(int index, const Item& provider);
 

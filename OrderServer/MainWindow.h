@@ -9,6 +9,7 @@
 #include "CustomerOrderSocket.h"
 #include "ProviderOrderSocket.h"
 #include "RemoveOrderThread.h"
+#include "ProviderView.h"
 
 // ==============================================================================================
 
@@ -21,6 +22,10 @@ public:
 	virtual ~MainWindow();
 
 private:
+
+	// Elements of interface - view
+	//
+	ProviderView*			m_pView = nullptr;
 
 	// Elements of interface - StatusBar
 	//
@@ -41,6 +46,7 @@ private:
 public:
 
 	bool					createInterface();
+	void					createProviderView();
 	void					createStatusBar();
 
 	bool					startArchThread();
@@ -73,6 +79,10 @@ public slots:
 
 	void					msgBox(const QString &title, const QString& text);
 	void					orderStateChanged(const Order::Item& order);
+
+	// Slots of view
+	//
+	void					onProviderListClick(const QModelIndex& index);
 };
 
 // ==============================================================================================

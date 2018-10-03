@@ -17,16 +17,18 @@ public:
 
 private:
 
+	QMutex				m_mutex;
+
 	sio_ReplyCfgXmlInfo m_rcxi;
-	QByteArray		m_cfgXmlData;
+	QByteArray			m_cfgXmlData;
 
 	virtual void	onSocketThreadStarted();
 	virtual void	onSocketThreadFinished();
 
-	bool			createCfgXml();
-	void			updateCfgXmlInfo();
-
 public:
+
+	void			createCfgXml();
+	void			updateCfgXmlInfo();
 
 	void			replyGetConfigXmlCrc(Udp::Request request);
 	void			replyGetConfigXmlInfo(Udp::Request request);

@@ -177,17 +177,6 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Item::updateOrderDate()
-	{
-		QDateTime cdt = QDateTime::currentDateTime();
-
-		m_orderTime.year = cdt.date().year() - 2000;
-		m_orderTime.month = cdt.date().month();
-		m_orderTime.day = cdt.date().day();
-	}
-
-	// -------------------------------------------------------------------------------------------------------------------
-
 	int Item::createCancelCode()
 	{
 		m_cancelCode = (rand() - 0)*(9999-1000)/(RAND_MAX - 0) + 1000;

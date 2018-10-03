@@ -4,6 +4,10 @@
 #include <QValidator>
 
 // -------------------------------------------------------------------------------------------------------------------
+//
+// CanceOrderDialog class implementation
+//
+// -------------------------------------------------------------------------------------------------------------------
 
 CanceOrderDialog::CanceOrderDialog(QWidget* parent)
 	: QDialog(parent)
@@ -41,6 +45,7 @@ void CanceOrderDialog::createInterface()
 	m_pKeyboardButton = new QPushButton(QIcon(":/icons/Keyboard.png"), QString(), this);
 
 	m_pCodeEdit->setFont(*listFont);
+	m_pCodeEdit->setAlignment(Qt::AlignCenter);
 
 	QValidator *validator = new QIntValidator(1, 9999, this);
 	m_pCodeEdit->setValidator(validator);

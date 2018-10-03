@@ -6,8 +6,8 @@
 #include <QThread>
 #include <QMessageBox>
 
-
 #include "Database.h"
+#include "ProviderDialog.h"
 
 #include "../lib/Provider.h"
 
@@ -60,7 +60,7 @@ bool MainWindow::createInterface()
 //	createActions();
 //	createMenu();
 //	createToolBars();
-//	createMeasureViews();
+	createProviderView();
 //	createPanels();
 	createStatusBar();
 //	createContextMenu();
@@ -72,6 +72,27 @@ bool MainWindow::createInterface()
 	connect(&theOrderBase, &Order::Base::signal_stateChanged, this, &MainWindow::orderStateChanged, Qt::QueuedConnection);
 
 	return true;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::createProviderView()
+{
+	m_pView = new ProviderView;
+	if (m_pView == nullptr)
+	{
+		return;
+	}
+
+//	connect(this, &MainWindow::setTextFilter, pView, &ProviderView::setTextFilter, Qt::QueuedConnection);
+
+//	connect(&theProviderBase, &Provider::Base::cfgXmlDataLoaded, m_pView, &ProviderView::updateList, Qt::QueuedConnection);
+//	connect(&theProviderBase, &Provider::Base::cfgXmlDataLoaded,m_pView, &ProviderView::updateOrderList, Qt::QueuedConnection);
+//	connect(&theOrderBase, &Order::Base::signal_stateChanged, m_pView, &ProviderView::orderStateChanged, Qt::QueuedConnection);
+
+	connect(m_pView, &QTableView::doubleClicked, this, &MainWindow::onProviderListClick);
+
+	setCentralWidget(m_pView);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -155,8 +176,6 @@ bool MainWindow::stopArchThread()
 	return true;
 }
 
-
-
 // -------------------------------------------------------------------------------------------------------------------
 
 bool MainWindow::loadBase()
@@ -212,6 +231,11 @@ bool MainWindow::loadBase()
 
 	qDebug() << msg;
 	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, msg);
+
+	if (m_pView != nullptr)
+	{
+		m_pView->updateList();
+	}
 
 	m_statusProviderCount->setText(tr("Provider count: %1").arg(theProviderBase.count()));
 
@@ -478,6 +502,82 @@ bool MainWindow::stopRemoveOrderThread()
 	pThread->deleteLater();
 
 	return true;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::onProviderListClick(const QModelIndex& index)
+{
+	if (thePtrDB == nullptr)
+	{
+		return;
+	}
+
+	if (m_pConfigSocket == nullptr)
+	{
+		return;
+	}
+
+	if (m_pView == nullptr)
+	{
+		return;
+	}
+
+	int i = index.row();
+	if (i < 0 || i >= m_pView->table().count())
+	{
+		return;
+	}
+
+	Provider::Item provider = m_pView->table().at(i);
+
+	ProviderDialog dialog(provider);
+	if (dialog.exec() != QDialog::Accepted)
+	{
+		return;
+	}
+
+	provider = dialog.provider();
+
+	// update data in database
+	//
+	SqlTable* table = thePtrDB->openTable(SQL_TABLE_PROVIDER);
+	if (table == nullptr)
+	{
+		return;
+	}
+
+	if (table->write(&provider, 1, provider.providerID()) != 1)
+	{
+		return;
+	}
+
+	table->close();
+
+	// update data in theProviderBase
+	//
+	Provider::Item* pProvider = theProviderBase.providerPtr(provider.providerID());
+	if (pProvider == nullptr)
+	{
+		return;
+	}
+
+	//
+	//
+	pProvider->setActive(provider.isActive());
+	pProvider->setActiveTime(provider.activeTime());
+	pProvider->setName(provider.name());
+	pProvider->setAddress(provider.address());
+	pProvider->setPhone(provider.phone());
+
+	// update data in ConfigSocket
+	//
+	m_pConfigSocket->createCfgXml();
+
+	// update data in View
+	//
+	m_pView->table().set(i, provider);
+	m_pView->table().updateRow(i);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
