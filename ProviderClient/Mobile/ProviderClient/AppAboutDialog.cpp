@@ -33,7 +33,7 @@ void AppAboutDialog::createInterface()
 	m_pLogoLabel = new QLabel(this);
 	m_pLogoLabel->setPixmap(QPixmap(":/icons/Logo.png"));
 	m_pLogoLabel->setAlignment(Qt::AlignCenter);
-	m_pVersionLabel = new QLabel(tr("Version %1").arg(qApp->applicationVersion()), this);
+	m_pVersionLabel = new QLabel(tr("Версия %1").arg(qApp->applicationVersion()), this);
 	m_pVersionLabel->setAlignment(Qt::AlignCenter);
 	m_pMailLabel = new QLabel("<a href=\"mailto:iBookingRest@gmail.com\">iBookingRest@gmail.com</a>", this);
 	m_pMailLabel->setOpenExternalLinks(true);

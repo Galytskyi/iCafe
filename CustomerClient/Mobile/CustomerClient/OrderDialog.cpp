@@ -48,7 +48,7 @@ void OrderDialog::createInterface()
 	m_pLogoLabel->setPixmap(QPixmap(":/icons/Logo.png"));
 	m_pLogoLabel->setAlignment(Qt::AlignCenter);
 
-	m_pProviderLabel = new QLabel(tr("Do you want to order in the:"), this);
+	m_pProviderLabel = new QLabel(tr("Вы хотите забронировать в:"), this);
 	m_pProviderEdit = new QLineEdit(this);
 	m_pProviderEdit->setReadOnly(true);
 	m_pProviderEdit->setFont(*listFont);
@@ -61,7 +61,7 @@ void OrderDialog::createInterface()
 	//
 	QVBoxLayout *phoneLayout = new QVBoxLayout;
 
-	m_pPhoneLabel = new QLabel(tr("Your phone number (+380**********):"), this);
+	m_pPhoneLabel = new QLabel(tr("Ваш номер телефона (+380**********):"), this);
 	m_pPhoneEdit = new QLineEdit(this);
 	m_pPhoneEdit->setFont(*listFont);
 	//m_pPhoneEdit->setValidator(new QIntValidator(this));
@@ -74,7 +74,7 @@ void OrderDialog::createInterface()
 	//
 	QVBoxLayout *timeLayout = new QVBoxLayout;
 
-	m_pTimeLabel = new QLabel(tr("Time of your order (HH:MM):"), this);
+	m_pTimeLabel = new QLabel(tr("Время вашего заказа (ЧЧ:ММ):"), this);
 	m_pTimeEdit = new QLineEdit(this);
 	m_pTimeEdit->setFont(*listFont);
 	m_pTimeEdit ->setValidator(new QRegExpValidator(QRegExp("[0-9]{1,2}\\:[0-9]{1,2}"), this));
@@ -86,7 +86,7 @@ void OrderDialog::createInterface()
 	//
 	QVBoxLayout *peopleCntLayout = new QVBoxLayout;
 
-	m_pPeopleLabel = new QLabel(tr("Number of people:"), this);
+	m_pPeopleLabel = new QLabel(tr("Количество человек:"), this);
 	m_pPeopleEdit = new QLineEdit(this);
 	m_pPeopleEdit->setFont(*listFont);
 	m_pPeopleEdit->setValidator(new QIntValidator(1, 30, this));
@@ -120,13 +120,13 @@ void OrderDialog::initDialog()
 	// init elements of interface
 	//
 
-	QString typeStr = tr("something");
+	QString typeStr = tr("что-то");
 	QString logoStr = ":/icons/Logo.png";
 
 	int type = theOptions.customerData().orderType();
 	if (type < 0 || type >= Order::TYPE_COUNT)
 	{
-		typeStr = tr("something");
+		typeStr = tr("что-то");
 		logoStr = ":/icons/Logo.png";
 	}
 	else
@@ -134,15 +134,15 @@ void OrderDialog::initDialog()
 		switch (type)
 		{
 			case Order::TYPE_TABLE:
-				typeStr = tr("Do you want to order table in the:");
+				typeStr = tr("Вы хотите забронировать столик в:");
 				logoStr = ":/icons/Table.png";
 				break;
 			case Order::TYPE_DINNER:
-				typeStr = tr("Do you want to order lunch in the:");
+				typeStr = tr("Вы хотите заказать обед в:");
 				logoStr = ":/icons/Dinner.png";
 				break;
 			default:
-				typeStr = tr("Do you want to order in the:");
+				typeStr = tr("Вы хотите забронировать в:");
 				logoStr = ":/icons/Logo.png";
 				break;
 		}
@@ -167,7 +167,7 @@ void OrderDialog::onOk()
 
 	if (phoneStr.isEmpty() == true || phoneStr.length() != 13)
 	{
-		QMessageBox::information(this, windowTitle(), tr("Please, input your phone number!"));
+		QMessageBox::information(this, windowTitle(), tr("Пожалуйста, укажите ваш номер телефона!"));
 		m_pPhoneEdit->setFocus();
 		return;
 	}
@@ -178,7 +178,7 @@ void OrderDialog::onOk()
 
 	if (phone == 0)
 	{
-		QMessageBox::information(this, windowTitle(), tr("Please, input your phone number!"));
+		QMessageBox::information(this, windowTitle(), tr("Пожалуйста, укажите ваш номер телефона!"));
 		m_pPhoneEdit->setFocus();
 		return;
 	}
@@ -187,7 +187,7 @@ void OrderDialog::onOk()
 
 	if (timeStr.isEmpty() == true || timeStr.length() != 5)
 	{
-		QMessageBox::information(this, windowTitle(), tr("Please, input order time!"));
+		QMessageBox::information(this, windowTitle(), tr("Пожалуйста, укажите время заказа!"));
 		m_pTimeEdit->setFocus();
 		return;
 	}
@@ -198,7 +198,7 @@ void OrderDialog::onOk()
 	begPos = timeStr.indexOf(':');
 	if (begPos == -1)
 	{
-		QMessageBox::information(this, windowTitle(), tr("Please, input order time!"));
+		QMessageBox::information(this, windowTitle(), tr("Пожалуйста, укажите время заказа!"));
 		m_pTimeEdit->setFocus();
 		return;
 	}
@@ -215,7 +215,7 @@ void OrderDialog::onOk()
 
 	if (peopleStr.isEmpty() == true)
 	{
-		QMessageBox::information(this, windowTitle(), tr("Please, input number of people!"));
+		QMessageBox::information(this, windowTitle(), tr("Пожалуйста, укажите количество человек!"));
 		m_pPeopleEdit->setFocus();
 		return;
 	}
@@ -224,7 +224,7 @@ void OrderDialog::onOk()
 
 	if (people == 0)
 	{
-		QMessageBox::information(this, windowTitle(), tr("Please, input number of people!"));
+		QMessageBox::information(this, windowTitle(), tr("Пожалуйста, укажите количество человек!"));
 		m_pPeopleEdit->setFocus();
 		return;
 	}

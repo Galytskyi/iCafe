@@ -20,12 +20,16 @@ int main(int argc, char *argv[])
 
 	a.setApplicationVersion(QString("1.0"));
 
-	QTranslator translator;
-	if (translator.load("CustomerClient_ru.qm", QApplication::applicationDirPath() + "/translations") == false)
+	bool hasLanguageFiles = false;
+	if (hasLanguageFiles == false)
 	{
-		qDebug() << "Options::loadLanguage() - didn't load language file";
+		QTranslator translator;
+		if (translator.load("CustomerClient_ru.qm", QApplication::applicationDirPath() + "/translations") == false)
+		{
+			qDebug() << "Options::loadLanguage() - didn't load language file";
+		}
+		qApp->installTranslator(&translator);
 	}
-	qApp->installTranslator(&translator);
 
 	theOptions.load();
 

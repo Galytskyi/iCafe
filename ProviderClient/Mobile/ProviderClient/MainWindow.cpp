@@ -39,7 +39,7 @@ MainWindow::~MainWindow()
 bool MainWindow::createInterface()
 {
 	setWindowIcon(QIcon(":/icons/Logo.png"));
-	setWindowTitle(tr("Provider of orders"));
+	setWindowTitle(tr("Поставщик заказов"));
 	setMinimumSize(480, 640);
 	move(QApplication::desktop()->availableGeometry().center() - rect().center());
 
@@ -254,14 +254,15 @@ void MainWindow::createActions()
 {
 	// Order
 	//
-	m_pOptionsAction = new QAction(tr("Options"), this);
+	m_pOptionsAction = new QAction(tr("Настройки"), this);
 	m_pOptionsAction->setShortcut(Qt::CTRL + Qt::Key_O);
 	m_pOptionsAction->setIcon(QIcon(":/icons/Options.png"));
-	m_pOptionsAction->setToolTip(tr("Options"));
+	m_pOptionsAction->setToolTip(tr("Настройки"));
 	connect(m_pOptionsAction, &QAction::triggered, this, &MainWindow::onOptions);
 
-	m_pInfoAction = new QAction(tr("Info"), this);
+	m_pInfoAction = new QAction(tr("Информация"), this);
 	m_pInfoAction->setIcon(QIcon(":/icons/Info.png"));
+	m_pInfoAction->setToolTip(tr("Информация"));
 	connect(m_pInfoAction, &QAction::triggered, this, &MainWindow::onAppAbout);
 }
 
@@ -275,7 +276,7 @@ bool MainWindow::createToolBars()
 	if (m_pOrderControlToolBar != nullptr)
 	{
 		m_pOrderControlToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
-		m_pOrderControlToolBar->setWindowTitle(tr("Control orders"));
+		m_pOrderControlToolBar->setWindowTitle(tr("Панель заказов"));
 		m_pOrderControlToolBar->setObjectName(m_pOrderControlToolBar->windowTitle());
 		m_pOrderControlToolBar->setMovable(false);
 		addToolBarBreak(Qt::TopToolBarArea);
@@ -436,7 +437,7 @@ void MainWindow::onOrderListClick(const QModelIndex& index)
 
 				QMessageBox::StandardButton reply;
 
-				reply = QMessageBox::question(this, tr("Cancel order"), tr("Do you want to cancel the order?\n\nTo cancel the order, please, call the client by phone: +380%1, and ask cancel code.").arg(order.phone()).arg(order.phone()), QMessageBox::Yes|QMessageBox::No);
+				reply = QMessageBox::question(this, tr("Отмена заказа"), tr("Вы хотите отменить заказ?\n\nДля того чтобы отменить заказ, пожалуйста, позвоните клиенту по телефону: +380%1, и спросите код отмены.").arg(order.phone()).arg(order.phone()), QMessageBox::Yes|QMessageBox::No);
 				if (reply == QMessageBox::No)
 				{
 					break;
@@ -470,7 +471,7 @@ void MainWindow::onOrderListClick(const QModelIndex& index)
 			{
 				QMessageBox::StandardButton reply;
 
-				reply = QMessageBox::question(this, tr("Take order"), tr("Do you want to take order?"), QMessageBox::Yes|QMessageBox::No);
+				reply = QMessageBox::question(this, tr("Принять заказ"), tr("Вы хотите принять заказ?"), QMessageBox::Yes|QMessageBox::No);
 
 				if (reply == QMessageBox::Yes)
 				{

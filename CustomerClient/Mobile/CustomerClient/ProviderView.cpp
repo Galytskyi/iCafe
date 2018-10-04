@@ -59,13 +59,13 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	switch(item.order().state())
 	{
 		case Order::STATE_ORDER_OK:
-			orderState = tr("Wellcome!");
+			orderState = tr("Добро пожаловать!");
 			painter->fillRect(option.rect, QColor(0xA0, 0xF0, 0xA0));	break;
 			break;
 
 		case Order::STATE_ORDER_PROCESSING:
 		case Order::STATE_SERVER_CREATED_ORDER:
-			orderState = tr("Wait answer");
+			orderState = tr("Ждите ответа");
 			painter->fillRect(option.rect, QColor(0xff, 0xf4, 0xc4));	break;
 			break;
 	}
@@ -542,7 +542,7 @@ void ProviderView::orderStateChanged(const Order::Item& order)
 
 			if (order.state() == Order::STATE_ORDER_CANCEL || order.state() == Order::STATE_UNDEFINED)
 			{
-				QMessageBox::information(this, tr("Order"), tr("\"%1\" canceled your order").arg(provider.name()));
+				QMessageBox::information(this, tr("Отмена заказа"), tr("\"%1\" отменили ваш заказ").arg(provider.name()));
 			}
 
 			break;

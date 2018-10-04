@@ -11,7 +11,7 @@
 
 const char* const		OrderColumn[] =
 {
-						QT_TRANSLATE_NOOP("OrderView.h", "Order"),
+						QT_TRANSLATE_NOOP("OrderView.h", "Заказ"),
 };
 
 const int				ORDER_COLUMN_COUNT	= sizeof(OrderColumn)/sizeof(OrderColumn[0]);

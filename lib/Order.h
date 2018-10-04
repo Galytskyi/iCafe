@@ -37,9 +37,9 @@ namespace Order
 
 	const char* const		OrderTypeStr[] =
 	{
-							QT_TRANSLATE_NOOP("Order.h", "Undefined"),
-							QT_TRANSLATE_NOOP("Order.h", "Table"),
-							QT_TRANSLATE_NOOP("Order.h", "Lunch"),
+							QT_TRANSLATE_NOOP("Order.h", "Не определен"),
+							QT_TRANSLATE_NOOP("Order.h", "Столик"),
+							QT_TRANSLATE_NOOP("Order.h", "Обед"),
 	};
 
 	const int			TYPE_COUNT							= sizeof(OrderTypeStr)/sizeof(OrderTypeStr[0]);

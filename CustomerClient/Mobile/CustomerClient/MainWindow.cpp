@@ -40,7 +40,7 @@ MainWindow::~MainWindow()
 bool MainWindow::createInterface()
 {
 	setWindowIcon(QIcon(":/icons/Logo.png"));
-	setWindowTitle(tr("Client of orders"));
+	setWindowTitle(tr("Клиент заказов"));
 	setMinimumSize(480, 640);
 	move(QApplication::desktop()->availableGeometry().center() - rect().center());
 
@@ -242,33 +242,33 @@ void MainWindow::createActions()
 
 	// Order
 	//
-	m_pSearchAction = new QAction(tr("Search"), this);
+	m_pSearchAction = new QAction(tr("Поиск"), this);
 	m_pSearchAction->setIcon(QIcon(":/icons/Search.png"));
 	m_pSearchAction->setFont(*menuFont);
 	//m_pSearchAction->setDisabled(true);
 	//m_pSearchAction->setCheckable(true);
 	connect(m_pSearchAction, &QAction::triggered, this, &MainWindow::onSearch);
 
-	m_pOrderTableAction = new QAction(tr("Order table"), this);
+	m_pOrderTableAction = new QAction(tr("Заказать столик"), this);
 	m_pOrderTableAction->setIcon(QIcon(":/icons/Table.png"));
 	m_pOrderTableAction->setFont(*menuFont);
 	connect(m_pOrderTableAction, &QAction::triggered, this, &MainWindow::onOrderTable);
 
-	m_pOrderDinnerAction = new QAction(tr("Order lunch"), this);
+	m_pOrderDinnerAction = new QAction(tr("Заказать обед"), this);
 	m_pOrderDinnerAction->setIcon(QIcon(":/icons/Dinner.png"));
 	m_pOrderDinnerAction->setFont(*menuFont);
 	connect(m_pOrderDinnerAction, &QAction::triggered, this, &MainWindow::onOrderDinner);
 
-	m_pCancelOrderAction = new QAction(tr("Cancel order"), this);
+	m_pCancelOrderAction = new QAction(tr("Отменить заказ"), this);
 	m_pCancelOrderAction->setFont(*menuFont);
 	connect(m_pCancelOrderAction, &QAction::triggered, this, &MainWindow::onOrderCancel);
 
-	m_pOptionsAction = new QAction(tr("Options"), this);
+	m_pOptionsAction = new QAction(tr("Настройки"), this);
 	m_pOptionsAction->setIcon(QIcon(":/icons/Options.png"));
 	m_pOptionsAction->setFont(*menuFont);
 	connect(m_pOptionsAction, &QAction::triggered, this, &MainWindow::onOptions);
 
-	m_pInfoAction = new QAction(tr("Info"), this);
+	m_pInfoAction = new QAction(tr("Информация"), this);
 	m_pInfoAction->setIcon(QIcon(":/icons/Info.png"));
 	m_pInfoAction->setFont(*menuFont);
 	connect(m_pInfoAction, &QAction::triggered, this, &MainWindow::onAppAbout);
@@ -284,7 +284,7 @@ bool MainWindow::createToolBars()
 	if (m_pOrderControlToolBar != nullptr)
 	{
 		m_pOrderControlToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
-		m_pOrderControlToolBar->setWindowTitle(tr("Control orders"));
+		m_pOrderControlToolBar->setWindowTitle(tr("Панель заказов"));
 		m_pOrderControlToolBar->setObjectName(m_pOrderControlToolBar->windowTitle());
 		m_pOrderControlToolBar->setMovable(false);
 		addToolBarBreak(Qt::TopToolBarArea);
@@ -361,7 +361,7 @@ void MainWindow::onSearch()
 		return;
 	}
 
-	//QMessageBox::information(this, tr("Search"), m_searchProvider->text());
+	//QMessageBox::information(this, tr("Поиск"), m_searchProvider->text());
 
 	emit setTextFilter(m_searchProvider->text().toUpper());
 
@@ -422,7 +422,7 @@ bool MainWindow::createOrder(int type)
 
 	if (theOrderBase.count() >= MAX_CUSTOMER_ORDER_COUNT)
 	{
-		QMessageBox::information(this, tr("Create order"), tr("You have already made %1 orders. To make a new order, cancel any of the previous orders.").arg(theOrderBase.count()));
+		QMessageBox::information(this, tr("Создание заказа"), tr("Вы уже сделали %1 заказов. Чтобы сделать новый заказ, отмените любой предыдущий заказ.").arg(theOrderBase.count()));
 		return false;
 	}
 
@@ -437,7 +437,7 @@ bool MainWindow::createOrder(int type)
 	Order::Item order = item.order();
 	if (order.state() != Order::STATE_UNDEFINED)
 	{
-		QMessageBox::information(this, tr("Create order"), tr("Please, cancel the previous order"));
+		QMessageBox::information(this, tr("Создание заказа"), tr("Пожалуйста, отмените предыдущий заказ."));
 		return false;
 	}
 
@@ -519,13 +519,13 @@ void MainWindow::onOrderCancel()
 
 	if (order.state() == Order::STATE_ORDER_OK)
 	{
-		QMessageBox::information(this, tr("Cancel order"), tr("To cancel the order, please, call the establishment <b>\"%1\"</b> by phone: <b>%2</b>, and say cancel code: <b>%3</b>").arg(provider.name()).arg(provider.phone()).arg(order.cancelCode()) );
+		QMessageBox::information(this, tr("Отмена заказа"), tr("Чтобы отменить заказ, пожалуйста, позвоните в заведение <b>%1</b> по телефону: <b>%2</b>, и скажите код отмены: <b>%3</b>").arg(provider.name()).arg(provider.phone()).arg(order.cancelCode()) );
 		return;
 	}
 
 	QMessageBox::StandardButton reply;
 
-	reply = QMessageBox::question(this, tr("Cancel order"), tr("Do you want to cancel the order?"), QMessageBox::Yes|QMessageBox::No);
+	reply = QMessageBox::question(this, tr("Отмена заказа"), tr("Вы хотите отменить заказ?"), QMessageBox::Yes|QMessageBox::No);
 
 	if (reply == QMessageBox::No)
 	{

@@ -40,7 +40,7 @@ void CanceOrderDialog::createInterface()
 	//
 	QHBoxLayout *codeLayout = new QHBoxLayout;
 
-	m_pCodeLabel = new QLabel(tr("Cancel code:"), this);
+	m_pCodeLabel = new QLabel(tr("Код отмены:"), this);
 	m_pCodeEdit = new QLineEdit(this);
 	m_pKeyboardButton = new QPushButton(QIcon(":/icons/Keyboard.png"), QString(), this);
 
@@ -185,7 +185,7 @@ void CanceOrderDialog::onOk()
 
 	if (code != m_cancelCode)
 	{
-		QMessageBox::information(this, tr("Cancel code"), tr("You had been input incorrect cancel code!\nTry again, please."));
+		QMessageBox::information(this, tr("Код отмены:"), tr("Вы ввели не верный код отмены!\nПопробуйте снова."));
 		m_pCodeEdit->setText(QString());
 		m_pCodeEdit->setFocus();
 		return;

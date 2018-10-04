@@ -8,7 +8,7 @@
 
 // ==============================================================================================
 
-const char* const	NO_CONNECTION_STR = QT_TRANSLATE_NOOP("OrderReceiveSocket.h", "  Waiting for connection ...");
+const char* const	NO_CONNECTION_STR = QT_TRANSLATE_NOOP("OrderReceiveSocket.h", "  Ожидание соединения ...");
 
 // ==============================================================================================
 

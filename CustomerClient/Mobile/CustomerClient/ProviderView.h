@@ -13,7 +13,7 @@
 
 const char* const		ProviderColumn[] =
 {
-						QT_TRANSLATE_NOOP("ProviderView.h", "Еstablishment"),
+						QT_TRANSLATE_NOOP("ProviderView.h", "Заведение"),
 };
 
 const int				PROVIDER_COLUMN_COUNT		= sizeof(ProviderColumn)/sizeof(ProviderColumn[0]);

@@ -61,20 +61,20 @@ void OrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 	{
 		case Order::STATE_ORDER_OK:
 
-			orderState = tr("Order accepted");
-			orderPhone = tr("Phone number: %1").arg("+380"+QString::number(order.phone()));
+			orderState = tr("Заказ принят");
+			orderPhone = tr("Номер телефона: %1").arg("+380"+QString::number(order.phone()));
 			painter->fillRect(option.rect, QColor(0xA0, 0xFF, 0xA0));
 			break;
 
 		case Order::STATE_ORDER_CANCEL:
-			orderState = tr("Order canceled");
-			orderPhone = tr("Phone number: %1").arg("+380"+QString::number(order.phone()));
+			orderState = tr("Заказ отменен");
+			orderPhone = tr("Номер телефона: %1").arg("+380"+QString::number(order.phone()));
 			painter->fillRect(option.rect, QColor(0xFF, 0xA0, 0xA0));
 			break;
 
 		case Order::STATE_ORDER_PROCESSING:
-			orderState = tr("Wait answer");
-			orderPhone= tr("Phone number: +38 (***) **-**-***");
+			orderState = tr("Ожидает ответа");
+			orderPhone= tr("Номер телефона: +38 (***) **-**-***");
 			painter->fillRect(option.rect, QColor(0xff, 0xf4, 0xc4));
 			break;
 	}
@@ -98,12 +98,12 @@ void OrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
 	Order::Time32 orderTime = order.orderTime();
 
-	QString orderDataStr = tr("%1 people").arg(order.people()) + tr(", at the %1").arg(QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute));
+	QString orderDataStr = tr("%1 человек(a)").arg(order.people()) + tr(", на %1").arg(QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute));
 
 	switch(order.type())
 	{
-		case Order::TYPE_TABLE:		orderDataStr.insert(0, tr("Table for "));	break;
-		case Order::TYPE_DINNER:	orderDataStr.insert(0, tr("Dinner for "));	break;
+		case Order::TYPE_TABLE:		orderDataStr.insert(0, tr("Столик для "));	break;
+		case Order::TYPE_DINNER:	orderDataStr.insert(0, tr("Обед для "));	break;
 		default:					assert(0);									break;
 	}
 
@@ -274,15 +274,15 @@ QString OrderTable::text(int row, int column, const Order::Item& order) const
 			{
 				Order::Time32 orderTime = order.orderTime();
 
-				result = tr("  %1 people").arg(order.people()) + tr(", at the: %1").arg(QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute)) + QString("\n");
+				result = tr("  %1 человек").arg(order.people()) + tr(", на: %1").arg(QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute)) + QString("\n");
 
 				if (order.state() == Order::STATE_ORDER_OK)
 				{
-					result += tr("  Phone number: %1").arg(QString::number(order.phone()));
+					result += tr("  Номер телеофна: %1").arg(QString::number(order.phone()));
 				}
 				else
 				{
-					result += tr("  Phone number: +38 (***) **-**-***");
+					result += tr("  Номер телефона: +38 (***) **-**-***");
 				}
 			}
 			break;
