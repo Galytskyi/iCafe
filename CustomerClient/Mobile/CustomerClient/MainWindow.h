@@ -11,6 +11,7 @@
 #include "ProviderView.h"
 #include "OrderDialog.h"
 #include "OptionsDialog.h"
+#include "AppAboutDialog.h"
 
 #include "../../../lib/Order.h"
 
@@ -40,6 +41,7 @@ private:
 	QAction*				m_pOrderDinnerAction = nullptr;
 	QAction*				m_pCancelOrderAction = nullptr;
 	QAction*				m_pOptionsAction = nullptr;
+	QAction*				m_pInfoAction = nullptr;
 
 private:
 
@@ -59,6 +61,7 @@ private:
 	ProviderView*			m_pView = nullptr;
 	OrderDialog*			m_pOrderDialog = nullptr;
 	OptionsDialog*			m_pOptionsDialog = nullptr;
+	AppAboutDialog*			m_pAppAboutDialog = nullptr;
 
 public:
 
@@ -101,6 +104,7 @@ private slots:
 	void					onOrderDinner();
 	void					onOrderCancel();
 	void					onOptions();
+	void					onAppAbout();
 
 	// Slots of widgets
 	//

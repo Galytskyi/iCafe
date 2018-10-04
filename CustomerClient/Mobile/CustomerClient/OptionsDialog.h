@@ -26,6 +26,7 @@ private:
 
 	// elements of interface - Menu
 	//
+	QLabel*				m_pLogoLabel = nullptr;
 	QLabel*				m_pRequestConfigTimeLabel = nullptr;
 	QLineEdit*			m_pRequestConfigTimeEdit = nullptr;
 

@@ -127,7 +127,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		codeOrder.setRight( midDots_x - 20 );
 
 		painter->setPen(QColor(0xFF, 0x80, 0x80));
-		painter->drawText(codeOrder, Qt::AlignRight, tr("%1").arg(order.cancelCode()));
+		painter->drawText(codeOrder, Qt::AlignRight, QString("%1").arg(order.cancelCode()));
 	}
 
 	// Order time
@@ -294,6 +294,8 @@ QVariant ProviderTable::data(const QModelIndex &index, int role) const
 
 QString ProviderTable::text(int row, int column, const ProviderItem& item) const
 {
+	Q_UNUSED(item);
+
 	if (row < 0 || row >= m_providerList.count())
 	{
 		return QString();
@@ -306,27 +308,27 @@ QString ProviderTable::text(int row, int column, const ProviderItem& item) const
 
 	QString result;
 
-	switch (column)
-	{
-		case PROVIDER_COLUMN_NAME:
+//	switch (column)
+//	{
+//		case PROVIDER_COLUMN_NAME:
 
-			result = item.provider().name() + QString("\n");
+//			result = item.provider().name() + QString("\n");
 
-			switch(item.order().state())
-			{
-				case Order::STATE_ORDER_OK:							result += tr("Your order has been accepted, Wellcome!");	break;
-				case Order::STATE_ORDER_CANCEL:						result += tr("Your order has been cancel, try later");	break;
-				case Order::STATE_ORDER_PROCESSING:					result += tr("Your order is processing by administrator");	break;
-				case Order::STATE_PROVIDER_IS_NOT_CONNECTED:		result += tr("Not connection with establishment");	break;
-				case Order::STATE_SERVER_CREATED_ORDER:				result += tr("Wait answer from establishment");	break;
-			}
+//			switch(item.order().state())
+//			{
+//				case Order::STATE_ORDER_OK:							result += tr("Your order has been accepted, Wellcome!");	break;
+//				case Order::STATE_ORDER_CANCEL:						result += tr("Your order has been cancel, try later");	break;
+//				case Order::STATE_ORDER_PROCESSING:					result += tr("Your order is processing by administrator");	break;
+//				case Order::STATE_PROVIDER_IS_NOT_CONNECTED:		result += tr("Not connection with establishment");	break;
+//				case Order::STATE_SERVER_CREATED_ORDER:				result += tr("Wait answer from establishment");	break;
+//			}
 
-			break;
+//			break;
 
-		default:
-			assert(0);
-			break;
-	}
+//		default:
+//			assert(0);
+//			break;
+//	}
 
 	return result;
 }

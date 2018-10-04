@@ -40,7 +40,7 @@ MainWindow::~MainWindow()
 bool MainWindow::createInterface()
 {
 	setWindowIcon(QIcon(":/icons/Logo.png"));
-	setWindowTitle(tr("Клиент заказов"));
+	setWindowTitle(tr("Client of orders"));
 	setMinimumSize(480, 640);
 	move(QApplication::desktop()->availableGeometry().center() - rect().center());
 
@@ -92,6 +92,21 @@ bool MainWindow::createInterface()
 	}
 
 	m_pStackedWidget->addWidget(m_pOptionsDialog);
+
+	// AppAboutDialog
+	//
+	m_pAppAboutDialog = new AppAboutDialog(this);
+	if (m_pAppAboutDialog == nullptr)
+	{
+		assert(0);
+	}
+	else
+	{
+		connect(m_pAppAboutDialog, &AppAboutDialog::accepted, this, &MainWindow::onSetMainWidget, Qt::QueuedConnection);
+		connect(m_pAppAboutDialog, &AppAboutDialog::rejected, this, &MainWindow::onSetMainWidget, Qt::QueuedConnection);
+	}
+
+	m_pStackedWidget->addWidget(m_pAppAboutDialog);
 
 	//
 	//
@@ -252,6 +267,11 @@ void MainWindow::createActions()
 	m_pOptionsAction->setIcon(QIcon(":/icons/Options.png"));
 	m_pOptionsAction->setFont(*menuFont);
 	connect(m_pOptionsAction, &QAction::triggered, this, &MainWindow::onOptions);
+
+	m_pInfoAction = new QAction(tr("Info"), this);
+	m_pInfoAction->setIcon(QIcon(":/icons/Info.png"));
+	m_pInfoAction->setFont(*menuFont);
+	connect(m_pInfoAction, &QAction::triggered, this, &MainWindow::onAppAbout);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -264,7 +284,7 @@ bool MainWindow::createToolBars()
 	if (m_pOrderControlToolBar != nullptr)
 	{
 		m_pOrderControlToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
-		m_pOrderControlToolBar->setWindowTitle(tr("Control panel measure process"));
+		m_pOrderControlToolBar->setWindowTitle(tr("Control orders"));
 		m_pOrderControlToolBar->setObjectName(m_pOrderControlToolBar->windowTitle());
 		m_pOrderControlToolBar->setMovable(false);
 		addToolBarBreak(Qt::TopToolBarArea);
@@ -279,6 +299,7 @@ bool MainWindow::createToolBars()
 		//m_searchProvider->setFont(*font);
 		//m_pOrderControlToolBar->addWidget(m_searchProvider);
 
+		m_pOrderControlToolBar->addAction(m_pInfoAction);
 		m_pOrderControlToolBar->addAction(m_pOptionsAction);
 
 		m_pOrderControlToolBar->setLayoutDirection(Qt::RightToLeft);
@@ -504,7 +525,7 @@ void MainWindow::onOrderCancel()
 
 	QMessageBox::StandardButton reply;
 
-	reply = QMessageBox::question(this, "Cancel order", "Do you want to cancel the order?", QMessageBox::Yes|QMessageBox::No);
+	reply = QMessageBox::question(this, tr("Cancel order"), tr("Do you want to cancel the order?"), QMessageBox::Yes|QMessageBox::No);
 
 	if (reply == QMessageBox::No)
 	{
@@ -538,6 +559,29 @@ void MainWindow::onOptions()
 
 	m_pOptionsDialog->setCustomerData(theOptions.customerData());
 	m_pOptionsDialog->initDialog();
+
+	m_pStackedWidget->setCurrentIndex(widgetIndex);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::onAppAbout()
+{
+	if (m_pStackedWidget == nullptr)
+	{
+		return;
+	}
+
+	if (m_pAppAboutDialog == nullptr)
+	{
+		return;
+	}
+
+	int widgetIndex = m_pStackedWidget->indexOf(m_pAppAboutDialog);
+	if (widgetIndex < 0 || widgetIndex >= m_pStackedWidget->count())
+	{
+		return;
+	}
 
 	m_pStackedWidget->setCurrentIndex(widgetIndex);
 }

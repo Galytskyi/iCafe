@@ -44,11 +44,16 @@ void OrderDialog::createInterface()
 
 	QVBoxLayout *providerLayout = new QVBoxLayout;
 
-	m_pProviderLabel = new QLabel(tr("Do you want to order in the"), this);
+	m_pLogoLabel = new QLabel(this);
+	m_pLogoLabel->setPixmap(QPixmap(":/icons/Logo.png"));
+	m_pLogoLabel->setAlignment(Qt::AlignCenter);
+
+	m_pProviderLabel = new QLabel(tr("Do you want to order in the:"), this);
 	m_pProviderEdit = new QLineEdit(this);
 	m_pProviderEdit->setReadOnly(true);
 	m_pProviderEdit->setFont(*listFont);
 
+	providerLayout->addWidget(m_pLogoLabel);
 	providerLayout->addWidget(m_pProviderLabel);
 	providerLayout->addWidget(m_pProviderEdit);
 
@@ -56,7 +61,7 @@ void OrderDialog::createInterface()
 	//
 	QVBoxLayout *phoneLayout = new QVBoxLayout;
 
-	m_pPhoneLabel = new QLabel(tr("Your phone number (+380**********)"), this);
+	m_pPhoneLabel = new QLabel(tr("Your phone number (+380**********):"), this);
 	m_pPhoneEdit = new QLineEdit(this);
 	m_pPhoneEdit->setFont(*listFont);
 	//m_pPhoneEdit->setValidator(new QIntValidator(this));
@@ -69,7 +74,7 @@ void OrderDialog::createInterface()
 	//
 	QVBoxLayout *timeLayout = new QVBoxLayout;
 
-	m_pTimeLabel = new QLabel(tr("Time of you order (HH:MM)"), this);
+	m_pTimeLabel = new QLabel(tr("Time of your order (HH:MM):"), this);
 	m_pTimeEdit = new QLineEdit(this);
 	m_pTimeEdit->setFont(*listFont);
 	m_pTimeEdit ->setValidator(new QRegExpValidator(QRegExp("[0-9]{1,2}\\:[0-9]{1,2}"), this));
@@ -81,7 +86,7 @@ void OrderDialog::createInterface()
 	//
 	QVBoxLayout *peopleCntLayout = new QVBoxLayout;
 
-	m_pPeopleLabel = new QLabel(tr("Number of people"), this);
+	m_pPeopleLabel = new QLabel(tr("Number of people:"), this);
 	m_pPeopleEdit = new QLineEdit(this);
 	m_pPeopleEdit->setFont(*listFont);
 	m_pPeopleEdit->setValidator(new QIntValidator(1, 30, this));
@@ -114,7 +119,39 @@ void OrderDialog::initDialog()
 {
 	// init elements of interface
 	//
+
+	QString typeStr = tr("something");
+	QString logoStr = ":/icons/Logo.png";
+
+	int type = theOptions.customerData().orderType();
+	if (type < 0 || type >= Order::TYPE_COUNT)
+	{
+		typeStr = tr("something");
+		logoStr = ":/icons/Logo.png";
+	}
+	else
+	{
+		switch (type)
+		{
+			case Order::TYPE_TABLE:
+				typeStr = tr("Do you want to order table in the:");
+				logoStr = ":/icons/Table.png";
+				break;
+			case Order::TYPE_DINNER:
+				typeStr = tr("Do you want to order lunch in the:");
+				logoStr = ":/icons/Dinner.png";
+				break;
+			default:
+				typeStr = tr("Do you want to order in the:");
+				logoStr = ":/icons/Logo.png";
+				break;
+		}
+	}
+
 	Order::Time32 orderTime = m_customerData.orderTime();
+
+	m_pLogoLabel->setPixmap(QPixmap(logoStr));
+	m_pProviderLabel->setText(typeStr);
 
 	m_pProviderEdit->setText(m_providerName);
 	m_pPhoneEdit->setText("+380"+QString::number(m_customerData.phone()));
@@ -148,8 +185,7 @@ void OrderDialog::onOk()
 
 	QString timeStr = m_pTimeEdit->text();
 
-
-	if (timeStr.isEmpty() == true)
+	if (timeStr.isEmpty() == true || timeStr.length() != 5)
 	{
 		QMessageBox::information(this, windowTitle(), tr("Please, input order time!"));
 		m_pTimeEdit->setFocus();
@@ -162,6 +198,8 @@ void OrderDialog::onOk()
 	begPos = timeStr.indexOf(':');
 	if (begPos == -1)
 	{
+		QMessageBox::information(this, windowTitle(), tr("Please, input order time!"));
+		m_pTimeEdit->setFocus();
 		return;
 	}
 

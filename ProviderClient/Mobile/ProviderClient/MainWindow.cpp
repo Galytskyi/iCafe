@@ -39,7 +39,7 @@ MainWindow::~MainWindow()
 bool MainWindow::createInterface()
 {
 	setWindowIcon(QIcon(":/icons/Logo.png"));
-	setWindowTitle(tr("Поставщик заказов"));
+	setWindowTitle(tr("Provider of orders"));
 	setMinimumSize(480, 640);
 	move(QApplication::desktop()->availableGeometry().center() - rect().center());
 
@@ -93,6 +93,21 @@ bool MainWindow::createInterface()
 	}
 
 	m_pStackedWidget->addWidget(m_pOptionsDialog);
+
+	// AppAboutDialog
+	//
+	m_pAppAboutDialog = new AppAboutDialog(this);
+	if (m_pAppAboutDialog == nullptr)
+	{
+		assert(0);
+	}
+	else
+	{
+		connect(m_pAppAboutDialog, &AppAboutDialog::accepted, this, &MainWindow::onSetMainWidget, Qt::QueuedConnection);
+		connect(m_pAppAboutDialog, &AppAboutDialog::rejected, this, &MainWindow::onSetMainWidget, Qt::QueuedConnection);
+	}
+
+	m_pStackedWidget->addWidget(m_pAppAboutDialog);
 
 	//
 	//
@@ -244,6 +259,10 @@ void MainWindow::createActions()
 	m_pOptionsAction->setIcon(QIcon(":/icons/Options.png"));
 	m_pOptionsAction->setToolTip(tr("Options"));
 	connect(m_pOptionsAction, &QAction::triggered, this, &MainWindow::onOptions);
+
+	m_pInfoAction = new QAction(tr("Info"), this);
+	m_pInfoAction->setIcon(QIcon(":/icons/Info.png"));
+	connect(m_pInfoAction, &QAction::triggered, this, &MainWindow::onAppAbout);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -256,22 +275,21 @@ bool MainWindow::createToolBars()
 	if (m_pOrderControlToolBar != nullptr)
 	{
 		m_pOrderControlToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
-		m_pOrderControlToolBar->setWindowTitle(tr("Control panel measure process"));
+		m_pOrderControlToolBar->setWindowTitle(tr("Control orders"));
 		m_pOrderControlToolBar->setObjectName(m_pOrderControlToolBar->windowTitle());
 		m_pOrderControlToolBar->setMovable(false);
 		addToolBarBreak(Qt::TopToolBarArea);
 		addToolBar(m_pOrderControlToolBar);
 
-
+		m_pOrderControlToolBar->addAction(m_pInfoAction);
 		m_pOrderControlToolBar->addAction(m_pOptionsAction);
 
-		QFont* font = new QFont("Arial", 14, 2);
-
 		m_connectLabel = new QLabel(m_pOrderControlToolBar);
-		m_connectLabel->setFont(*font);
+		QSize cellSize = QFontMetrics(m_connectLabel->font()).size(Qt::TextSingleLine, NO_CONNECTION_STR);
 		m_connectLabel->setStyleSheet("color: rgb(255, 0, 0);");
 		m_connectLabel->setText(tr(NO_CONNECTION_STR));
-		m_connectLabel->setFixedWidth(450);
+		m_connectLabel->setFixedWidth(cellSize.width());
+		m_connectLabel->setFixedHeight(cellSize.height());
 		m_connectLabel->setEnabled(false);
 
 
@@ -373,6 +391,29 @@ void MainWindow::onOptions()
 
 // -------------------------------------------------------------------------------------------------------------------
 
+void MainWindow::onAppAbout()
+{
+	if (m_pStackedWidget == nullptr)
+	{
+		return;
+	}
+
+	if (m_pAppAboutDialog == nullptr)
+	{
+		return;
+	}
+
+	int widgetIndex = m_pStackedWidget->indexOf(m_pAppAboutDialog);
+	if (widgetIndex < 0 || widgetIndex >= m_pStackedWidget->count())
+	{
+		return;
+	}
+
+	m_pStackedWidget->setCurrentIndex(widgetIndex);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 void MainWindow::onOrderListClick(const QModelIndex& index)
 {
 	if (m_pView == nullptr)
@@ -395,7 +436,7 @@ void MainWindow::onOrderListClick(const QModelIndex& index)
 
 				QMessageBox::StandardButton reply;
 
-				reply = QMessageBox::question(this, tr("Cancel order"), tr("Do you want to cancel the order?\n\nTo cancel the order, please, call the client by phone: +380%1, and ask cancel code").arg(order.phone()).arg(order.phone()), QMessageBox::Yes|QMessageBox::No);
+				reply = QMessageBox::question(this, tr("Cancel order"), tr("Do you want to cancel the order?\n\nTo cancel the order, please, call the client by phone: +380%1, and ask cancel code.").arg(order.phone()).arg(order.phone()), QMessageBox::Yes|QMessageBox::No);
 				if (reply == QMessageBox::No)
 				{
 					break;
@@ -429,7 +470,7 @@ void MainWindow::onOrderListClick(const QModelIndex& index)
 			{
 				QMessageBox::StandardButton reply;
 
-				reply = QMessageBox::question(this, "Take order", "Do you want to take order?", QMessageBox::Yes|QMessageBox::No);
+				reply = QMessageBox::question(this, tr("Take order"), tr("Do you want to take order?"), QMessageBox::Yes|QMessageBox::No);
 
 				if (reply == QMessageBox::Yes)
 				{

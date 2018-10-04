@@ -7,5 +7,7 @@
         <file>icons/Options.png</file>
         <file>icons/Table.png</file>
         <file>icons/Logo.png</file>
+        <file>icons/Info.png</file>
+        <file>icons/Settings.png</file>
     </qresource>
 </RCC>

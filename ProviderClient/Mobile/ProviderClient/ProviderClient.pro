@@ -8,7 +8,6 @@ QT += core
 QT += gui
 QT += network
 QT += xml
-QT += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -29,6 +28,10 @@ win32 {
 unix {
 	CONFIG(debug, debug|release): DESTDIR = ../../../bin_unix/debug
 	CONFIG(release, debug|release): DESTDIR = ../../../bin_unix/release
+}
+android {
+	CONFIG(debug, debug|release): DESTDIR = ../../../bin_android/debug
+	CONFIG(release, debug|release): DESTDIR = ../../../bin_android/release
 }
 
 # include(../../../qtpropertybrowser/src/qtpropertybrowser.pri)
@@ -57,10 +60,10 @@ SOURCES += \
 	Options.cpp \
 	OrderView.cpp \
 	OptionsDialog.cpp \
-	Database.cpp \
 	OrderStateSocket.cpp \
 	OrderReceiveSocket.cpp \
-    CancelOrderDialog.cpp
+    CancelOrderDialog.cpp \
+    AppAboutDialog.cpp
 
 
 HEADERS += \
@@ -74,11 +77,10 @@ HEADERS += \
 	Options.h \
 	OrderView.h \
 	OptionsDialog.h \
-	Database.h \
 	OrderStateSocket.h \
 	OrderReceiveSocket.h \
-    CancelOrderDialog.h
-
+    CancelOrderDialog.h \
+    AppAboutDialog.h
 
 RESOURCES += \
 	resources.qrc
@@ -96,6 +98,13 @@ DISTFILES += \
     android/res/drawable-hdpi/icon.png \
 	android/res/drawable-xhdpi/icon.png \
     android/res/drawable-xxhdpi/icon.png \
-    android/res/drawable-xxxhdpi/icon.png
+    android/res/drawable-xxxhdpi/icon.png \
+	translations/ProviderClient_ru.ts \
+    translations/ProviderClient_ru.qm
+
+TRANSLATIONS =	\
+	translations/ProviderClient_ru.ts
+
+CODECFORSRC     = UTF-8
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

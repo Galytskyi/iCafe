@@ -183,10 +183,10 @@ const int			xmlTagOrderLastVersion = 1;
 
 const char* const	ArchTypeStr[] =
 {
-					QT_TRANSLATE_NOOP("ArchThread.h", "Error"),
-					QT_TRANSLATE_NOOP("ArchThread.h", "Warning"),
-					QT_TRANSLATE_NOOP("ArchThread.h", "Event"),
-					QT_TRANSLATE_NOOP("ArchThread.h", "Order"),
+					"Error",
+					"Warning",
+					"Event",
+					"Order",
 };
 
 const int			ARCH_MSG_TYPE_COUNT						= sizeof(ArchTypeStr)/sizeof(ArchTypeStr[0]);

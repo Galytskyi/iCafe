@@ -14,8 +14,8 @@
 
 const char* const		DatabaseParam[] =
 {
-						QT_TRANSLATE_NOOP("Options.h", "Path"),
-						QT_TRANSLATE_NOOP("Options.h", "Type"),
+						"Path",
+						"Type",
 };
 
 const int				DBO_PARAM_COUNT	= sizeof(DatabaseParam)/sizeof(DatabaseParam[0]);
@@ -27,7 +27,7 @@ const int				DBO_PARAM_PATH	= 0,
 
 const char* const		DatabaseType[] =
 {
-						QT_TRANSLATE_NOOP("Options.h", "SQLite"),
+						"SQLite",
 };
 
 const int				DATABASE_TYPE_COUNT		= sizeof(DatabaseType)/sizeof(DatabaseType[0]);

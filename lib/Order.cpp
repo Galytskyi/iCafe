@@ -149,16 +149,7 @@ namespace Order
 			return QString();
 		}
 
-		QString str;
-
-		switch(m_type)
-		{
-			case Order::TYPE_TABLE:		str.insert(0, tr("Table"));		break;
-			case Order::TYPE_DINNER:	str.insert(0, tr("Dinner"));	break;
-			default:					assert(0);						break;
-		}
-
-		return str;
+		return OrderTypeStr[m_type];
 	}
 
 	bool Item::setType(int type)

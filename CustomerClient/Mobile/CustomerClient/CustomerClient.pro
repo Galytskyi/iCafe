@@ -12,7 +12,7 @@ QT += xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 win32 {
-	TARGET = CustomerClinent
+	TARGET = CustomerClient
 }
 android{
 	TARGET = BookingRest
@@ -29,6 +29,10 @@ win32 {
 unix {
 	CONFIG(debug, debug|release): DESTDIR = ../../../bin_unix/debug
 	CONFIG(release, debug|release): DESTDIR = ../../../bin_unix/release
+}
+android {
+	CONFIG(debug, debug|release): DESTDIR = ../../../bin_android/debug
+	CONFIG(release, debug|release): DESTDIR = ../../../bin_android/release
 }
 
 
@@ -50,7 +54,7 @@ SOURCES += \
 	../../../lib/Provider.cpp \
 	../../../lib/XmlHelper.cpp \
 	../../../lib/Order.cpp \
-	../../../lib/Crc32.cpp
+	../../../lib/Crc32.cpp \
 	main.cpp \
 	MainWindow.cpp \
 	ProviderView.cpp \
@@ -58,7 +62,8 @@ SOURCES += \
 	OrderDialog.cpp \
 	Options.cpp \
     OrderStateSocket.cpp \
-    OptionsDialog.cpp \
+	OptionsDialog.cpp \
+    AppAboutDialog.cpp
 
 HEADERS += \
 	../../../lib/UdpSocket.h \
@@ -73,7 +78,8 @@ HEADERS += \
 	OrderDialog.h \
 	Options.h \
     OrderStateSocket.h \
-    OptionsDialog.h
+    OptionsDialog.h \
+    AppAboutDialog.h
 
 
 RESOURCES += \
@@ -92,6 +98,13 @@ DISTFILES += \
 	android/res/drawable-hdpi/icon.png \
 	android/res/drawable-xhdpi/icon.png \
 	android/res/drawable-xxhdpi/icon.png \
-	android/res/drawable-xxxhdpi/icon.png
+	android/res/drawable-xxxhdpi/icon.png \
+    translations/CustomerClient_ru.ts \
+    translations/CustomerClient_ru.qm
+
+TRANSLATIONS =	\
+	translations/CustomerClient_ru.ts
+
+CODECFORSRC     = UTF-8
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

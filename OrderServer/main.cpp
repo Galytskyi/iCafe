@@ -16,8 +16,10 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 
 	a.setApplicationName("OrderServer");
-	a.setOrganizationName("iCafe");
-	a.setOrganizationDomain("iCafe.com");
+	a.setOrganizationName("BookingRest");
+	a.setOrganizationDomain("BookingRest.com.ua");
+
+	a.setApplicationVersion(QString("1.0"));
 
 	theOptions.load();
 

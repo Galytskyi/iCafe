@@ -40,9 +40,14 @@ void OptionsDialog::createInterface()
 	//
 	QVBoxLayout *providerIdLayout = new QVBoxLayout;
 
+	m_pLogoLabel = new QLabel(this);
+	m_pLogoLabel->setPixmap(QPixmap(":/icons/Settings.png"));
+	m_pLogoLabel->setAlignment(Qt::AlignCenter);
+
 	m_pProviderIdLabel = new QLabel(tr("ProviderID:"), this);
 	m_pProviderIdEdit = new QLineEdit(this);
 
+	providerIdLayout->addWidget(m_pLogoLabel);
 	providerIdLayout->addWidget(m_pProviderIdLabel);
 	providerIdLayout->addWidget(m_pProviderIdEdit);
 

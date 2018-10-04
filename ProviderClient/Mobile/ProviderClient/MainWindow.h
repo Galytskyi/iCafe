@@ -11,6 +11,7 @@
 #include "OrderView.h"
 #include "CancelOrderDialog.h"
 #include "OptionsDialog.h"
+#include "AppAboutDialog.h"
 
 #include "../../../lib/Order.h"
 
@@ -38,6 +39,7 @@ private:
 							// menu - Order
 							//
 	QAction*				m_pOptionsAction = nullptr;
+	QAction*				m_pInfoAction = nullptr;
 
 private:
 
@@ -58,6 +60,7 @@ private:
 	OrderView*				m_pView= nullptr;
 	CanceOrderDialog*		m_pCancelOrderDialog = nullptr;
 	OptionsDialog*			m_pOptionsDialog = nullptr;
+	AppAboutDialog*			m_pAppAboutDialog = nullptr;
 
 public:
 
@@ -95,6 +98,7 @@ private slots:
 	// menu - Order
 	//
 	void					onOptions();
+	void					onAppAbout();
 
 	// Slots of view
 	//

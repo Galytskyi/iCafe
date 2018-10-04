@@ -242,41 +242,11 @@ QVariant OrderTable::data(const QModelIndex &index, int role) const
 		return QVariant();
 	}
 
-	if (role == Qt::TextAlignmentRole)
-	{
-		return Qt::AlignLeft;
-	}
-
-	if (role == Qt::TextColorRole)
-	{
-		return QVariant();
-	}
-
-	if (role == Qt::BackgroundColorRole)
-	{
-		QVariant result = QVariant();
-
-		switch(order.state())
-		{
-			case Order::STATE_ORDER_OK:			result = QColor(0xA0, 0xFF, 0xA0);	break;
-			case Order::STATE_ORDER_CANCEL:		result = QColor(Qt::gray);			break;
-			case Order::STATE_ORDER_PROCESSING:	result = QColor(0xFF, 0xA0, 0xA0);	break;
-			default:							result = QVariant();				break;
-		}
-
-		return result;
-	}
-
 	if (role == Qt::UserRole)
 	{
 		QVariant var;
 		var.setValue(order);
 		return var;
-	}
-
-	if (role == Qt::DisplayRole || role == Qt::EditRole)
-	{
-		return text(row, column, order);
 	}
 
 	return QVariant();

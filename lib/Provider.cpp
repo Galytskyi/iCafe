@@ -619,7 +619,7 @@ namespace Provider
 
 			default:
 
-				qDebug() << tr("ProviderType::readFromXml - Undefined version");
+				qDebug() << "ProviderType::readFromXml - Undefined version";
 				assert(0);
 
 				break;
@@ -653,7 +653,7 @@ namespace Provider
 
 		default:
 
-			qDebug() << tr("ProviderType::readFromXml - Undefined version");
+			qDebug() << "ProviderType::readFromXml - Undefined version";
 			assert(0);
 
 			break;

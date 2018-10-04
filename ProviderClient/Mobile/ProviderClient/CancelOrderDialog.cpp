@@ -185,7 +185,9 @@ void CanceOrderDialog::onOk()
 
 	if (code != m_cancelCode)
 	{
-		QMessageBox::information(this, tr("Cancel code"), tr("You had been input incorrect cancel code!"));
+		QMessageBox::information(this, tr("Cancel code"), tr("You had been input incorrect cancel code!\nTry again, please."));
+		m_pCodeEdit->setText(QString());
+		m_pCodeEdit->setFocus();
 		return;
 	}
 

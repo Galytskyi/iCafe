@@ -43,9 +43,14 @@ void OptionsDialog::createInterface()
 
 	QVBoxLayout *requestConfigTimeLayout = new QVBoxLayout;
 
+	m_pLogoLabel = new QLabel(this);
+	m_pLogoLabel->setPixmap(QPixmap(":/icons/Settings.png"));
+	m_pLogoLabel->setAlignment(Qt::AlignCenter);
+
 	m_pRequestConfigTimeLabel = new QLabel(tr("Config request time (ms):"), this);
 	m_pRequestConfigTimeEdit = new QLineEdit(this);
 
+	requestConfigTimeLayout->addWidget(m_pLogoLabel);
 	requestConfigTimeLayout->addWidget(m_pRequestConfigTimeLabel);
 	requestConfigTimeLayout->addWidget(m_pRequestConfigTimeEdit);
 
