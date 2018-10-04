@@ -170,7 +170,7 @@ namespace Order
 
 	int Item::createCancelCode()
 	{
-		m_cancelCode = (rand() - 0)*(9999-1000)/(RAND_MAX - 0) + 1000;
+		m_cancelCode = ( (double) (rand()) - 0)*(9999-1000)/(RAND_MAX - 0) + 1000;
 
 		return m_cancelCode;
 	}

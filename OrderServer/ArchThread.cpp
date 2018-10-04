@@ -1,5 +1,6 @@
 #include "ArchThread.h"
 
+#include <QApplication>
 #include <QThread>
 #include <QDateTime>
 #include <QDebug>
@@ -43,7 +44,7 @@ void ArchThread::slot_onThreadFinished()
 
 void ArchThread::onThreadStarted()
 {
-	m_archFile.setFileName(ArchFileName);
+	m_archFile.setFileName(qApp->applicationDirPath() + "/" + ArchFileName);
 	if (m_archFile.open(QIODevice::Append) == false)
 	{
 		qDebug() << "ArchThread::onThreadStarted() - arch file was not opened";

@@ -19,7 +19,7 @@
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
-	theOrderBase.readFromXml(QString("customer%1").arg(xmlOrderFileName));
+	theOrderBase.readFromXml(qApp->applicationDirPath() + "/"+ QString("customer%1").arg(xmlOrderFileName));
 
 	createInterface();
 
@@ -519,7 +519,7 @@ void MainWindow::onOrderCancel()
 
 	if (order.state() == Order::STATE_ORDER_OK)
 	{
-		QMessageBox::information(this, tr("Отмена заказа"), tr("Чтобы отменить заказ, пожалуйста, позвоните в заведение <b>\"%1\"</b> по телефону: <b>%2</b> и сообщите код отмены: <b style=\"color: #FF0000\">%3</b>").arg(provider.name()).arg(provider.phone()).arg(order.cancelCode()) );
+		QMessageBox::information(this, tr("Отмена заказа"), tr("Чтобы отменить заказ, пожалуйста, позвоните в заведение <b>\"%1\"</b> по телефону: <b>%2</b> и сообщите код отмены: <b style=\"color: #FF0000\">%3</b>.<br>Или подождите %4 минут и Ваш заказ будет отменен автоматически.").arg(provider.name()).arg(provider.phone()).arg(order.cancelCode()).arg( MAX_SECONDS_ORDER_LIVE / 60 ) );
 		return;
 	}
 
@@ -646,7 +646,7 @@ void MainWindow::cfgXmlReceived(const QByteArray& cfgXmlData, int version)
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-	theOrderBase.writeToXml(QString("customer%1").arg(xmlOrderFileName));
+	theOrderBase.writeToXml(qApp->applicationDirPath() + "/"+ QString("customer%1").arg(xmlOrderFileName));
 
 	QMainWindow::closeEvent(e);
 }

@@ -33,8 +33,7 @@ void CustomerOrderSocket::onSocketThreadStarted()
 
 	connect(this, &CustomerOrderSocket::appendOrderToBase, &theOrderBase, &Order::Base::slot_appendOrder, Qt::QueuedConnection);
 
-	QTime midnight(0,0,0);
-	qsrand(midnight.secsTo(QTime::currentTime()));
+	qsrand(QTime::currentTime().msecsSinceStartOfDay());
 }
 
 // -------------------------------------------------------------------------------------------------------------------

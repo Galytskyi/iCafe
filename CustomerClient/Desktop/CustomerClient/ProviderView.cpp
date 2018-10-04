@@ -285,7 +285,7 @@ QVariant ProviderTable::data(const QModelIndex &index, int role) const
 
 	if (role == Qt::TextColorRole)
 	{
-		if (item.provider().active() == false)
+		if (item.provider().isActive() == false)
 		{
 			return QColor(0xA0, 0xA0, 0xA0);
 		}
@@ -503,7 +503,7 @@ void ProviderView::updateList()
 	for(int i = 0; i < count; i++)
 	{
 		Provider::Item provider = theProviderBase.provider(i);
-		if (provider.isEmpty() == true || provider.active()== false)
+		if (provider.isEmpty() == true || provider.isActive()== false)
 		{
 			continue;
 		}

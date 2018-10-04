@@ -1,5 +1,6 @@
 #include "ConfigSocket.h"
 
+#include <QApplication>
 #include <QFile>
 #include <assert.h>
 
@@ -229,7 +230,7 @@ void ConfigSocket::requestGetConfigXml(quint32 partIndex)
 			assert(m_rcxi.dataSize != m_cfgXmlData.count());
 		}
 
-		QFile file(xmlConfigFileName);
+		QFile file(qApp->applicationDirPath() + "/" + xmlConfigFileName);
 		if (file.open(QIODevice::WriteOnly) == true)
 		{
 			file.write(m_cfgXmlData);

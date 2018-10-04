@@ -5,8 +5,8 @@
 #include <QStyledItemDelegate>
 #include <QMutex>
 
-#include "../../lib/Provider.h"
-#include "../../lib/Order.h"
+#include "../lib/Provider.h"
+#include "../lib/Order.h"
 
 
 // ==============================================================================================

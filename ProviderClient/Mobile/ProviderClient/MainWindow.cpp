@@ -18,7 +18,7 @@
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
-	theOrderBase.readFromXml(QString("provider%1").arg(xmlOrderFileName));
+	theOrderBase.readFromXml(qApp->applicationDirPath() + "/"+ QString("provider%1").arg(xmlOrderFileName));
 
 	createInterface();
 
@@ -561,7 +561,7 @@ void MainWindow::removeOrder(const Order::Item& order)
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-	theOrderBase.writeToXml(QString("provider%1").arg(xmlOrderFileName));
+	theOrderBase.writeToXml(qApp->applicationDirPath() + "/"+ QString("provider%1").arg(xmlOrderFileName));
 
 	QMainWindow::closeEvent(e);
 }
