@@ -66,7 +66,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		case Order::STATE_ORDER_PROCESSING:
 		case Order::STATE_SERVER_CREATED_ORDER:
 			orderState = tr("Ждите ответа");
-			painter->fillRect(option.rect, QColor(0xff, 0xf4, 0xc4));	break;
+			painter->fillRect(option.rect, QColor(0xff, 0xfa, 0xd1));	break;
 			break;
 	}
 
@@ -93,7 +93,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	painter->drawText(providerDataRect, Qt::AlignLeft, provider.name());
 
 	QSize cellSize = QFontMetrics(*m_providerNameFont).size(Qt::TextSingleLine,"A");
-	providerDataRect.adjust(0, cellSize.height() , 0, 0);
+	providerDataRect.adjust(0, cellSize.height(), 0, 0);
 
 	painter->setFont(*m_providerAddressFont);
 	painter->setPen(QColor(0x70, 0x70, 0x70));
@@ -103,7 +103,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	//painter->setFont(*m_providerAddressFont);
 	painter->setPen(QColor(0x70, 0x70, 0x70));
-	painter->drawText(providerDataRect, Qt::AlignLeft, "+380 " + provider.phone() );
+	painter->drawText(providerDataRect, Qt::AlignLeft, provider.phone() );
 
 	// order state
 	//

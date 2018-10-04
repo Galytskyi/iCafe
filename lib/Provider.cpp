@@ -73,8 +73,10 @@ namespace Provider
 		m_id = INVALID_ID;
 		m_googleID.clear();
 
+		m_rank = 0;
 		m_active = false;
 		m_activeTime.clear();
+		m_enableDinner = false;
 
 		m_type = 0;
 
@@ -128,6 +130,7 @@ namespace Provider
 				result &= xml.readUInt32Attribute("ProviderID", &m_id);
 
 				result &= xml.readIntAttribute("Type", &m_type);
+				result &= xml.readBoolAttribute("EnableDinner", &m_enableDinner);
 
 				result &= xml.readStringAttribute("Name", &m_name);
 				result &= xml.readStringAttribute("Address", &m_address);
@@ -159,6 +162,7 @@ namespace Provider
 					xml.writeUInt32Attribute("ProviderID", providerID(), false);
 
 					xml.writeIntAttribute("Type", type());
+					xml.writeBoolAttribute("EnableDinner", enableDinner());
 
 					xml.writeStringAttribute("Name", name());
 					xml.writeStringAttribute("Address", address());
@@ -185,8 +189,10 @@ namespace Provider
 		m_id = from.m_id;
 		m_googleID = from.m_googleID;
 
+		m_rank = from.m_rank;
 		m_active = from.m_active;
 		m_activeTime = from.m_activeTime;
+		m_enableDinner = from.m_enableDinner;
 
 		m_type = from.m_type;
 

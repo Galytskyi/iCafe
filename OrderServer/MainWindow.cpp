@@ -54,7 +54,7 @@ bool MainWindow::createInterface()
 {
 //	setWindowIcon(QIcon(":/icons/Metrology.ico"));
 	setWindowTitle(tr("Сервер заказов"));
-	setMinimumSize(640, 480);
+	setMinimumSize(700, 500);
 	move(QApplication::desktop()->availableGeometry().center() - rect().center());
 
 //	createActions();
@@ -544,11 +544,13 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 	SqlTable* table = thePtrDB->openTable(SQL_TABLE_PROVIDER);
 	if (table == nullptr)
 	{
+		QMessageBox::information(this, tr("Database"), tr("Error of opening table SQL_TABLE_PROVIDER for write") );
 		return;
 	}
 
 	if (table->write(&provider, 1, provider.providerID()) != 1)
 	{
+		QMessageBox::information(this, tr("Database"), tr("Error writing to table") );
 		return;
 	}
 

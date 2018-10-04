@@ -56,8 +56,10 @@ int SqlFieldBase::init(int objectType, int)
 			append("ObjectID",						QVariant::Int);
 			append("ProviderID",					QVariant::Int);
 
+			append("Rank",							QVariant::Int);
 			append("Active",						QVariant::Bool);
 			append("ActiveTime",					QVariant::String, 32);
+			append("EnableDinner",					QVariant::Bool);
 
 			append("TypeID",						QVariant::Int);
 
@@ -663,8 +665,10 @@ int SqlTable::read(void* pRecord, int* key, int keyCount)
 
 					provider->setProviderID(query.value(field++).toInt());
 
+					provider->setRank(query.value(field++).toInt());
 					provider->setActive(query.value(field++).toBool());
 					provider->setActiveTime(query.value(field++).toString());
+					provider->setEnableDinner(query.value(field++).toBool());
 
 					provider->setType(query.value(field++).toInt());
 
@@ -782,6 +786,8 @@ int SqlTable::write(void* pRecord, int count, int* key)
 			continue;
 		}
 
+		//qDebug() << request + QString("%1").arg(key[r]);
+
 		field = 0;
 
 		query.bindValue(field++, m_info.objectID());
@@ -819,8 +825,10 @@ int SqlTable::write(void* pRecord, int count, int* key)
 
 					query.bindValue(field++, provider->providerID());
 
+					query.bindValue(field++, provider->rank());
 					query.bindValue(field++, provider->isActive());
 					query.bindValue(field++, provider->activeTime());
+					query.bindValue(field++, provider->enableDinner());
 
 					query.bindValue(field++, provider->type());
 

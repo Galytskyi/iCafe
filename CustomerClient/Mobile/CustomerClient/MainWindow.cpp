@@ -519,7 +519,7 @@ void MainWindow::onOrderCancel()
 
 	if (order.state() == Order::STATE_ORDER_OK)
 	{
-		QMessageBox::information(this, tr("Отмена заказа"), tr("Чтобы отменить заказ, пожалуйста, позвоните в заведение <b>%1</b> по телефону: <b>%2</b>, и скажите код отмены: <b>%3</b>").arg(provider.name()).arg(provider.phone()).arg(order.cancelCode()) );
+		QMessageBox::information(this, tr("Отмена заказа"), tr("Чтобы отменить заказ, пожалуйста, позвоните в заведение <b>\"%1\"</b> по телефону: <b>%2</b> и сообщите код отмены: <b style=\"color: #FF0000\">%3</b>").arg(provider.name()).arg(provider.phone()).arg(order.cancelCode()) );
 		return;
 	}
 
@@ -603,6 +603,7 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 
 	ProviderItem item = m_pView->table().at(i);
 
+	Provider::Item provider = item.provider();
 	Order::Item order = item.order();
 
 	// create context menu
@@ -616,7 +617,11 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 	if (order.state() == Order::STATE_UNDEFINED)
 	{
 		pContextMenu->addAction(m_pOrderTableAction);
-		pContextMenu->addAction(m_pOrderDinnerAction);
+
+		if (provider.enableDinner() == true)
+		{
+			pContextMenu->addAction(m_pOrderDinnerAction);
+		}
 	}
 	else
 	{

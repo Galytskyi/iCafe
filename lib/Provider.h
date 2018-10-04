@@ -37,8 +37,10 @@ namespace Provider
 		quint32				m_id = INVALID_ID;
 		QString				m_googleID;
 
+		int					m_rank = 0;
 		bool				m_active = false;
 		QString				m_activeTime;
+		bool				m_enableDinner = false;
 
 		int					m_type = 0;
 
@@ -63,11 +65,17 @@ namespace Provider
 		QString				googleID() const { return m_googleID; }
 		void				setGoogleID(const QString& id) { m_googleID = id; }
 
+		int					rank() const { return m_rank; }
+		void				setRank(int rank) { m_rank = rank; }
+
 		bool				isActive() const { return m_active; }
 		void				setActive(bool active) { m_active = active; }
 
 		QString				activeTime() const { return m_activeTime; }
 		void				setActiveTime(const QString& time) { m_activeTime = time; }
+
+		bool				enableDinner() const { return m_enableDinner; }
+		void				setEnableDinner(bool enable) { m_enableDinner = enable; }
 
 		int					type() const { return m_type; }
 		void				setType(int type) { m_type = type; }

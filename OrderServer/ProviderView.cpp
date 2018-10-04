@@ -119,6 +119,14 @@ QVariant ProviderTable::data(const QModelIndex &index, int role) const
 			}
 		}
 
+		if (column == PROVIDER_COLUMN_DINNER)
+		{
+			if (provider.enableDinner() == true)
+			{
+				return QColor(0xA0, 0xF0, 0xA0);
+			}
+		}
+
 		return QVariant();
 	}
 
@@ -150,6 +158,7 @@ QString ProviderTable::text(int row, int column, const Provider::Item& provider)
 	{
 		case PROVIDER_COLUMN_ID:		result = QString::number(provider.providerID());					break;
 		case PROVIDER_COLUMN_ACTIVE:	result = provider.isActive() ? provider.activeTime() : tr("No");	break;
+		case PROVIDER_COLUMN_DINNER:	result = provider.enableDinner() ? "Yes" : tr("No");				break;
 		case PROVIDER_COLUMN_NAME:		result = provider.name();											break;
 		case PROVIDER_COLUMN_ADDRESS:	result = provider.address();										break;
 		case PROVIDER_COLUMN_PHONE:		result = provider.phone();											break;

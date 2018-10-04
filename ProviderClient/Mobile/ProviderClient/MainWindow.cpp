@@ -437,7 +437,7 @@ void MainWindow::onOrderListClick(const QModelIndex& index)
 
 				QMessageBox::StandardButton reply;
 
-				reply = QMessageBox::question(this, tr("Отмена заказа"), tr("Вы хотите отменить заказ?\n\nДля того чтобы отменить заказ, пожалуйста, позвоните клиенту по телефону: +380%1, и спросите код отмены.").arg(order.phone()).arg(order.phone()), QMessageBox::Yes|QMessageBox::No);
+				reply = QMessageBox::question(this, tr("Отмена заказа"), tr("Вы хотите отменить заказ?<br><br>Для того чтобы отменить заказ, пожалуйста, позвоните клиенту по телефону: <b>+380%1</b> и спросите код отмены.").arg(order.phone()).arg(order.phone()), QMessageBox::Yes|QMessageBox::No);
 				if (reply == QMessageBox::No)
 				{
 					break;
@@ -528,7 +528,7 @@ void MainWindow::appendOrder(const Order::Item& order)
 
 void MainWindow::orderStateChanged(const Order::Item& order)
 {
-	qDebug() << "MainWindow::orderStateChanged1 - ID : " << order.handle().ID << ", state: " << order.state();
+	qDebug() << "MainWindow::orderStateChanged - ID : " << order.handle().ID << ", state: " << order.state();
 
 	if (m_pView == nullptr)
 	{

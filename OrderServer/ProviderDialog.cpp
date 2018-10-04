@@ -40,28 +40,22 @@ void ProviderDialog::createInterface()
 {
 	setMinimumSize(400, 200);
 
+
 	// create elements of interface
 	//
-	QHBoxLayout *providerLayout = new QHBoxLayout;
+	QVBoxLayout *activeLayout = new QVBoxLayout;
 
-	m_pProviderIDLabel = new QLabel(tr("Provider ID"), this);
-	m_pProviderIDEdit = new QLineEdit(this);
-	m_pProviderIDEdit->setReadOnly(true);
-	m_pProviderIDEdit->setAlignment(Qt::AlignCenter);
+	m_pProviderActiveCheck = new QCheckBox(tr("Activate this provider"), this);
+	m_pEnableDinnerCheck = new QCheckBox(tr("Enable dinner for this provider"), this);
 
-	//m_pProviderActiveLabel = new QLabel(tr(""), this);
-	m_pProviderActiveCheck = new QCheckBox(this);
-
-	//providerLayout->addWidget(m_pProviderActiveLabel);
-	providerLayout->addWidget(m_pProviderActiveCheck);
-	providerLayout->addWidget(m_pProviderIDLabel);
-	providerLayout->addWidget(m_pProviderIDEdit);
+	activeLayout->addWidget(m_pProviderActiveCheck);
+	activeLayout->addWidget(m_pEnableDinnerCheck);
 
 	//
 	//
-	QVBoxLayout *nameLayout = new QVBoxLayout;
+	QHBoxLayout *nameLayout = new QHBoxLayout;
 
-	m_pNameLabel = new QLabel(tr("Name"), this);
+	m_pNameLabel = new QLabel(tr("Provider name"), this);
 	//m_pNameLabel->setAlignment(Qt::AlignCenter);
 	m_pNameEdit = new QLineEdit(this);
 
@@ -70,7 +64,7 @@ void ProviderDialog::createInterface()
 
 	//
 	//
-	QVBoxLayout *addressLayout = new QVBoxLayout;
+	QHBoxLayout *addressLayout = new QHBoxLayout;
 
 	m_pAddressLabel = new QLabel(tr("Address"), this);
 	//m_pAddressLabel->setAlignment(Qt::AlignCenter);
@@ -81,9 +75,9 @@ void ProviderDialog::createInterface()
 
 	//
 	//
-	QVBoxLayout *phoneLayout = new QVBoxLayout;
+	QHBoxLayout *phoneLayout = new QHBoxLayout;
 
-	m_pPhoneLabel = new QLabel(tr("Provider phone number (+380**********)"), this);
+	m_pPhoneLabel = new QLabel(tr("Phone number (+380**********)"), this);
 	//m_pPhoneLabel->setAlignment(Qt::AlignCenter);
 	m_pPhoneEdit = new QLineEdit(this);
 	m_pPhoneEdit->setValidator(new QRegExpValidator(QRegExp("\\+38[0-9]{10}"), this));
@@ -101,7 +95,7 @@ void ProviderDialog::createInterface()
 	//
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 
-	mainLayout->addLayout(providerLayout);
+	mainLayout->addLayout(activeLayout);
 	mainLayout->addLayout(nameLayout);
 	mainLayout->addLayout(addressLayout);
 	mainLayout->addLayout(phoneLayout);
@@ -118,8 +112,8 @@ void ProviderDialog::initDialog()
 {
 	// init elements of interface
 	//
-	m_pProviderIDEdit->setText(QString::number(m_provider.providerID()));
 	m_pProviderActiveCheck->setChecked(m_provider.isActive());
+	m_pEnableDinnerCheck->setChecked(m_provider.enableDinner());
 	m_pNameEdit->setText(m_provider.name());
 	m_pAddressEdit->setText(m_provider.address());
 	m_pPhoneEdit->setText(m_provider.phone());
@@ -130,6 +124,7 @@ void ProviderDialog::initDialog()
 void ProviderDialog::onOk()
 {
 	bool active = m_pProviderActiveCheck->checkState() == Qt::Checked;
+	bool enableDinner = m_pEnableDinnerCheck->checkState() == Qt::Checked;
 
 	QString nameStr = m_pNameEdit->text();
 
@@ -167,6 +162,7 @@ void ProviderDialog::onOk()
 	}
 
 	m_provider.setActive(active);
+	m_provider.setEnableDinner(enableDinner);
 	m_provider.setActiveTime(activeTime);
 	m_provider.setName(nameStr);
 	m_provider.setAddress(addresStr);
