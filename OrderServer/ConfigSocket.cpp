@@ -28,8 +28,7 @@ ConfigSocket::~ConfigSocket()
 
 void ConfigSocket::onSocketThreadStarted()
 {
-	qDebug() << "ConfigSocket::onSocketThreadStarted()";
-	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started", Order::Item());
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started");
 
 	createCfgXml();
 
@@ -40,6 +39,7 @@ void ConfigSocket::onSocketThreadStarted()
 
 void ConfigSocket::onSocketThreadFinished()
 {
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "finished");
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -94,11 +94,8 @@ void ConfigSocket::updateCfgXmlInfo()
 			break;
 
 		default:
-
-			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Undefined version: %1").arg(m_rcxi.version), Order::Item());
-			qDebug() << tr("ConfigSocket::updateCfgXmlInfo - Undefined version");
 			assert(0);
-
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Undefined version: %1").arg(m_rcxi.version));
 			break;
 	}
 
@@ -111,7 +108,7 @@ void ConfigSocket::processRequest(Udp::Request request)
 {
 	if(request.headerCrcOk() == false)
 	{
-		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "SIO_ERROR_INCCORECT_CRC32", Order::Item());
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "SIO_ERROR_INCCORECT_CRC32");
 		request.setErrorCode(SIO_ERROR_INCCORECT_CRC32);
 		sendAck(request);
 		return;
@@ -132,14 +129,9 @@ void ConfigSocket::processRequest(Udp::Request request)
 			break;
 
 		default:
-
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()));
 			request.setErrorCode(SIO_ERROR_INCCORECT_REQUEST_ID);
 			sendAck(request);
-
-			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()), Order::Item());
-			qDebug() << "ConfigSocket::processRequest - Unknown request.ID(): " << request.ID();
-			assert(false);
-
 			break;
 	}
 }
@@ -173,7 +165,7 @@ void ConfigSocket::replyGetConfigXml(Udp::Request request)
 	{
 		// error part index
 
-		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("SIO_ERROR_INCCORECT_PART_NUMBER: %1").arg(partIndex), Order::Item());
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("SIO_ERROR_INCCORECT_PART_NUMBER: %1").arg(partIndex));
 		request.setErrorCode(SIO_ERROR_INCCORECT_PART_NUMBER);
 		sendAck(request);
 

@@ -53,7 +53,7 @@ MainWindow::~MainWindow()
 bool MainWindow::createInterface()
 {
 //	setWindowIcon(QIcon(":/icons/Metrology.ico"));
-	setWindowTitle(tr("Сервер заказов"));
+	setWindowTitle(tr("Server of orders"));
 	setMinimumSize(700, 500);
 	move(QApplication::desktop()->availableGeometry().center() - rect().center());
 

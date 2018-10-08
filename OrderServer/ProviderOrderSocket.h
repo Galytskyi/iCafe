@@ -1,5 +1,5 @@
-#ifndef ORDERROVIDERSOCKET_H
-#define ORDERPROVIDERSOCKET_H
+#ifndef PROVIDERORDERSOCKET_H
+#define PROVIDERORDERSOCKET_H
 
 #include "../lib/UdpSocket.h"
 #include "../lib/Order.h"
@@ -40,4 +40,4 @@ private slots:
 
 // ==============================================================================================
 
-#endif // ORDERROVIDERSOCKET_H
+#endif // PROVIDERORDERSOCKET_H

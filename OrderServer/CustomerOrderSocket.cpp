@@ -26,7 +26,6 @@ CustomerOrderSocket::~CustomerOrderSocket()
 
 void CustomerOrderSocket::onSocketThreadStarted()
 {
-	qDebug() << "CustomerOrderSocket::onSocketThreadStarted()";
 	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started");
 
 	connect(this, &Udp::ServerSocket::requestReceived, this, &CustomerOrderSocket::processRequest, Qt::QueuedConnection);
@@ -41,6 +40,8 @@ void CustomerOrderSocket::onSocketThreadStarted()
 void CustomerOrderSocket::onSocketThreadFinished()
 {
 	disconnect(this, &CustomerOrderSocket::appendOrderToBase, &theOrderBase, &Order::Base::slot_appendOrder);
+
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "finished");
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -70,14 +71,9 @@ void CustomerOrderSocket::processRequest(Udp::Request request)
 			break;
 
 		default:
-
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()));
 			request.setErrorCode(SIO_ERROR_INCCORECT_REQUEST_ID);
 			sendAck(request);
-
-			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()));
-			qDebug() << "CustomerOrderSocket::processRequest - Unknown request.ID() : " << request.ID();
-			assert(false);
-
 			break;
 	}
 }
@@ -103,7 +99,6 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 	if (wo.state != Order::STATE_CUSTOMER_CREATING_ORDER)
 	{
 		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_REQUEST_INCORRECT");
-		qDebug() << "CustomerOrderSocket::replyCreateOrder - Order::STATE_REQUEST_INCORRECT";
 
 		wo.state = Order::STATE_INCORRECT_REQUEST;
 		sendReply(request, wo);
@@ -114,7 +109,6 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 	if (theOrderBase.isExist(wo.orderID) == true)
 	{
 		emit appendMessageToArch(ARCH_MSG_TYPE_WARNING, __FUNCTION__, "Order::STATE_ORDER_ALREADY_EXIST");
-		qDebug() << "CustomerOrderSocket::replyCreateOrder - Order::STATE_ORDER_ALREADY_EXIST";
 
 		wo = theOrderBase.order(wo.orderID).toWrap();
 		wo.state = Order::STATE_ORDER_ALREADY_EXIST;
@@ -147,7 +141,6 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 	//
 	//
 	emit appendOrderToBase(order);
-	qDebug() << "CustomerOrderSocket::replyCreateOrder - appendOrderToBase";
 
 	//
 	//
@@ -174,11 +167,11 @@ void CustomerOrderSocket::replyGetOrderState(const Udp::Request& request)
 
 	if (theOrderBase.isExist(wo.orderID) == false)
 	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_WARNING, __FUNCTION__, "Order::STATE_ORDER_NOT_FOUND");
+
 		wo.state = Order::STATE_ORDER_NOT_FOUND;
 		sendReply(request, wo);
 
-		emit appendMessageToArch(ARCH_MSG_TYPE_WARNING, __FUNCTION__, "Order::STATE_ORDER_NOT_FOUND");
-		qDebug() << "CustomerOrderSocket::replyGetOrderState - Order::STATE_ORDER_NOT_FOUND";
 		return;
 	}
 
@@ -206,7 +199,6 @@ void CustomerOrderSocket::replyRemoveOrder(const Udp::Request& request)
 	if (wo.state != Order::STATE_CUSTOMER_REMOVING_ORDER)
 	{
 		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_REQUEST_INCORRECT");
-		qDebug() << "CustomerOrderSocket::replyRemoveOrder - Order::STATE_REQUEST_INCORRECT";
 
 		wo.state = Order::STATE_INCORRECT_REQUEST;
 		sendReply(request, wo);
@@ -217,7 +209,6 @@ void CustomerOrderSocket::replyRemoveOrder(const Udp::Request& request)
 	if (theOrderBase.isExist(wo.orderID) == false)
 	{
 		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_ORDER_NOT_FOUND");
-		qDebug() << "CustomerOrderSocket::replyRemoveOrder - Order::STATE_ORDER_NOT_FOUND";
 
 		wo.state = Order::STATE_ORDER_NOT_FOUND;
 		sendReply(request, wo);
@@ -228,7 +219,6 @@ void CustomerOrderSocket::replyRemoveOrder(const Udp::Request& request)
 	if (theOrderBase.remove(wo.orderID) == false)
 	{
 		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_ORDER_NOT_REMOVED");
-		qDebug() << "CustomerOrderSocket::replyRemoveOrder - Order::STATE_ORDER_NOT_REMOVED";
 
 		wo.state = Order::STATE_ORDER_NOT_REMOVED;
 		sendReply(request, wo);
@@ -247,8 +237,6 @@ void CustomerOrderSocket::replyRemoveOrder(const Udp::Request& request)
 
 	//
 	//
-	qDebug() << "CustomerOrderSocket::replyRemoveOrder - removeOrderFromBase";
-
 	wo.state = Order::STATE_SERVER_REMOVED_ORDER;
 	sendReply(request, wo);
 }

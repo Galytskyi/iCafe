@@ -28,7 +28,6 @@ ProviderOrderSocket::~ProviderOrderSocket()
 
 void ProviderOrderSocket::onSocketThreadStarted()
 {
-	qDebug() << "ProviderOrderSocket::onSocketThreadStarted()";
 	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started");
 
 	connect(this, &Udp::ServerSocket::requestReceived, this, &ProviderOrderSocket::processRequest, Qt::QueuedConnection);
@@ -66,14 +65,9 @@ void ProviderOrderSocket::processRequest(Udp::Request request)
 			break;
 
 		default:
-
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()));
 			request.setErrorCode(SIO_ERROR_INCCORECT_REQUEST_ID);
 			sendAck(request);
-
-			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()));
-			qDebug() << "ProviderOrderSocket::processRequest - Unknown request.ID() : " << request.ID();
-			assert(false);
-
 			break;
 	}
 }
@@ -89,7 +83,7 @@ void ProviderOrderSocket::replyGetOrder(const Udp::Request& request)
 
 	if (rgo.version != 1)
 	{
-		assert(0);
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Wrong version: %1").arg(rgo.version));
 	}
 
 	emit setProviderConnected(rgo.providerID, rgo.wrapVersion);
@@ -151,8 +145,8 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 					 arg(pOrder->state());
 	emit appendMessageToArch(ARCH_MSG_TYPE_ORDER, __FUNCTION__, msgStr);
 
-	qDebug() << "ProviderOrderSocket::replySetOrderState : " << wo.state;
-
+	//
+	//
 	sendReply(request, wo);
 }
 

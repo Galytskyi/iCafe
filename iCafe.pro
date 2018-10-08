@@ -1,11 +1,7 @@
 TEMPLATE = subdirs
 
-CONFIG += ordered
+#CONFIG += ordered
 
-SUBDIRS += qtservice \
-    qtpropertybrowser \
-	OrderServer \
-	ProviderClient/Desktop/ProviderClient \
-	ProviderClient/Mobile/ProviderClient \
-	CustomerClient/Desktop/CustomerClient \
-	CustomerClient/Mobile/CustomerClient
+SUBDIRS += OrderServer
+SUBDIRS += ProviderClient
+SUBDIRS += CustomerClient

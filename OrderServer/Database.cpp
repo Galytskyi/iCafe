@@ -1020,8 +1020,6 @@ bool Database::open()
 			break;
 	}
 
-	qDebug() << path;
-
 	if (m_database.open() == false)
 	{
 		QMessageBox::critical(nullptr, tr("Database"), tr("Cannot open database"));

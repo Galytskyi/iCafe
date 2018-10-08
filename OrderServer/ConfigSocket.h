@@ -37,7 +37,7 @@ public:
 signals:
 
 	void			msgBox(const QString &title, const QString& text);
-	void			appendMessageToArch(int type, const QString& func, const QString& text, const Order::Item& order);
+	void			appendMessageToArch(int type, const QString& func, const QString& text);
 
 private slots:
 
