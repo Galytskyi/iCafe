@@ -128,6 +128,7 @@ namespace Provider
 			case 1:
 
 				result &= xml.readUInt32Attribute("ProviderID", &m_id);
+				//result &= xml.readStringAttribute("GoogleID", &m_googleID);
 
 				result &= xml.readIntAttribute("Type", &m_type);
 				result &= xml.readBoolAttribute("EnableDinner", &m_enableDinner);
@@ -160,6 +161,7 @@ namespace Provider
 				xml.writeStartElement(xmlTagProvider);
 				{
 					xml.writeUInt32Attribute("ProviderID", providerID(), false);
+					//xml.writeStringAttribute("GoogleID", googleID());
 
 					xml.writeIntAttribute("Type", type());
 					xml.writeBoolAttribute("EnableDinner", enableDinner());
@@ -526,7 +528,7 @@ namespace Provider
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Base::setProviderConnected(quint32 providerID, quint32 wrapVersion)
+	void Base::setProviderConnected(bool connect, quint32 providerID, quint32 wrapVersion)
 	{
 		Q_UNUSED(wrapVersion);
 
@@ -543,7 +545,7 @@ namespace Provider
 			return;
 		}
 
-		m_providerList[index].setConnectState(true);
+		m_providerList[index].setConnectState(connect);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------

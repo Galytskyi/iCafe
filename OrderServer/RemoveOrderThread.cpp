@@ -43,7 +43,6 @@ void RemoveOrderThread::slot_onThreadFinished()
 
 void RemoveOrderThread::onThreadStarted()
 {
-	qDebug() << "RemoveOrderThread::onThreadStarted()";
 	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started");
 
 	connect(this, &RemoveOrderThread::removeOrder, &theOrderBase, &Order::Base::slot_removeOrder, Qt::QueuedConnection);
@@ -61,12 +60,12 @@ void RemoveOrderThread::onThreadFinished()
 
 	disconnect(this, &RemoveOrderThread::removeOrder, &theOrderBase, &Order::Base::slot_removeOrder);
 
-	qDebug() << "RemoveOrderThread::onThreadFinished()";
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "finished");
 }
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void RemoveOrderThread::removeFrendlyOrder(quint32 phone)
+void RemoveOrderThread::removeFrendlyOrders(quint32 phone)
 {
 	QList<Order::Item> list = theOrderBase.orderList();
 
@@ -117,8 +116,6 @@ void RemoveOrderThread::autoRemoveTimeout()
 	{
 		emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, QString("removed: %1").arg(removedCount) );
 	}
-
-	qDebug() << "RemoveOrderThread::autoRemoveTimeout() - removed: " << removedCount;
 }
 
 // -------------------------------------------------------------------------------------------------------------------

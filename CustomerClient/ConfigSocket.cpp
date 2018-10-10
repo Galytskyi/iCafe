@@ -259,7 +259,7 @@ void ConfigSocket::replyGetConfigXml(const Udp::Request& request)
 
 	sio_ReplyCfgXml* rcx = (sio_ReplyCfgXml*) request.data();
 
-	if (rcx->partIndex < 0 || rcx->partIndex >= m_rcxi.partCount)
+	if (rcx->partIndex >= m_rcxi.partCount)
 	{
 		m_cfgXmlData.clear();
 

@@ -180,12 +180,16 @@ void ConfigSocket::replyGetConfigXml(Udp::Request request)
 		dataSize = m_rcxi.dataSize - offer;
 	}
 
+	//
+	//
 	request.initWrite();
 	request.writeData((const char*) &REPLY_CONFIG_XML_VERSION, sizeof(quint32));
 	request.writeData((const char*) &partIndex, sizeof(quint32));
 	request.writeData((const char*) &dataSize, sizeof(quint32));
 	request.writeData(m_cfgXmlData.data() + offer, dataSize);
 
+	//
+	//
 	sendAck(request);
 }
 

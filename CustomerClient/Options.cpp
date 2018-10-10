@@ -181,11 +181,11 @@ void CustomerDataOption::load()
 {
 	QSettings s;
 
-	m_serverIP = s.value(QString("%1ServerIP").arg(CUSTOMER_DATA_REG_KEY), "192.168.76.123").toString();
+	m_serverIP = s.value(QString("%1ServerIP").arg(CUSTOMER_DATA_REG_KEY), "193.0.61.244").toString();
 	m_serverConfigPort = s.value(QString("%1ServerConfigPort").arg(CUSTOMER_DATA_REG_KEY), PORT_CONFIG_XML_REQUEST).toUInt();
 	m_serverCustomerPort = s.value(QString("%1ServerCustomerPort").arg(CUSTOMER_DATA_REG_KEY), PORT_CUSTOMER_ORDER_REQUEST).toUInt();
 
-	m_phone = s.value(QString("%1Phone").arg(CUSTOMER_DATA_REG_KEY), 11).toULongLong();
+	m_phone = s.value(QString("%1Phone").arg(CUSTOMER_DATA_REG_KEY), 501002030).toULongLong();
 	m_orderTime = s.value(QString("%1OrderTime").arg(CUSTOMER_DATA_REG_KEY), 49152).toUInt();
 	m_people = s.value(QString("%1People").arg(CUSTOMER_DATA_REG_KEY), 2).toUInt();
 

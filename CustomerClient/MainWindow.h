@@ -55,6 +55,7 @@ private:
 	//
 	QToolBar*				m_pOrderControlToolBar = nullptr;
 	QLineEdit*				m_searchProvider  = nullptr;
+	QLabel*					m_connectLabel = nullptr;
 
 	// Elements of interface - view
 	//

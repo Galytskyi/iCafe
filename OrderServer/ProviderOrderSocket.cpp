@@ -79,19 +79,33 @@ void ProviderOrderSocket::replyGetOrder(const Udp::Request& request)
 	//const char * pBuffer = const_cast<const Udp::Request&>(request).data();
 	//OrderItem* order = (OrderItem*) const_cast<const Udp::Request&>(request).data();
 
-	sio_RequestGetOrder rgo = *(sio_RequestGetOrder*) const_cast<const Udp::Request&>(request).data();
+	sio_RequestGetOrder* ptr_rgo = (sio_RequestGetOrder*) const_cast<const Udp::Request&>(request).data();
 
-	if (rgo.version != 1)
+	if (ptr_rgo->version < 1 || ptr_rgo->version > REQUEST_GET_ORDER_VERSION)
 	{
-		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Wrong version: %1").arg(rgo.version));
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Wrong reply version: %1").arg(ptr_rgo->version));
+		return;
 	}
 
-	emit setProviderConnected(rgo.providerID, rgo.wrapVersion);
+	emit setProviderConnected(true, ptr_rgo->providerID, ptr_rgo->wrapVersion);
 
-	Order::Item order = theOrderBase.hasOrderForProvider(rgo.providerID);
+	Order::Item order = theOrderBase.hasOrderForProvider(ptr_rgo->providerID);
 
-	sio_OrderWrap wo = order.toWrap();
-	sendReply(request, wo);
+	switch (ptr_rgo->wrapVersion)
+	{
+		case 1:
+			{
+				sio_OrderWrap wo = order.toWrap();
+				sendReply(request, wo);
+			}
+			break;
+
+		default:
+			assert(0);
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Wrong wrap version: %1").arg(ptr_rgo->version));
+			break;
+	}
+
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -133,7 +147,7 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 
 		pOrder->setRemoveTime(rt);
 
-		emit removeFrendlyOrder(pOrder->phone());
+		emit removeFrendlyOrders(pOrder->phone());
 	}
 
 	//

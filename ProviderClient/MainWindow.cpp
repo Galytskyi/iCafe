@@ -18,7 +18,7 @@
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
-	theOrderBase.readFromXml(qApp->applicationDirPath() + "/"+ QString("provider%1").arg(xmlOrderFileName));
+	theOrderBase.readFromXml(QString("provider%1").arg(xmlOrderFileName));
 
 	createInterface();
 
@@ -286,12 +286,11 @@ bool MainWindow::createToolBars()
 		m_pOrderControlToolBar->addAction(m_pOptionsAction);
 
 		m_connectLabel = new QLabel(m_pOrderControlToolBar);
-		QSize cellSize = QFontMetrics(m_connectLabel->font()).size(Qt::TextSingleLine, NO_CONNECTION_STR);
 		m_connectLabel->setStyleSheet("color: rgb(255, 0, 0);");
-		m_connectLabel->setText(tr(NO_CONNECTION_STR));
-		m_connectLabel->setFixedWidth(cellSize.width());
-		m_connectLabel->setFixedHeight(cellSize.height());
-		m_connectLabel->setEnabled(false);
+		m_connectLabel->setText(NO_CONNECTION_STR);
+		//m_connectLabel->setAlignment(Qt::AlignLeft);
+
+		m_pOrderControlToolBar->addWidget(m_connectLabel);
 
 
 		m_pOrderControlToolBar->setLayoutDirection(Qt::RightToLeft);
@@ -561,7 +560,7 @@ void MainWindow::removeOrder(const Order::Item& order)
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-	theOrderBase.writeToXml(qApp->applicationDirPath() + "/"+ QString("provider%1").arg(xmlOrderFileName));
+	theOrderBase.writeToXml(QString("provider%1").arg(xmlOrderFileName));
 
 	QMainWindow::closeEvent(e);
 }

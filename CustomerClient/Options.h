@@ -146,9 +146,6 @@ private:
 
 public:
 
-	int					w;
-	int					h;
-
 	QString				serverIP() const { return m_serverIP; }
 	void				setServerIP(const QString& ip) { m_serverIP = ip; }
 

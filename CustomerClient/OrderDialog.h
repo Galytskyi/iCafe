@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QDialogButtonBox>
 
 #include "Options.h"

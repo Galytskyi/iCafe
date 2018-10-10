@@ -157,13 +157,15 @@ namespace Provider
 	signals:
 
 		void					cfgXmlDataLoaded();
+		void					providerConnectChanged(quint32 providerID, bool connect);
+
 
 	public slots:
 
 		bool					readFromXml(const QByteArray& cfgXmlData, int version);
 		void					writeToXml(XmlWriteHelper& xml, int version);
 
-		void					setProviderConnected(quint32 providerID, quint32 wrapVersion);
+		void					setProviderConnected(bool connect, quint32 providerID, quint32 wrapVersion);
 	};
 
 	// ==============================================================================================

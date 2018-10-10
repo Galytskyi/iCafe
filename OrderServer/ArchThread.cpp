@@ -110,7 +110,7 @@ void ArchThread::appendMessage(int type, const QString& func, const QString& tex
 	m_archFile.write(msgStr.toLocal8Bit(), msgStr.toLocal8Bit().count());
 	m_archFile.flush();
 
-	qDebug() << func << " - " << text;
+	qDebug() << timeStr << ": " << func << " - " << text;
 }
 
 // -------------------------------------------------------------------------------------------------------------------

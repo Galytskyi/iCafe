@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	a.setApplicationVersion(QString("1.0"));
 
 	bool hasLanguageFiles = false;
-	if (hasLanguageFiles == false)
+	if (hasLanguageFiles == true)
 	{
 		QTranslator translator;
 		if (translator.load("ProviderClient_ru.qm", QApplication::applicationDirPath() + "/translations") == false)

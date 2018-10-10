@@ -37,7 +37,7 @@ void ConnectionOption::load()
 {
 	QSettings s;
 
-	m_serverIP = s.value(QString("%1ServerIP").arg(CONNECTION_REG_KEY), "192.168.76.123").toString();
+	m_serverIP = s.value(QString("%1ServerIP").arg(CONNECTION_REG_KEY), "193.0.61.244").toString();
 	m_serverCfgPort = s.value(QString("%1ServerCfgPort").arg(CONNECTION_REG_KEY), PORT_CONFIG_XML_REQUEST).toUInt();
 	m_serverDataPort = s.value(QString("%1ServerDataPort").arg(CONNECTION_REG_KEY), PORT_PROVIDER_ORDER_REQUEST).toUInt();
 }
@@ -99,7 +99,7 @@ void ProviderDataOption::load()
 	m_requestProviderTime = s.value(QString("%1RequestProviderTime").arg(PROVIDER_DATA_REG_KEY), 1000).toInt();
 	m_requestCustomerTime = s.value(QString("%1RequestCustomerTime").arg(PROVIDER_DATA_REG_KEY), 1000).toInt();
 
-	m_serverIP = s.value(QString("%1ServerIP").arg(PROVIDER_DATA_REG_KEY), "192.168.76.123").toString();
+	m_serverIP = s.value(QString("%1ServerIP").arg(PROVIDER_DATA_REG_KEY), "193.0.61.244").toString();
 	m_serverProviderPort = s.value(QString("%1ServerProviderPort").arg(PROVIDER_DATA_REG_KEY), PORT_PROVIDER_ORDER_REQUEST).toInt();
 	m_serverCustomerPort = s.value(QString("%1ServerCustomerPort").arg(PROVIDER_DATA_REG_KEY), PORT_CUSTOMER_ORDER_REQUEST).toInt();
 

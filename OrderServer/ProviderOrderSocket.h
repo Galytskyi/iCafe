@@ -27,8 +27,8 @@ public:
 
 signals:
 
-	void			setProviderConnected(quint32 providerID, quint32 wrapVersion);
-	void			removeFrendlyOrder(quint32 phone);
+	void			setProviderConnected(bool connect, quint32 providerID, quint32 wrapVersion);
+	void			removeFrendlyOrders(quint32 phone);
 
 	void			msgBox(const QString &title, const QString& text);
 	void			appendMessageToArch(int type, const QString& func, const QString& text);

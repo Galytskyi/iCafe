@@ -229,7 +229,6 @@ bool MainWindow::loadBase()
 
 	QString msg = QString("ProviderBase::load() - Loaded providers: %1, Loaded provider types: %2, Time for load: %3 ms" ).arg(theProviderBase.count()).arg(theProviderTypeBase.count()).arg(rt);
 
-	qDebug() << msg;
 	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, msg);
 
 	if (m_pView != nullptr)
@@ -474,7 +473,7 @@ bool MainWindow::startRemoveOrderThread()
 
 	if (m_pProviderOrderSocket != nullptr)
 	{
-		connect(m_pProviderOrderSocket, &ProviderOrderSocket::removeFrendlyOrder, m_pRemoveOrderThread, &RemoveOrderThread::removeFrendlyOrder, Qt::QueuedConnection);
+		connect(m_pProviderOrderSocket, &ProviderOrderSocket::removeFrendlyOrders, m_pRemoveOrderThread, &RemoveOrderThread::removeFrendlyOrders, Qt::QueuedConnection);
 	}
 
 	pThread->start();
@@ -568,6 +567,7 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 	//
 	pProvider->setActive(provider.isActive());
 	pProvider->setActiveTime(provider.activeTime());
+	pProvider->setEnableDinner(provider.enableDinner());
 	pProvider->setName(provider.name());
 	pProvider->setAddress(provider.address());
 	pProvider->setPhone(provider.phone());

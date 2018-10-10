@@ -19,7 +19,7 @@
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
-	theOrderBase.readFromXml(qApp->applicationDirPath() + "/"+ QString("customer%1").arg(xmlOrderFileName));
+	theOrderBase.readFromXml(QString("customer%1").arg(xmlOrderFileName));
 
 	createInterface();
 
@@ -249,7 +249,7 @@ void MainWindow::createActions()
 	//m_pSearchAction->setCheckable(true);
 	connect(m_pSearchAction, &QAction::triggered, this, &MainWindow::onSearch);
 
-	m_pOrderTableAction = new QAction(tr("Заказать столик"), this);
+	m_pOrderTableAction = new QAction(tr("Бронировать столик"), this);
 	m_pOrderTableAction->setIcon(QIcon(":/icons/Table.png"));
 	m_pOrderTableAction->setFont(*menuFont);
 	connect(m_pOrderTableAction, &QAction::triggered, this, &MainWindow::onOrderTable);
@@ -301,6 +301,14 @@ bool MainWindow::createToolBars()
 
 		m_pOrderControlToolBar->addAction(m_pInfoAction);
 		m_pOrderControlToolBar->addAction(m_pOptionsAction);
+
+		m_connectLabel = new QLabel(m_pOrderControlToolBar);
+		m_connectLabel->setStyleSheet("color: rgb(255, 0, 0);");
+		m_connectLabel->setText(NO_CONNECTION_STR);
+		//m_connectLabel->setAlignment(Qt::AlignCenter);
+
+		m_pOrderControlToolBar->addWidget(m_connectLabel);
+
 
 		m_pOrderControlToolBar->setLayoutDirection(Qt::RightToLeft);
 	}
@@ -640,13 +648,15 @@ void MainWindow::cfgXmlReceived(const QByteArray& cfgXmlData, int version)
 {
 	theProviderBase.readFromXml(cfgXmlData, version);
 	theProviderTypeBase.readFromXml(cfgXmlData, version);
+
+	m_connectLabel->setText(QString());
 }
 
 // -------------------------------------------------------------------------------------------------------------------
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-	theOrderBase.writeToXml(qApp->applicationDirPath() + "/"+ QString("customer%1").arg(xmlOrderFileName));
+	theOrderBase.writeToXml(QString("customer%1").arg(xmlOrderFileName));
 
 	QMainWindow::closeEvent(e);
 }

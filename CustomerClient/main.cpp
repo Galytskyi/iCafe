@@ -18,10 +18,10 @@ int main(int argc, char *argv[])
 	a.setOrganizationName("BookingRest");
 	a.setOrganizationDomain("BookingRest.com.ua");
 
-	a.setApplicationVersion(QString("1.0"));
+	a.setApplicationVersion(QString("1.0.0"));
 
 	bool hasLanguageFiles = false;
-	if (hasLanguageFiles == false)
+	if (hasLanguageFiles == true)
 	{
 		QTranslator translator;
 		if (translator.load("CustomerClient_ru.qm", QApplication::applicationDirPath() + "/translations") == false)

@@ -8,10 +8,6 @@
 
 // ==============================================================================================
 
-const char* const	NO_CONNECTION_STR = QT_TRANSLATE_NOOP("OrderReceiveSocket.h", "  Ожидание соединения ...");
-
-// ==============================================================================================
-
 class OrderReceiveSocket : public Udp::ClientSocket
 {
 
@@ -30,6 +26,8 @@ private:
 	QTimer			m_requestGetOrderTimer;
 
 public:
+
+	sio_RequestGetOrder m_rgo;
 
 	// functions: Request - Reply
 	//

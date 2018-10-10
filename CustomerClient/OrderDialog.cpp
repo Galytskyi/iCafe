@@ -206,10 +206,28 @@ void OrderDialog::onOk()
 	hourStr = timeStr.left(begPos);
 	timeStr.remove(0, begPos + 1);
 
-	Order::Time32 orderTime;
+	int hour = hourStr.toInt();
+	int minute = timeStr.toInt();
 
-	orderTime.hour = hourStr.toInt();
-	orderTime.minute = timeStr.toInt();
+	//qDebug() << hourStr << ":" << timeStr << "trans to" << minute << ":" << orderTime.time ;
+
+	if (hour < 0 || hour >= 24)
+	{
+		QMessageBox::information(this, windowTitle(), tr("Время заказа указано не верно!"));
+		m_pTimeEdit->setFocus();
+		return;
+	}
+
+	if (minute < 0 || minute >= 60)
+	{
+		QMessageBox::information(this, windowTitle(), tr("Время заказа указано не верно!"));
+		m_pTimeEdit->setFocus();
+		return;
+	}
+
+	Order::Time32 orderTime;
+	orderTime.hour = hour;
+	orderTime.minute = minute;
 
 	QString peopleStr = m_pPeopleEdit->text();
 

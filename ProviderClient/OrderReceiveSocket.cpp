@@ -34,6 +34,12 @@ void OrderReceiveSocket::onSocketThreadStarted()
 	connect(&m_requestGetOrderTimer, &QTimer::timeout, this, &OrderReceiveSocket::requestGetOrder, Qt::QueuedConnection);
 
 	m_requestGetOrderTimer.start(theOptions.providerData().requestProviderTime());
+
+	// init
+	//
+	m_rgo.version = REQUEST_GET_ORDER_VERSION;
+	m_rgo.providerID = theOptions.providerData().providerID();
+	m_rgo.wrapVersion = ORDER_WRAP_VERSION;
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -81,13 +87,7 @@ void OrderReceiveSocket::requestGetOrder()
 		return;
 	}
 
-	sio_RequestGetOrder rgo;
-
-	rgo.version = REQUEST_GET_ORDER_VERSION;
-	rgo.providerID = theOptions.providerData().providerID();
-	rgo.wrapVersion = ORDER_WRAP_VERSION;
-
-	sendRequest(CLIENT_GET_ORDER, (const char*) &rgo, sizeof(sio_RequestGetOrder));
+	sendRequest(CLIENT_GET_ORDER, (const char*) &m_rgo, sizeof(sio_RequestGetOrder));
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -134,6 +134,11 @@ void OrderReceiveSocket::replyGetOrder(const Udp::Request& request)
 
 void OrderReceiveSocket::requestSetOrderState(const Order::Item& order)
 {
+	if (isReadyToSend() == false)
+	{
+		return;
+	}
+
 	sio_OrderWrap wo = order.toWrap();
 	sendRequest(CLIENT_SET_ORDER_STATE, wo);
 }
