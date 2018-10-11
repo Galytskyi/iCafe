@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QAction>
+#include <QMenuBar>
+#include <QToolBar>
 #include <QLabel>
 
 #include "ArchThread.h"
@@ -22,6 +25,22 @@ public:
 	virtual ~MainWindow();
 
 private:
+
+	// Actions of main menu
+	//
+							// menu - Providers
+							//
+	QAction*				m_pAppendProviderAction = nullptr;
+	QAction*				m_pEditProviderAction = nullptr;
+	QAction*				m_pRemoveProviderAction = nullptr;
+
+	// Elements of interface - Menu
+	//
+	QMenu*					m_pProviderMenu = nullptr;
+
+	// Elements of interface - ToolBar
+	//
+	QToolBar*				m_pControlToolBar = nullptr;
 
 	// Elements of interface - view
 	//
@@ -46,6 +65,10 @@ private:
 public:
 
 	bool					createInterface();
+
+	void					createActions();
+	void					createMenu();
+	bool					createToolBars();
 	void					createProviderView();
 	void					createStatusBar();
 
@@ -77,8 +100,19 @@ signals:
 
 public slots:
 
+	//
+	//
 	void					msgBox(const QString &title, const QString& text);
+
+	//
+	//
 	void					orderStateChanged(const Order::Item& order);
+
+	// menu - Providers
+	//
+	void					onAppendProvider();
+	void					onEditProvider();
+	void					onRemoveProvider();
 
 	// Slots of view
 	//

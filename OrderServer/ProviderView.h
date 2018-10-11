@@ -64,10 +64,16 @@ private:
 public:
 
 	int					count() const { return m_providerList.count(); }
+	void				clear();
+
+	void				append(const Provider::Item& item);
+
 	Provider::Item		at(int index) const;
+
 	void				set(int index, const Provider::Item& item);
 	void				set(const QList<Provider::Item> &list_add);
-	void				clear();
+
+	void				remove(int index);
 
 	QString				text(int row, int column, const Provider::Item& provider) const;
 	void				updateRow(int row);

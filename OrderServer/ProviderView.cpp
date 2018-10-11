@@ -205,6 +205,24 @@ void ProviderTable::updateColumn(int column)
 
 // -------------------------------------------------------------------------------------------------------------------
 
+void ProviderTable::append(const Provider::Item& item)
+{
+	if (item.isEmpty() == true)
+	{
+		return;
+	}
+
+	int index = m_providerList.count();
+
+	beginInsertRows(QModelIndex(), index, index);
+
+		m_providerList.append(item);
+
+	endInsertRows();
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 Provider::Item ProviderTable::at(int index) const
 {
 	if (index < 0 || index >= count())
@@ -242,6 +260,22 @@ void ProviderTable::set(const QList<Provider::Item>& list_add)
 		m_providerList = list_add;
 
 	endInsertRows();
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void ProviderTable::remove(int index)
+{
+	if (index < 0 || index >= m_providerList.count())
+	{
+		return;
+	}
+
+	beginRemoveRows(QModelIndex(), index, index);
+
+		m_providerList.removeAt(index);
+
+	endRemoveRows();
 }
 
 // -------------------------------------------------------------------------------------------------------------------

@@ -139,7 +139,7 @@ void ProviderDialog::onOk()
 
 	if (addresStr.isEmpty() == true)
 	{
-		QMessageBox::information(this, windowTitle(), tr("Please, input number of people!"));
+		QMessageBox::information(this, windowTitle(), tr("Please, input address!"));
 		m_pAddressEdit->setFocus();
 		return;
 	}

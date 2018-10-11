@@ -52,14 +52,14 @@ MainWindow::~MainWindow()
 
 bool MainWindow::createInterface()
 {
-//	setWindowIcon(QIcon(":/icons/Metrology.ico"));
+	setWindowIcon(QIcon(":/icons/Logo.png"));
 	setWindowTitle(tr("Server of orders"));
 	setMinimumSize(700, 500);
 	move(QApplication::desktop()->availableGeometry().center() - rect().center());
 
-//	createActions();
-//	createMenu();
-//	createToolBars();
+	createActions();
+	createMenu();
+	createToolBars();
 	createProviderView();
 //	createPanels();
 	createStatusBar();
@@ -70,6 +70,71 @@ bool MainWindow::createInterface()
 //	setMeasureType(MEASURE_TYPE_LINEARITY);
 
 	connect(&theOrderBase, &Order::Base::signal_stateChanged, this, &MainWindow::orderStateChanged, Qt::QueuedConnection);
+
+	return true;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::createActions()
+{
+	// Providers
+	//
+	m_pAppendProviderAction = new QAction(tr("Append .."), this);
+	m_pAppendProviderAction->setShortcut(Qt::CTRL + Qt::Key_Insert);
+	m_pAppendProviderAction->setIcon(QIcon(":/icons/Append.png"));
+	m_pAppendProviderAction->setToolTip(tr("Append provider"));
+	connect(m_pAppendProviderAction, &QAction::triggered, this, &MainWindow::onAppendProvider);
+
+	m_pEditProviderAction = new QAction(tr("Edit ..."), this);
+	m_pEditProviderAction->setShortcut(Qt::CTRL + Qt::Key_Enter);
+	m_pEditProviderAction->setIcon(QIcon(":/icons/Edit.png"));
+	m_pEditProviderAction->setToolTip(tr("Edit provider"));
+	connect(m_pEditProviderAction, &QAction::triggered, this, &MainWindow::onEditProvider);
+
+	m_pRemoveProviderAction = new QAction(tr("Remove ..."), this);
+	m_pRemoveProviderAction->setShortcut(Qt::CTRL + Qt::Key_Delete);
+	m_pRemoveProviderAction->setIcon(QIcon(":/icons/Remove.png"));
+	m_pRemoveProviderAction->setToolTip(tr("Remove provider"));
+	connect(m_pRemoveProviderAction, &QAction::triggered, this, &MainWindow::onRemoveProvider);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::createMenu()
+{
+	QMenuBar* pMenuBar = menuBar();
+	if (pMenuBar == nullptr)
+	{
+		return;
+	}
+
+	m_pProviderMenu = pMenuBar->addMenu(tr("&Provider"));
+
+	m_pProviderMenu->addAction(m_pAppendProviderAction);
+	m_pProviderMenu->addAction(m_pEditProviderAction);
+	m_pProviderMenu->addAction(m_pRemoveProviderAction);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+bool MainWindow::createToolBars()
+{
+	// Control panel measure process
+	//
+	m_pControlToolBar = new QToolBar(this);
+	if (m_pControlToolBar != nullptr)
+	{
+		m_pControlToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
+		m_pControlToolBar->setWindowTitle(tr("Control panel"));
+		m_pControlToolBar->setObjectName(m_pControlToolBar->windowTitle());
+		addToolBarBreak(Qt::TopToolBarArea);
+		addToolBar(m_pControlToolBar);
+
+		m_pControlToolBar->addAction(m_pAppendProviderAction);
+		m_pControlToolBar->addAction(m_pEditProviderAction);
+		m_pControlToolBar->addAction(m_pRemoveProviderAction);
+	}
 
 	return true;
 }
@@ -505,6 +570,131 @@ bool MainWindow::stopRemoveOrderThread()
 
 // -------------------------------------------------------------------------------------------------------------------
 
+void MainWindow::onAppendProvider()
+{
+	ProviderDialog dialog;
+	if (dialog.exec() != QDialog::Accepted)
+	{
+		return;
+	}
+
+	Provider::Item provider(dialog.provider());
+
+	// append data in database
+	//
+	SqlTable* table = thePtrDB->openTable(SQL_TABLE_PROVIDER);
+	if (table == nullptr)
+	{
+		QMessageBox::information(this, tr("Database"), tr("Error of opening table SQL_TABLE_PROVIDER for write") );
+		return;
+	}
+
+	if (table->write(&provider) != 1)
+	{
+		QMessageBox::information(this, tr("Database"), tr("Error append to table") );
+		return;
+	}
+
+	table->close();
+
+	// append data in theProviderBase
+	//
+	int index = theProviderBase.append(provider);
+	if (index == -1)
+	{
+		return;
+	}
+
+	// update data in ConfigSocket
+	//
+	m_pConfigSocket->createCfgXml();
+
+	// append data in View
+	//
+	m_pView->table().append(provider);
+
+	// statusBar
+	//
+	m_statusProviderCount->setText(tr("Provider count: %1").arg(theProviderBase.count()));
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::onEditProvider()
+{
+	if (m_pView == nullptr)
+	{
+		return;
+	}
+
+	int index = m_pView->currentIndex().row();
+	if (index < 0 || index >= m_pView->table().count())
+	{
+		return;
+	}
+
+	onProviderListClick(m_pView->currentIndex());
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::onRemoveProvider()
+{
+	if (m_pView == nullptr)
+	{
+		return;
+	}
+
+	int index = m_pView->currentIndex().row();
+	if (index < 0 || index >= m_pView->table().count())
+	{
+		return;
+	}
+
+	Provider::Item provider = m_pView->table().at(index);
+
+	QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Remove provider"), tr("Do you want to remove provider:\n%1?").arg(provider.name()), QMessageBox::Yes|QMessageBox::No);
+	if (reply == QMessageBox::No)
+	{
+		return;
+	}
+
+	// update data in database
+	//
+	SqlTable* table = thePtrDB->openTable(SQL_TABLE_PROVIDER);
+	if (table == nullptr)
+	{
+		QMessageBox::information(this, tr("Database"), tr("Error of opening table SQL_TABLE_PROVIDER for write") );
+		return;
+	}
+
+	if (table->remove(provider.providerID()) != 1)
+	{
+		QMessageBox::information(this, tr("Database"), tr("Error remove from table") );
+		return;
+	}
+
+	table->close();
+
+	// remove in theProviderBase
+	//
+	theProviderBase.remove(provider.providerID());
+
+	// update data in ConfigSocket
+	//
+	m_pConfigSocket->createCfgXml();
+
+	// remove in View
+	//
+	m_pView->table().remove(index);
+
+	// statusBar
+	//
+	m_statusProviderCount->setText(tr("Provider count: %1").arg(theProviderBase.count()));
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 void MainWindow::onProviderListClick(const QModelIndex& index)
 {
 	if (thePtrDB == nullptr)
@@ -549,7 +739,7 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 
 	if (table->write(&provider, 1, provider.providerID()) != 1)
 	{
-		QMessageBox::information(this, tr("Database"), tr("Error writing to table") );
+		QMessageBox::information(this, tr("Database"), tr("Error update in table") );
 		return;
 	}
 
@@ -565,12 +755,7 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 
 	//
 	//
-	pProvider->setActive(provider.isActive());
-	pProvider->setActiveTime(provider.activeTime());
-	pProvider->setEnableDinner(provider.enableDinner());
-	pProvider->setName(provider.name());
-	pProvider->setAddress(provider.address());
-	pProvider->setPhone(provider.phone());
+	*pProvider = provider;
 
 	// update data in ConfigSocket
 	//

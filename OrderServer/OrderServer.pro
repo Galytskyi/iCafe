@@ -93,4 +93,7 @@ DISTFILES += \
     ../csv/Provider.csv \
 	../csv/ProviderType.csv
 
+RESOURCES += \
+    resources.qrc
+
 

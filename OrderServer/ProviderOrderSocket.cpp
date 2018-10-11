@@ -40,6 +40,8 @@ void ProviderOrderSocket::onSocketThreadStarted()
 void ProviderOrderSocket::onSocketThreadFinished()
 {
 	disconnect(this, &ProviderOrderSocket::setProviderConnected, &theProviderBase, &Provider::Base::setProviderConnected);
+
+	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "finished");
 }
 
 // -------------------------------------------------------------------------------------------------------------------

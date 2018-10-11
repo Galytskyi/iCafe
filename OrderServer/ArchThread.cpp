@@ -44,6 +44,8 @@ void ArchThread::slot_onThreadFinished()
 
 void ArchThread::onThreadStarted()
 {
+	qDebug() << "ArchThread::onThreadStarted() - started";
+
 	m_archFile.setFileName(qApp->applicationDirPath() + "/" + ArchFileName);
 	if (m_archFile.open(QIODevice::Append) == false)
 	{
@@ -52,19 +54,19 @@ void ArchThread::onThreadStarted()
 		return;
 	}
 
-	qDebug() << "ArchThread::onThreadStarted() - arch file opened";
+	appendMessage(ARCH_MSG_TYPE_EVENT, __FUNCTION__, QString("arch file opened"));
 }
 
 // -------------------------------------------------------------------------------------------------------------------
 
 void ArchThread::onThreadFinished()
 {
+	appendMessage(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "finished");
+
 	if (m_archFile.isOpen() == true)
 	{
 		m_archFile.close();
 	}
-
-	qDebug() << "ArchThread::onThreadFinished()";
 }
 
 // -------------------------------------------------------------------------------------------------------------------

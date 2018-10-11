@@ -305,6 +305,24 @@ namespace Provider
 			return;
 		}
 
+		m_providerIndexMap.remove(m_providerList[index].providerID());
+		m_providerList.remove(index);
+	}
+
+	// -------------------------------------------------------------------------------------------------------------------
+
+	void Base::remove(quint32 providerID)
+	{
+		QMutexLocker locker(&m_mutex);
+
+		int index = m_providerIndexMap[providerID];
+
+		if (index < 0 || index >= m_providerList.count())
+		{
+			return;
+		}
+
+		m_providerIndexMap.remove(m_providerList[index].providerID());
 		m_providerList.remove(index);
 	}
 

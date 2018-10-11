@@ -139,7 +139,9 @@ namespace Provider
 
 		int						append(const Item &provider);
 		void					append(const QVector<Item>& list);
+
 		void					remove(int index);
+		void					remove(quint32 providerID);
 
 		Item					provider(int index) const;
 		Item*					providerPtr(int index);
