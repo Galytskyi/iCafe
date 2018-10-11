@@ -37,6 +37,7 @@ private:
 	// Elements of interface - Menu
 	//
 	QMenu*					m_pProviderMenu = nullptr;
+	QMenu*					m_pContextMenu = nullptr;
 
 	// Elements of interface - ToolBar
 	//
@@ -71,6 +72,7 @@ public:
 	bool					createToolBars();
 	void					createProviderView();
 	void					createStatusBar();
+	void					createContextMenu();
 
 	bool					startArchThread();
 	bool					stopArchThread();
@@ -108,11 +110,15 @@ public slots:
 	//
 	void					orderStateChanged(const Order::Item& order);
 
-	// menu - Providers
+	// Slots of Main menu - Providers
 	//
 	void					onAppendProvider();
 	void					onEditProvider();
 	void					onRemoveProvider();
+
+	// Slots of contex menu
+	//
+	void					onContextMenu(QPoint);
 
 	// Slots of view
 	//

@@ -63,7 +63,7 @@ bool MainWindow::createInterface()
 	createProviderView();
 //	createPanels();
 	createStatusBar();
-//	createContextMenu();
+	createContextMenu();
 
 //	loadSettings();
 
@@ -80,7 +80,7 @@ void MainWindow::createActions()
 {
 	// Providers
 	//
-	m_pAppendProviderAction = new QAction(tr("Append .."), this);
+	m_pAppendProviderAction = new QAction(tr("Append ..."), this);
 	m_pAppendProviderAction->setShortcut(Qt::CTRL + Qt::Key_Insert);
 	m_pAppendProviderAction->setIcon(QIcon(":/icons/Append.png"));
 	m_pAppendProviderAction->setToolTip(tr("Append provider"));
@@ -89,7 +89,7 @@ void MainWindow::createActions()
 	m_pEditProviderAction = new QAction(tr("Edit ..."), this);
 	m_pEditProviderAction->setShortcut(Qt::CTRL + Qt::Key_Enter);
 	m_pEditProviderAction->setIcon(QIcon(":/icons/Edit.png"));
-	m_pEditProviderAction->setToolTip(tr("Edit provider"));
+	m_pEditProviderAction->setToolTip(tr("Edit provider data"));
 	connect(m_pEditProviderAction, &QAction::triggered, this, &MainWindow::onEditProvider);
 
 	m_pRemoveProviderAction = new QAction(tr("Remove ..."), this);
@@ -184,6 +184,30 @@ void MainWindow::createStatusBar()
 	pStatusBar->setLayoutDirection(Qt::RightToLeft);
 
 	m_statusEmpty->setText(QString());
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::createContextMenu()
+{
+	// create context menu
+	//
+	m_pContextMenu = new QMenu(this);
+
+	m_pContextMenu->addAction(m_pAppendProviderAction);
+	m_pContextMenu->addAction(m_pEditProviderAction);
+	m_pContextMenu->addAction(m_pRemoveProviderAction);
+
+	// init context menu
+	//
+	if (m_pView == nullptr)
+	{
+		return;
+	}
+
+	m_pView->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(m_pView, &QTableView::customContextMenuRequested, this, &MainWindow::onContextMenu);
+
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -691,6 +715,18 @@ void MainWindow::onRemoveProvider()
 	// statusBar
 	//
 	m_statusProviderCount->setText(tr("Provider count: %1").arg(theProviderBase.count()));
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::onContextMenu(QPoint)
+{
+	if (m_pContextMenu == nullptr)
+	{
+		return;
+	}
+
+	m_pContextMenu->exec(QCursor::pos());
 }
 
 // -------------------------------------------------------------------------------------------------------------------
