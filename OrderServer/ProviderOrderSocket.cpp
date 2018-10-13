@@ -233,7 +233,7 @@ void ProviderOrderSocket::replySetProviderState(const Udp::Request& request)
 
 		emit providerStateChanged(pProvider->providerID(), pProvider->state());
 
-		if (pProvider->enableTakeOrder() == false)
+		if (pProvider->enableAcceptOrder() == false)
 		{
 			emit removeFrendlyOrdersByProviderID(pProvider->providerID());
 		}

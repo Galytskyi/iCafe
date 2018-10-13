@@ -139,7 +139,7 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 		return;
 	}
 
-	if (pProvider->enableTakeOrder() == false)
+	if (pProvider->enableAcceptOrder() == false)
 	{
 		emit appendMessageToArch(ARCH_MSG_TYPE_WARNING, __FUNCTION__, "Order::STATE_PROVIDER_DONT_TAKE_ORDER");
 

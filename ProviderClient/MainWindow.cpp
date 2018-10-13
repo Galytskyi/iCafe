@@ -259,7 +259,7 @@ void MainWindow::createActions()
 	m_pEnableOrderAction = new QAction(tr("Принимать заказы"), this);
 	m_pEnableOrderAction->setIcon(QIcon(":/icons/Cancel.png"));
 	m_pEnableOrderAction->setToolTip(tr("Принимать заказы"));
-	connect(m_pEnableOrderAction, &QAction::triggered, this, &MainWindow::onEnableTakeOrder);
+	connect(m_pEnableOrderAction, &QAction::triggered, this, &MainWindow::onEnableAcceptOrder);
 
 	m_pOptionsAction = new QAction(tr("Настройки"), this);
 	m_pOptionsAction->setShortcut(Qt::CTRL + Qt::Key_O);
@@ -373,10 +373,10 @@ void MainWindow::onSendRequestCancelOrder()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void MainWindow::onEnableTakeOrder()
+void MainWindow::onEnableAcceptOrder()
 {
 	Provider::State state = theOptions.providerData().state();
-	state.takeOrder = !state.takeOrder;
+	state.acceptOrder = !state.acceptOrder;
 
 	emit sendRequestChangeProviderState(state.flags);
 }
@@ -583,7 +583,7 @@ void MainWindow::providerStateChanged(quint32 state)
 
 	Provider::State providerState = state;
 
-	m_pEnableOrderAction->setIcon(providerState.takeOrder == true ?  QIcon(":/icons/Ok.png") : QIcon(":/icons/Cancel.png"));
+	m_pEnableOrderAction->setIcon(providerState.acceptOrder == true ?  QIcon(":/icons/Ok.png") : QIcon(":/icons/Cancel.png"));
 }
 
 // -------------------------------------------------------------------------------------------------------------------

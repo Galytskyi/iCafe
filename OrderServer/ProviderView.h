@@ -15,7 +15,7 @@ const char* const		ProviderColumn[] =
 {
 						QT_TRANSLATE_NOOP("ProviderView.h", "ID"),
 						QT_TRANSLATE_NOOP("ProviderView.h", "Active"),
-						QT_TRANSLATE_NOOP("ProviderView.h", "Take orders"),
+						QT_TRANSLATE_NOOP("ProviderView.h", "Accept orders"),
 						QT_TRANSLATE_NOOP("ProviderView.h", "Enable dinner"),
 						QT_TRANSLATE_NOOP("ProviderView.h", "Name"),
 						QT_TRANSLATE_NOOP("ProviderView.h", "Address"),

@@ -85,15 +85,13 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		painter->drawPixmap(coordDots_x, coordDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsBlackPixmap);
 	}
 
-	//provider.setEnableTakeOrder(false);
-
 	// provider data
 	//
 	QRect providerDataRect = option.rect;
 	providerDataRect.adjust(m_dpi, 5, -m_dpi, 0);
 
 	painter->setFont(*m_providerNameFont);
-	painter->setPen(provider.enableTakeOrder() ? QColor(0x0, 0x0, 0x0) : QColor(0x70, 0x70, 0x70));
+	painter->setPen(provider.enableAcceptOrder() ? QColor(0x0, 0x0, 0x0) : QColor(0x70, 0x70, 0x70));
 	painter->drawText(providerDataRect, Qt::AlignLeft, provider.name());
 
 	QSize cellSize = QFontMetrics(*m_providerNameFont).size(Qt::TextSingleLine,"A");
@@ -101,13 +99,13 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	painter->setFont(*m_providerAddressFont);
 	painter->setPen(QColor(0x70, 0x70, 0x70));
-	painter->drawText(providerDataRect, Qt::AlignLeft, provider.enableTakeOrder() ? provider.address() : tr("Заведение сейчас не приниммает заказы"));
+	painter->drawText(providerDataRect, Qt::AlignLeft, provider.enableAcceptOrder() ? provider.address() : tr("Заведение сейчас не приниммает заказы"));
 
 	providerDataRect.adjust(0, cellSize.height() - 4, 0, 0);
 
 	//painter->setFont(*m_providerAddressFont);
 	painter->setPen(QColor(0x70, 0x70, 0x70));
-	painter->drawText(providerDataRect, Qt::AlignLeft, provider.enableTakeOrder() ? provider.phone() : QString());
+	painter->drawText(providerDataRect, Qt::AlignLeft, provider.enableAcceptOrder() ? provider.phone() : QString());
 
 	// order state
 	//
@@ -139,7 +137,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	int coordState_x = m_dpi / 2 - m_iconSize / 2;
 
-	if (provider.enableTakeOrder() == true)
+	if (provider.enableAcceptOrder() == true)
 	{
 		if (orderState.isEmpty() == false)
 		{

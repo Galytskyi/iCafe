@@ -397,7 +397,7 @@ ProviderView* MainWindow::createProviderView()
 
 	connect(this, &MainWindow::setTextFilter, pView, &ProviderView::setTextFilter, Qt::QueuedConnection);
 
-	//connect(&theProviderBase, &Provider::Base::cfgXmlDataLoaded, pView, &ProviderView::updateList, Qt::QueuedConnection);
+	connect(&theProviderBase, &Provider::Base::cfgXmlDataLoaded, pView, &ProviderView::updateList, Qt::QueuedConnection);
 	connect(&theProviderBase, &Provider::Base::cfgXmlDataLoaded, pView, &ProviderView::updateOrderList, Qt::QueuedConnection);
 	connect(&theOrderBase, &Order::Base::signal_stateChanged, pView, &ProviderView::orderStateChanged, Qt::QueuedConnection);
 
@@ -682,7 +682,7 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 
 	Provider::Item provider = item.provider();
 
-	if (provider.enableTakeOrder() == false)
+	if (provider.enableAcceptOrder() == false)
 	{
 		return;
 	}
@@ -701,7 +701,7 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 	{
 		pContextMenu->addAction(m_pOrderTableAction);
 
-		if (provider.enableTakeDinner() == true)
+		if (provider.enableDinner() == true)
 		{
 			pContextMenu->addAction(m_pOrderDinnerAction);
 		}

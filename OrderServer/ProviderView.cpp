@@ -126,7 +126,7 @@ QVariant ProviderTable::data(const QModelIndex &index, int role) const
 
 			case PROVIDER_COLUMN_TAKE_ORDERS:
 
-				if (provider.enableTakeOrder() == true)
+				if (provider.enableAcceptOrder() == true)
 				{
 					return QColor(0xA0, 0xF0, 0xA0);
 				}
@@ -135,7 +135,7 @@ QVariant ProviderTable::data(const QModelIndex &index, int role) const
 
 			case PROVIDER_COLUMN_TAKE_DINNER:
 
-				if (provider.enableTakeDinner() == true)
+				if (provider.enableDinner() == true)
 				{
 					return QColor(0xA0, 0xF0, 0xA0);
 				}
@@ -179,8 +179,8 @@ QString ProviderTable::text(int row, int column, const Provider::Item& provider)
 	{
 		case PROVIDER_COLUMN_ID:			result = QString::number(provider.providerID());					break;
 		case PROVIDER_COLUMN_ACTIVE:		result = provider.isActive() ? provider.activeTime() : tr("No");	break;
-		case PROVIDER_COLUMN_TAKE_ORDERS:	result = provider.enableTakeOrder() ? "Yes" : tr("No");				break;
-		case PROVIDER_COLUMN_TAKE_DINNER:	result = provider.enableTakeDinner() ? "Yes" : tr("No");			break;
+		case PROVIDER_COLUMN_TAKE_ORDERS:	result = provider.enableAcceptOrder() ? "Yes" : tr("No");				break;
+		case PROVIDER_COLUMN_TAKE_DINNER:	result = provider.enableDinner() ? "Yes" : tr("No");			break;
 		case PROVIDER_COLUMN_NAME:			result = provider.name();											break;
 		case PROVIDER_COLUMN_ADDRESS:		result = provider.address();										break;
 		case PROVIDER_COLUMN_PHONE:			result = provider.phone();											break;

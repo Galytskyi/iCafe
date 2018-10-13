@@ -101,7 +101,7 @@ private slots:
 
 	// menu
 	//
-	void					onEnableTakeOrder();
+	void					onEnableAcceptOrder();
 	void					onOptions();
 	void					onAppAbout();
 

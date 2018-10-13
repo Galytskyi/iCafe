@@ -36,7 +36,7 @@ namespace Provider
 		struct
 		{
 			quint32 active : 1;
-			quint32 takeOrder : 1;
+			quint32 acceptOrder : 1;
 			quint32 enableDinner : 1;
 		};
 	};
@@ -98,11 +98,11 @@ namespace Provider
 		bool				isActive() const { return m_state.active; }
 		void				setActive(bool active) { m_state.active = active; }
 
-		bool				enableTakeOrder() const { return m_state.takeOrder; }
-		void				setEnableTakeOrder(bool enable) { m_state.takeOrder = enable; }
+		bool				enableAcceptOrder() const { return m_state.acceptOrder; }
+		void				setEnableAcceptOrder(bool enable) { m_state.acceptOrder = enable; }
 
-		bool				enableTakeDinner() const { return m_state.enableDinner; }
-		void				setEnableTakeDinner(bool enable) { m_state.enableDinner = enable; }
+		bool				enableDinner() const { return m_state.enableDinner; }
+		void				setEnableDinner(bool enable) { m_state.enableDinner = enable; }
 
 		QString				activeTime() const { return m_activeTime; }
 		void				setActiveTime(const QString& time) { m_activeTime = time; }
@@ -168,8 +168,6 @@ namespace Provider
 		mutable QMutex			m_mutex;
 		QVector<Item>			m_providerList;
 		QMap<quint32, int>		m_providerIndexMap;
-
-		quint32*				m_pEnableTakeOrderState = nullptr;
 
 	public:
 
