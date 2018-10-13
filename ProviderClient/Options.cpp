@@ -96,12 +96,13 @@ void ProviderDataOption::load()
 	QSettings s;
 
 	m_providerID = s.value(QString("%1ProviderID").arg(PROVIDER_DATA_REG_KEY), -1).toUInt();
-	m_requestProviderTime = s.value(QString("%1RequestProviderTime").arg(PROVIDER_DATA_REG_KEY), 1000).toInt();
-	m_requestCustomerTime = s.value(QString("%1RequestCustomerTime").arg(PROVIDER_DATA_REG_KEY), 1000).toInt();
+
+	m_requestProviderTime = s.value(QString("%1RequestProviderTime").arg(PROVIDER_DATA_REG_KEY), 2000).toUInt();
+	m_requestCustomerTime = s.value(QString("%1RequestCustomerTime").arg(PROVIDER_DATA_REG_KEY), 2000).toUInt();
 
 	m_serverIP = s.value(QString("%1ServerIP").arg(PROVIDER_DATA_REG_KEY), "193.0.61.244").toString();
-	m_serverProviderPort = s.value(QString("%1ServerProviderPort").arg(PROVIDER_DATA_REG_KEY), PORT_PROVIDER_ORDER_REQUEST).toInt();
-	m_serverCustomerPort = s.value(QString("%1ServerCustomerPort").arg(PROVIDER_DATA_REG_KEY), PORT_CUSTOMER_ORDER_REQUEST).toInt();
+	m_serverProviderPort = s.value(QString("%1ServerProviderPort").arg(PROVIDER_DATA_REG_KEY), PORT_PROVIDER_ORDER_REQUEST).toUInt();
+	m_serverCustomerPort = s.value(QString("%1ServerCustomerPort").arg(PROVIDER_DATA_REG_KEY), PORT_CUSTOMER_ORDER_REQUEST).toUInt();
 
 	m_showKeyboard = s.value(QString("%1ShowKeyboard").arg(PROVIDER_DATA_REG_KEY), true).toBool();
 }
@@ -113,6 +114,7 @@ void ProviderDataOption::save()
 	QSettings s;
 
 	s.setValue(QString("%1ProviderID").arg(PROVIDER_DATA_REG_KEY), m_providerID);
+
 	s.setValue(QString("%1RequestProviderTime").arg(PROVIDER_DATA_REG_KEY), m_requestProviderTime);
 	s.setValue(QString("%1RequestCustomerTime").arg(PROVIDER_DATA_REG_KEY), m_requestCustomerTime);
 
@@ -128,6 +130,8 @@ void ProviderDataOption::save()
 ProviderDataOption& ProviderDataOption::operator=(const ProviderDataOption& from)
 {
 	m_providerID = from.m_providerID;
+	m_state = from.m_state;
+
 	m_requestProviderTime = from.m_requestProviderTime;
 	m_requestCustomerTime = from.m_requestCustomerTime;
 

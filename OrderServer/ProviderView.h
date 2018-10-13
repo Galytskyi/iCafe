@@ -15,7 +15,8 @@ const char* const		ProviderColumn[] =
 {
 						QT_TRANSLATE_NOOP("ProviderView.h", "ID"),
 						QT_TRANSLATE_NOOP("ProviderView.h", "Active"),
-						QT_TRANSLATE_NOOP("ProviderView.h", "Dinner"),
+						QT_TRANSLATE_NOOP("ProviderView.h", "Take orders"),
+						QT_TRANSLATE_NOOP("ProviderView.h", "Enable dinner"),
 						QT_TRANSLATE_NOOP("ProviderView.h", "Name"),
 						QT_TRANSLATE_NOOP("ProviderView.h", "Address"),
 						QT_TRANSLATE_NOOP("ProviderView.h", "Phone"),
@@ -25,16 +26,18 @@ const int				PROVIDER_COLUMN_COUNT		= sizeof(ProviderColumn)/sizeof(ProviderColu
 
 const int				PROVIDER_COLUMN_ID			= 0,
 						PROVIDER_COLUMN_ACTIVE		= 1,
-						PROVIDER_COLUMN_DINNER		= 2,
-						PROVIDER_COLUMN_NAME		= 3,
-						PROVIDER_COLUMN_ADDRESS		= 4,
-						PROVIDER_COLUMN_PHONE		= 5;
+						PROVIDER_COLUMN_TAKE_ORDERS	= 2,
+						PROVIDER_COLUMN_TAKE_DINNER	= 3,
+						PROVIDER_COLUMN_NAME		= 4,
+						PROVIDER_COLUMN_ADDRESS		= 5,
+						PROVIDER_COLUMN_PHONE		= 6;
 
 const int				ProviderColumnWidth[PROVIDER_COLUMN_COUNT] =
 {
 						 50, //PROVIDER_COLUMN_ID
 						120, //PROVIDER_COLUMN_ACTIVE
-						 50, //PROVIDER_COLUMN_DINNER
+						 80, //PROVIDER_COLUMN_TAKE_ORDERS
+						 80, //PROVIDER_COLUMN_TAKE_DINNER
 						150, //PROVIDER_COLUMN_NAME
 						200, //PROVIDER_COLUMN_ADDRESS
 						100, //PROVIDER_COLUMN_PHONE

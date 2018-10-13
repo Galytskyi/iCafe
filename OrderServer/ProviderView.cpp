@@ -107,27 +107,48 @@ QVariant ProviderTable::data(const QModelIndex &index, int role) const
 
 	if (role == Qt::BackgroundColorRole)
 	{
-		if (column == PROVIDER_COLUMN_ACTIVE)
+		QVariant result = QVariant();
+
+		switch (column)
 		{
-			if (provider.isActive() == false)
-			{
-				return QColor(0xF0, 0xA0, 0xA0);
-			}
-			else
-			{
-				return QColor(0xA0, 0xF0, 0xA0);
-			}
+			case PROVIDER_COLUMN_ACTIVE:
+
+				if (provider.isActive() == false)
+				{
+					result = QColor(0xF0, 0xA0, 0xA0);
+				}
+				else
+				{
+					result = QColor(0xA0, 0xF0, 0xA0);
+				}
+
+				break;
+
+			case PROVIDER_COLUMN_TAKE_ORDERS:
+
+				if (provider.enableTakeOrder() == true)
+				{
+					return QColor(0xA0, 0xF0, 0xA0);
+				}
+
+				break;
+
+			case PROVIDER_COLUMN_TAKE_DINNER:
+
+				if (provider.enableTakeDinner() == true)
+				{
+					return QColor(0xA0, 0xF0, 0xA0);
+				}
+
+				break;
+
+
+			default:
+				result = QVariant();
+				break;
 		}
 
-		if (column == PROVIDER_COLUMN_DINNER)
-		{
-			if (provider.enableDinner() == true)
-			{
-				return QColor(0xA0, 0xF0, 0xA0);
-			}
-		}
-
-		return QVariant();
+		return result;
 	}
 
 	if (role == Qt::DisplayRole || role == Qt::EditRole)
@@ -156,13 +177,14 @@ QString ProviderTable::text(int row, int column, const Provider::Item& provider)
 
 	switch (column)
 	{
-		case PROVIDER_COLUMN_ID:		result = QString::number(provider.providerID());					break;
-		case PROVIDER_COLUMN_ACTIVE:	result = provider.isActive() ? provider.activeTime() : tr("No");	break;
-		case PROVIDER_COLUMN_DINNER:	result = provider.enableDinner() ? "Yes" : tr("No");				break;
-		case PROVIDER_COLUMN_NAME:		result = provider.name();											break;
-		case PROVIDER_COLUMN_ADDRESS:	result = provider.address();										break;
-		case PROVIDER_COLUMN_PHONE:		result = provider.phone();											break;
-		default:						assert(0);															break;
+		case PROVIDER_COLUMN_ID:			result = QString::number(provider.providerID());					break;
+		case PROVIDER_COLUMN_ACTIVE:		result = provider.isActive() ? provider.activeTime() : tr("No");	break;
+		case PROVIDER_COLUMN_TAKE_ORDERS:	result = provider.enableTakeOrder() ? "Yes" : tr("No");				break;
+		case PROVIDER_COLUMN_TAKE_DINNER:	result = provider.enableTakeDinner() ? "Yes" : tr("No");			break;
+		case PROVIDER_COLUMN_NAME:			result = provider.name();											break;
+		case PROVIDER_COLUMN_ADDRESS:		result = provider.address();										break;
+		case PROVIDER_COLUMN_PHONE:			result = provider.phone();											break;
+		default:							assert(0);															break;
 	}
 
 	return result;

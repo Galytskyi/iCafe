@@ -182,18 +182,19 @@ void CustomerDataOption::load()
 	QSettings s;
 
 	m_serverIP = s.value(QString("%1ServerIP").arg(CUSTOMER_DATA_REG_KEY), "193.0.61.244").toString();
+
 	m_serverConfigPort = s.value(QString("%1ServerConfigPort").arg(CUSTOMER_DATA_REG_KEY), PORT_CONFIG_XML_REQUEST).toUInt();
+	m_serverProviderPort = s.value(QString("%1ServerProviderPort").arg(CUSTOMER_DATA_REG_KEY), PORT_PROVIDER_ORDER_REQUEST).toUInt();
 	m_serverCustomerPort = s.value(QString("%1ServerCustomerPort").arg(CUSTOMER_DATA_REG_KEY), PORT_CUSTOMER_ORDER_REQUEST).toUInt();
+
+	m_requestConfigTime = s.value(QString("%1RequestConfigTime").arg(CUSTOMER_DATA_REG_KEY), 2000).toUInt();
+	m_requestProviderTime = s.value(QString("%1RequestProviderTime").arg(CUSTOMER_DATA_REG_KEY), 2000).toUInt();
+	m_requestCustomerTime = s.value(QString("%1RequestCustomerTime").arg(CUSTOMER_DATA_REG_KEY), 2000).toUInt();
 
 	m_phone = s.value(QString("%1Phone").arg(CUSTOMER_DATA_REG_KEY), 501002030).toULongLong();
 	m_orderTime = s.value(QString("%1OrderTime").arg(CUSTOMER_DATA_REG_KEY), 49152).toUInt();
 	m_people = s.value(QString("%1People").arg(CUSTOMER_DATA_REG_KEY), 2).toUInt();
 
-	m_requestConfigTime = s.value(QString("%1RequestConfigTime").arg(CUSTOMER_DATA_REG_KEY), 1000).toUInt();
-	m_requestCustomerTime = s.value(QString("%1RequestCustomerTime").arg(CUSTOMER_DATA_REG_KEY), 1000).toUInt();
-
-	m_fontName = s.value(QString("%1FontName").arg(CUSTOMER_DATA_REG_KEY), "Arial").toString();
-	m_fontSize = s.value(QString("%1FontSize").arg(CUSTOMER_DATA_REG_KEY), 12).toUInt();
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -203,18 +204,18 @@ void CustomerDataOption::save()
 	QSettings s;
 
 	s.setValue(QString("%1ServerIP").arg(CUSTOMER_DATA_REG_KEY), m_serverIP);
+
 	s.setValue(QString("%1ServerConfigPort").arg(CUSTOMER_DATA_REG_KEY), m_serverConfigPort);
+	s.setValue(QString("%1ServerProviderPort").arg(CUSTOMER_DATA_REG_KEY), m_serverProviderPort);
 	s.setValue(QString("%1ServerCustomerPort").arg(CUSTOMER_DATA_REG_KEY), m_serverCustomerPort);
+
+	s.setValue(QString("%1RequestConfigTime").arg(CUSTOMER_DATA_REG_KEY), m_requestConfigTime);
+	s.setValue(QString("%1RequestProviderTime").arg(CUSTOMER_DATA_REG_KEY), m_requestProviderTime);
+	s.setValue(QString("%1RequestCustomerTime").arg(CUSTOMER_DATA_REG_KEY), m_requestCustomerTime);
 
 	s.setValue(QString("%1Phone").arg(CUSTOMER_DATA_REG_KEY), m_phone);
 	s.setValue(QString("%1OrderTime").arg(CUSTOMER_DATA_REG_KEY), m_orderTime);
 	s.setValue(QString("%1People").arg(CUSTOMER_DATA_REG_KEY), m_people);
-
-	s.setValue(QString("%1RequestConfigTime").arg(CUSTOMER_DATA_REG_KEY), m_requestConfigTime);
-	s.setValue(QString("%1RequestCustomerTime").arg(CUSTOMER_DATA_REG_KEY), m_requestCustomerTime);
-
-	s.setValue(QString("%1FontName").arg(CUSTOMER_DATA_REG_KEY), m_fontName);
-	s.setValue(QString("%1FontSize").arg(CUSTOMER_DATA_REG_KEY), m_fontSize);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -222,20 +223,20 @@ void CustomerDataOption::save()
 CustomerDataOption& CustomerDataOption::operator=(const CustomerDataOption& from)
 {
 	m_serverIP = from.m_serverIP;
+
 	m_serverConfigPort = from.m_serverConfigPort;
+	m_serverProviderPort = from.m_serverProviderPort;
 	m_serverCustomerPort = from.m_serverCustomerPort;
+
+	m_requestConfigTime = from.m_requestConfigTime;
+	m_requestProviderTime = from.m_requestProviderTime;
+	m_requestCustomerTime = from.m_requestCustomerTime;
 
 	m_orderType = from.m_orderType;
 	m_providerID = from.m_providerID;
 	m_phone = from.m_phone;
 	m_orderTime = from.m_orderTime;
 	m_people = from.m_people;
-
-	m_requestConfigTime = from.m_requestConfigTime;
-	m_requestCustomerTime = from.m_requestCustomerTime;
-
-	m_fontName = from.m_fontName;
-	m_fontSize = from.m_fontSize;
 
 	return *this;
 }

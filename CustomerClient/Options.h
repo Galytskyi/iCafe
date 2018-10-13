@@ -129,8 +129,14 @@ public:
 private:
 
 	QString				m_serverIP;
+
 	int					m_serverConfigPort = PORT_CONFIG_XML_REQUEST;
+	int					m_serverProviderPort = PORT_PROVIDER_ORDER_REQUEST;
 	int					m_serverCustomerPort = PORT_CUSTOMER_ORDER_REQUEST;
+
+	int					m_requestConfigTime = 2000;
+	int					m_requestProviderTime = 2000;
+	int					m_requestCustomerTime = 2000;
 
 	int					m_orderType = 0;
 	quint32				m_providerID = -1;
@@ -138,24 +144,35 @@ private:
 	quint32				m_orderTime = 49152;
 	int					m_people = 2;
 
-	int					m_requestConfigTime = 1000;
-	int					m_requestCustomerTime = 1000;
-
-	QString				m_fontName;
-	int					m_fontSize = 12;
-
 public:
 
 	QString				serverIP() const { return m_serverIP; }
 	void				setServerIP(const QString& ip) { m_serverIP = ip; }
 
+	//
+	//
 	int					serverConfigPort() const { return m_serverConfigPort; }
 	void				setServerConfigPort(int port) { m_serverConfigPort = port; }
+
+	int					serveProviderPort() const { return m_serverProviderPort; }
+	void				setServerProviderPort(int port) { m_serverProviderPort = port; }
 
 	int					serverCustomerPort() const { return m_serverCustomerPort; }
 	void				setServerCustomerPort(int port) { m_serverCustomerPort = port; }
 
+	//
+	//
+	int					requestConfigTime() const { return m_requestConfigTime; }
+	void				setRequestConfigTime(int  time) { m_requestConfigTime = time; }
 
+	int					requestProviderTime() const { return m_requestProviderTime; }
+	void				setRequestProviderTime(int time) { m_requestProviderTime = time; }
+
+	int					requestCustomerTime() const { return m_requestCustomerTime; }
+	void				setRequestCustomerTime(int  time) { m_requestCustomerTime = time; }
+
+	//
+	//
 	int					orderType() const { return m_orderType; }
 	void				setOrderType(int type) { m_orderType = type; }
 
@@ -170,19 +187,6 @@ public:
 
 	int					people() const { return m_people; }
 	void				setPeople(int count) { m_people = count; }
-
-	int					requestConfigTime() const { return m_requestConfigTime; }
-	void				setRequestConfigTime(int  time) { m_requestConfigTime = time; }
-
-	int					requestCustomerTime() const { return m_requestCustomerTime; }
-	void				setRequestCustomerTime(int  time) { m_requestCustomerTime = time; }
-
-	QString				fontName() const { return m_fontName; }
-	void				setFontName(const QString& name) { m_fontName = name; }
-
-	int					fontSize() const { return m_fontSize; }
-	void				setFontSize(int size) { m_fontSize = size; }
-
 
 	void				load();
 	void				save();

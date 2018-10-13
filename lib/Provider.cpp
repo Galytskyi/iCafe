@@ -73,11 +73,11 @@ namespace Provider
 		m_id = INVALID_ID;
 		m_googleID.clear();
 
-		m_rank = 0;
-		m_active = false;
-		m_activeTime.clear();
-		m_enableDinner = false;
+		m_state = 0;
 
+		m_activeTime.clear();
+
+		m_rank = 0;
 		m_type = 0;
 
 		m_name.clear();
@@ -85,6 +85,9 @@ namespace Provider
 		m_phone.clear();
 		m_mail.clear();
 		m_website.clear();
+
+		m_geoLat = 0;
+		m_geoLng = 0;
 
 		m_connect = false;
 	}
@@ -128,14 +131,16 @@ namespace Provider
 			case 1:
 
 				result &= xml.readUInt32Attribute("ProviderID", &m_id);
-				//result &= xml.readStringAttribute("GoogleID", &m_googleID);
+				result &= xml.readStringAttribute("GoogleID", &m_googleID);
 
 				result &= xml.readIntAttribute("Type", &m_type);
-				result &= xml.readBoolAttribute("EnableDinner", &m_enableDinner);
 
 				result &= xml.readStringAttribute("Name", &m_name);
 				result &= xml.readStringAttribute("Address", &m_address);
 				result &= xml.readStringAttribute("Telephone", &m_phone);
+
+				result &= xml.readDoubleAttribute("GeoLat", &m_geoLat);
+				result &= xml.readDoubleAttribute("GeoLng", &m_geoLng);
 
 				break;
 
@@ -161,14 +166,16 @@ namespace Provider
 				xml.writeStartElement(xmlTagProvider);
 				{
 					xml.writeUInt32Attribute("ProviderID", providerID(), false);
-					//xml.writeStringAttribute("GoogleID", googleID());
+					xml.writeStringAttribute("GoogleID", googleID());
 
 					xml.writeIntAttribute("Type", type());
-					xml.writeBoolAttribute("EnableDinner", enableDinner());
 
 					xml.writeStringAttribute("Name", name());
 					xml.writeStringAttribute("Address", address());
 					xml.writeStringAttribute("Telephone", phone());
+
+					xml.writeDoubleAttribute("GeoLat", geoLat());
+					xml.writeDoubleAttribute("GeoLng", geoLng());
 				}
 
 				xml.writeEndElement();
@@ -191,11 +198,11 @@ namespace Provider
 		m_id = from.m_id;
 		m_googleID = from.m_googleID;
 
-		m_rank = from.m_rank;
-		m_active = from.m_active;
-		m_activeTime = from.m_activeTime;
-		m_enableDinner = from.m_enableDinner;
+		m_state = from.m_state;
 
+		m_activeTime = from.m_activeTime;
+
+		m_rank = from.m_rank;
 		m_type = from.m_type;
 
 		m_name = from.m_name;
@@ -203,6 +210,9 @@ namespace Provider
 		m_phone = from.m_phone;
 		m_mail = from.m_mail;
 		m_website = from.m_website;
+
+		m_geoLat = from.m_geoLat;
+		m_geoLng = from.m_geoLng;
 
 		m_connect = from.m_connect;
 

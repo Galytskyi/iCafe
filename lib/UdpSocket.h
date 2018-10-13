@@ -208,7 +208,7 @@ namespace Udp
 		quint32				m_requestNo = 1;
 		quint32				m_protocolVersion = 1;
 
-		int					m_msTimeout = 100;
+		int					m_msTimeout = 300;
 		int					m_retryCount = 0;
 		int					m_retryCtr = 0;
 		quint32				m_ackTimeoutCtr = 0;

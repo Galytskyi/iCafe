@@ -117,6 +117,39 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 		return;
 	}
 
+	quint32 providerID = ((Order::Handle) wo.orderID).providerID;
+	Provider::Item* pProvider = theProviderBase.providerPtr( providerID );
+	if (pProvider == nullptr)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+
+		wo.state = Order::STATE_PROVIDER_NOT_FOUND;
+		sendReply(request, wo);
+
+		return;
+	}
+
+	if (pProvider->isActive() == false)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_ACTIVE");
+
+		wo.state = Order::STATE_PROVIDER_NOT_ACTIVE;
+		sendReply(request, wo);
+
+		return;
+	}
+
+	if (pProvider->enableTakeOrder() == false)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_WARNING, __FUNCTION__, "Order::STATE_PROVIDER_DONT_TAKE_ORDER");
+
+		wo.state = Order::STATE_PROVIDER_DONT_TAKE_ORDER;
+		sendReply(request, wo);
+
+		return;
+	}
+
+
 	Order::Item order(wo);
 
 	order.setAddress(request.address());

@@ -22,6 +22,30 @@ namespace Provider
 
 	// ==============================================================================================
 
+	#pragma pack(push, 1)
+
+	union State
+	{
+		State(quint32 f = 0)
+		{
+			flags = f;
+		}
+
+		quint32 flags = 0;
+
+		struct
+		{
+			quint32 active : 1;
+			quint32 takeOrder : 1;
+			quint32 enableDinner : 1;
+		};
+	};
+
+	#pragma pack(pop)
+
+
+	// ==============================================================================================
+
 	class Item : public QObject
 	{
 		Q_OBJECT
@@ -37,11 +61,11 @@ namespace Provider
 		quint32				m_id = INVALID_ID;
 		QString				m_googleID;
 
-		int					m_rank = 0;
-		bool				m_active = false;
-		QString				m_activeTime;
-		bool				m_enableDinner = false;
+		State				m_state;
 
+		QString				m_activeTime;
+
+		int					m_rank = 0;
 		int					m_type = 0;
 
 		QString				m_name;
@@ -49,6 +73,9 @@ namespace Provider
 		QString				m_phone;
 		QString				m_mail;
 		QString				m_website;
+
+		double				m_geoLat = 0;
+		double				m_geoLng = 0;
 
 		bool				m_connect = false;
 
@@ -65,17 +92,23 @@ namespace Provider
 		QString				googleID() const { return m_googleID; }
 		void				setGoogleID(const QString& id) { m_googleID = id; }
 
-		int					rank() const { return m_rank; }
-		void				setRank(int rank) { m_rank = rank; }
+		quint32				state() const { return m_state.flags; }
+		void				setState(quint32 state) { m_state = state; }
 
-		bool				isActive() const { return m_active; }
-		void				setActive(bool active) { m_active = active; }
+		bool				isActive() const { return m_state.active; }
+		void				setActive(bool active) { m_state.active = active; }
+
+		bool				enableTakeOrder() const { return m_state.takeOrder; }
+		void				setEnableTakeOrder(bool enable) { m_state.takeOrder = enable; }
+
+		bool				enableTakeDinner() const { return m_state.enableDinner; }
+		void				setEnableTakeDinner(bool enable) { m_state.enableDinner = enable; }
 
 		QString				activeTime() const { return m_activeTime; }
 		void				setActiveTime(const QString& time) { m_activeTime = time; }
 
-		bool				enableDinner() const { return m_enableDinner; }
-		void				setEnableDinner(bool enable) { m_enableDinner = enable; }
+		int					rank() const { return m_rank; }
+		void				setRank(int rank) { m_rank = rank; }
 
 		int					type() const { return m_type; }
 		void				setType(int type) { m_type = type; }
@@ -94,6 +127,12 @@ namespace Provider
 
 		QString				website() const { return m_website; }
 		void				setWebsite(const QString& website) { m_website = website; }
+
+		double				geoLat() const { return m_geoLat; }
+		void				setGeoLat(double lat) { m_geoLat = lat; }
+
+		double				geoLng() const { return m_geoLng; }
+		void				setGeoLng(double lng) { m_geoLng = lng; }
 
 		bool				isConnected() const { return m_connect; }
 		void				setConnectState(bool connect);
@@ -129,6 +168,8 @@ namespace Provider
 		mutable QMutex			m_mutex;
 		QVector<Item>			m_providerList;
 		QMap<quint32, int>		m_providerIndexMap;
+
+		quint32*				m_pEnableTakeOrderState = nullptr;
 
 	public:
 

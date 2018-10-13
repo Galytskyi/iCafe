@@ -149,8 +149,11 @@ bool MainWindow::startOrderReceiveUdpThread()
 	//
 	connect(m_pOrderReceiveSocket, &OrderReceiveSocket::socketConnection, this, &MainWindow::onSocketConnection, Qt::QueuedConnection);
 	connect(m_pOrderReceiveSocket, &OrderReceiveSocket::appendOrderToBase, this, &MainWindow::appendOrder, Qt::QueuedConnection);
+	connect(m_pOrderReceiveSocket, &OrderReceiveSocket::providerStateChanged, this, &MainWindow::providerStateChanged, Qt::QueuedConnection);
 
-	connect(this, &MainWindow::sendRequestChangeState, m_pOrderReceiveSocket, &OrderReceiveSocket::requestSetOrderState, Qt::QueuedConnection);
+	connect(this, &MainWindow::sendRequestChangeOrderState, m_pOrderReceiveSocket, &OrderReceiveSocket::requestSetOrderState, Qt::QueuedConnection);
+	connect(this, &MainWindow::sendRequestGetProviderState, m_pOrderReceiveSocket, &OrderReceiveSocket::requestGetProviderState, Qt::QueuedConnection);
+	connect(this, &MainWindow::sendRequestChangeProviderState, m_pOrderReceiveSocket, &OrderReceiveSocket::requestSetProviderState, Qt::QueuedConnection);
 	//
 	//
 	pThread->start();
@@ -169,9 +172,10 @@ bool MainWindow::stopOrderReceiveUdpThread()
 
 	//
 	//
-	disconnect(this, &MainWindow::sendRequestChangeState, m_pOrderReceiveSocket, &OrderReceiveSocket::requestSetOrderState);
+	disconnect(this, &MainWindow::sendRequestChangeOrderState, m_pOrderReceiveSocket, &OrderReceiveSocket::requestSetOrderState);
 
 	disconnect(m_pOrderReceiveSocket, &OrderReceiveSocket::appendOrderToBase, this, &MainWindow::appendOrder);
+	disconnect(m_pOrderReceiveSocket, &OrderReceiveSocket::providerStateChanged, this, &MainWindow::providerStateChanged);
 	//
 	//
 	QThread *pThread = m_pOrderReceiveSocket->thread();
@@ -252,8 +256,11 @@ bool MainWindow::stopOrderStateUdpThread()
 
 void MainWindow::createActions()
 {
-	// Order
-	//
+	m_pEnableOrderAction = new QAction(tr("Принимать заказы"), this);
+	m_pEnableOrderAction->setIcon(QIcon(":/icons/Cancel.png"));
+	m_pEnableOrderAction->setToolTip(tr("Принимать заказы"));
+	connect(m_pEnableOrderAction, &QAction::triggered, this, &MainWindow::onEnableTakeOrder);
+
 	m_pOptionsAction = new QAction(tr("Настройки"), this);
 	m_pOptionsAction->setShortcut(Qt::CTRL + Qt::Key_O);
 	m_pOptionsAction->setIcon(QIcon(":/icons/Options.png"));
@@ -284,6 +291,7 @@ bool MainWindow::createToolBars()
 
 		m_pOrderControlToolBar->addAction(m_pInfoAction);
 		m_pOrderControlToolBar->addAction(m_pOptionsAction);
+		m_pOrderControlToolBar->addAction(m_pEnableOrderAction);
 
 		m_connectLabel = new QLabel(m_pOrderControlToolBar);
 		m_connectLabel->setStyleSheet("color: rgb(255, 0, 0);");
@@ -358,9 +366,19 @@ void MainWindow::onSendRequestCancelOrder()
 
 	order.setState(Order::STATE_ORDER_CANCEL);
 
-	emit sendRequestChangeState(order);
+	emit sendRequestChangeOrderState(order);
 
 	emit onSetMainWidget();
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::onEnableTakeOrder()
+{
+	Provider::State state = theOptions.providerData().state();
+	state.takeOrder = !state.takeOrder;
+
+	emit sendRequestChangeProviderState(state.flags);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -481,7 +499,7 @@ void MainWindow::onOrderListClick(const QModelIndex& index)
 					order.setState(Order::STATE_ORDER_CANCEL);
 				}
 
-				emit sendRequestChangeState(order);
+				emit sendRequestChangeOrderState(order);
 			}
 
 			break;
@@ -497,6 +515,8 @@ void MainWindow::onSocketConnection(bool connect)
 {
 	if (connect == true)
 	{
+		emit sendRequestGetProviderState();
+
 		m_connectLabel->setText("");
 	}
 	else
@@ -525,21 +545,6 @@ void MainWindow::appendOrder(const Order::Item& order)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void MainWindow::orderStateChanged(const Order::Item& order)
-{
-	qDebug() << "MainWindow::orderStateChanged - ID : " << order.handle().ID << ", state: " << order.state();
-
-	if (m_pView == nullptr)
-	{
-		return;
-	}
-
-	m_pView->changeState(order);
-}
-
-
-// -------------------------------------------------------------------------------------------------------------------
-
 void MainWindow::removeOrder(const Order::Item& order)
 {
 	bool result = theOrderBase.remove(order.handle().ID);
@@ -554,6 +559,31 @@ void MainWindow::removeOrder(const Order::Item& order)
 	}
 
 	m_pView->removeFromList(order);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::orderStateChanged(const Order::Item& order)
+{
+	qDebug() << "MainWindow::orderStateChanged - ID : " << order.handle().ID << ", state: " << order.state();
+
+	if (m_pView == nullptr)
+	{
+		return;
+	}
+
+	m_pView->changeState(order);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::providerStateChanged(quint32 state)
+{
+	theOptions.providerData().setState(state);
+
+	Provider::State providerState = state;
+
+	m_pEnableOrderAction->setIcon(providerState.takeOrder == true ?  QIcon(":/icons/Ok.png") : QIcon(":/icons/Cancel.png"));
 }
 
 // -------------------------------------------------------------------------------------------------------------------

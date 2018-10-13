@@ -66,6 +66,15 @@ void ProviderOrderSocket::processRequest(Udp::Request request)
 			replySetOrderState(request);
 			break;
 
+		case CLIENT_GET_PROVIDER_INIT_STATE:
+		case CLIENT_GET_PROVIDER_STATE:
+			replyGetProviderState(request);
+			break;
+
+		case CLIENT_SET_PROVIDER_STATE:
+			replySetProviderState(request);
+			break;
+
 		default:
 			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Unknown request.ID(): %1").arg(request.ID()));
 			request.setErrorCode(SIO_ERROR_INCCORECT_REQUEST_ID);
@@ -149,7 +158,7 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 
 		pOrder->setRemoveTime(rt);
 
-		emit removeFrendlyOrders(pOrder->phone());
+		emit removeFrendlyOrdersByPhone(pOrder->phone());
 	}
 
 	//
@@ -164,6 +173,73 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 	//
 	//
 	sendReply(request, wo);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void ProviderOrderSocket::replyGetProviderState(const Udp::Request& request)
+{
+	sio_RequestProviderState* ptr_rps = (sio_RequestProviderState*) const_cast<const Udp::Request&>(request).data();
+
+	if (ptr_rps->version < 1 || ptr_rps->version > REQUEST_SET_PROVIDER_STATE_VERSION)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Wrong reply version: %1").arg(ptr_rps->version));
+		sendReply(request, (const char*) ptr_rps, sizeof(sio_RequestProviderState));
+		return;
+	}
+
+	Provider::Item* pProvider = theProviderBase.providerPtr(ptr_rps->providerID);
+	if (pProvider == nullptr)
+	{
+		sendReply(request, (const char*) ptr_rps, sizeof(sio_RequestProviderState));
+		return;
+	}
+
+	ptr_rps->state = pProvider->state();
+
+	sendReply(request, (const char*) ptr_rps, sizeof(sio_RequestProviderState));
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void ProviderOrderSocket::replySetProviderState(const Udp::Request& request)
+{
+	sio_RequestProviderState* ptr_rps = (sio_RequestProviderState*) const_cast<const Udp::Request&>(request).data();
+
+	if (ptr_rps->version < 1 || ptr_rps->version > REQUEST_SET_PROVIDER_STATE_VERSION)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Wrong reply version: %1").arg(ptr_rps->version));
+		sendReply(request, (const char*) ptr_rps, sizeof(sio_RequestProviderState));
+		return;
+	}
+
+	Provider::Item* pProvider = theProviderBase.providerPtr(ptr_rps->providerID);
+	if (pProvider == nullptr)
+	{
+		sendReply(request, (const char*) ptr_rps, sizeof(sio_RequestProviderState));
+		return;
+	}
+
+	if (pProvider->isActive() == false)
+	{
+		sendReply(request, (const char*) ptr_rps, sizeof(sio_RequestProviderState));
+		return;
+	}
+
+	if (ptr_rps->state != pProvider->state())
+	{
+		pProvider->setState(ptr_rps->state);
+		pProvider->setActive(true);
+
+		emit providerStateChanged(pProvider->providerID(), pProvider->state());
+
+		if (pProvider->enableTakeOrder() == false)
+		{
+			emit removeFrendlyOrdersByProviderID(pProvider->providerID());
+		}
+	}
+
+	sendReply(request, (const char*) ptr_rps, sizeof(sio_RequestProviderState));
 }
 
 // -------------------------------------------------------------------------------------------------------------------

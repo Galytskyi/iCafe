@@ -30,7 +30,8 @@ private:
 	// elements of interface - Menu
 	//
 	QCheckBox*			m_pProviderActiveCheck = nullptr;
-	QCheckBox*			m_pEnableDinnerCheck = nullptr;
+	QCheckBox*			m_pEnableTakeOrderCheck = nullptr;
+	QCheckBox*			m_pEnableTakeDinnerCheck = nullptr;
 
 	QLabel*				m_pNameLabel = nullptr;
 	QLineEdit*			m_pNameEdit = nullptr;

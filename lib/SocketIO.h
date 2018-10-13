@@ -35,6 +35,12 @@ const quint32	CLIENT_REMOVE_ORDER = 1202;
 				//
 const quint32	CLIENT_GET_ORDER = 1300;
 const quint32	CLIENT_SET_ORDER_STATE = 1301;
+const quint32	CLIENT_GET_PROVIDER_INIT_STATE = 1302;
+const quint32	CLIENT_GET_PROVIDER_STATE = 1303;
+const quint32	CLIENT_SET_PROVIDER_STATE = 1304;
+
+
+
 
 // ==============================================================================================
 // Errors
@@ -51,7 +57,7 @@ const int		SIO_ERROR_COUNT = 3;
 // Limiters
 //
 
-const int		MAX_FAIL_ACK_COUNT				= 5;
+const int		MAX_FAIL_ACK_COUNT				= 3;
 
 const int		MAX_CUSTOMER_ORDER_COUNT		= 5;
 
@@ -151,6 +157,23 @@ struct sio_RequestGetOrder
 
 	quint32 providerID = -1;
 	quint32 wrapVersion = 0;
+};
+
+#pragma pack(pop)
+
+// ----------------------------------------------------------------------------------------------
+// CLIENT_SET_PROVIDER_STATE
+//
+const quint32	REQUEST_SET_PROVIDER_STATE_VERSION = 1;
+
+#pragma pack(push, 1)
+
+struct sio_RequestProviderState
+{
+	quint32 version = REQUEST_SET_PROVIDER_STATE_VERSION;
+
+	quint32 providerID = -1;
+	quint32 state = 0;
 };
 
 #pragma pack(pop)

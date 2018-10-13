@@ -41,7 +41,9 @@ private:
 
 	QPixmap				m_dotsBlackPixmap;
 	QPixmap				m_dotsGrayPixmap;
-	QPixmap				n_tablePixmap;
+	QPixmap				m_unblockedPixmap;
+	QPixmap				m_blockedPixmap;
+	QPixmap				m_tablePixmap;
 	QPixmap				m_dinnerPixmap;
 
 public:
@@ -110,6 +112,9 @@ public:
 	void				clear();
 
 	QString				text(int row, int column, const ProviderItem& item) const;
+
+	void				updateProviderState(quint32 providerID, quint32 state);
+
 	void				updateRow(int row);
 	void				updateColumn(int column);
 };

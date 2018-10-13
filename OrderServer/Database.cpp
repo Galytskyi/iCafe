@@ -1,7 +1,7 @@
 #include "Database.h"
 
-#include <assert.h>
 #include <QMessageBox>
+#include <assert.h>
 
 #include "Options.h"
 
@@ -55,17 +55,20 @@ int SqlFieldBase::init(int objectType, int)
 
 			append("ObjectID",						QVariant::Int);
 			append("ProviderID",					QVariant::Int);
+			append("GoogleID",						QVariant::String, 16);
+
+			append("State",							QVariant::Int);
+			append("ActiveTime",					QVariant::String, 32);
 
 			append("Rank",							QVariant::Int);
-			append("Active",						QVariant::Bool);
-			append("ActiveTime",					QVariant::String, 32);
-			append("EnableDinner",					QVariant::Bool);
-
 			append("TypeID",						QVariant::Int);
 
 			append("Name",							QVariant::String, 64);
 			append("Address",						QVariant::String, 256);
 			append("Phone",							QVariant::String, 16);
+
+			append("Lat",							QVariant::Double);
+			append("Lng",							QVariant::Double);
 
 			break;
 
@@ -664,17 +667,20 @@ int SqlTable::read(void* pRecord, int* key, int keyCount)
 					Provider::Item* provider = static_cast<Provider::Item*> (pRecord) + readedCount;
 
 					provider->setProviderID(query.value(field++).toInt());
+					provider->setGoogleID(query.value(field++).toString());
+
+					provider->setState(query.value(field++).toInt());
+					provider->setActiveTime(query.value(field++).toString());
 
 					provider->setRank(query.value(field++).toInt());
-					provider->setActive(query.value(field++).toBool());
-					provider->setActiveTime(query.value(field++).toString());
-					provider->setEnableDinner(query.value(field++).toBool());
-
 					provider->setType(query.value(field++).toInt());
 
 					provider->setName(query.value(field++).toString());
 					provider->setAddress(query.value(field++).toString());
 					provider->setPhone(query.value(field++).toString());
+
+					provider->setGeoLat(query.value(field++).toDouble());
+					provider->setGeoLng(query.value(field++).toDouble());
 				}
 				break;
 
@@ -824,17 +830,20 @@ int SqlTable::write(void* pRecord, int count, int* key)
 					}
 
 					query.bindValue(field++, provider->providerID());
+					query.bindValue(field++, provider->googleID());
+
+					query.bindValue(field++, provider->state());
+					query.bindValue(field++, provider->activeTime());
 
 					query.bindValue(field++, provider->rank());
-					query.bindValue(field++, provider->isActive());
-					query.bindValue(field++, provider->activeTime());
-					query.bindValue(field++, provider->enableDinner());
-
 					query.bindValue(field++, provider->type());
 
 					query.bindValue(field++, provider->name());
 					query.bindValue(field++, provider->address());
 					query.bindValue(field++, provider->phone());
+
+					query.bindValue(field++, provider->geoLat());
+					query.bindValue(field++, provider->geoLng());
 				}
 				break;
 

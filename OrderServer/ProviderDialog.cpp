@@ -46,10 +46,12 @@ void ProviderDialog::createInterface()
 	QVBoxLayout *activeLayout = new QVBoxLayout;
 
 	m_pProviderActiveCheck = new QCheckBox(tr("Activate this provider"), this);
-	m_pEnableDinnerCheck = new QCheckBox(tr("Enable dinner for this provider"), this);
+	m_pEnableTakeOrderCheck = new QCheckBox(tr("Enable take orders for this provider"), this);
+	m_pEnableTakeDinnerCheck = new QCheckBox(tr("Enable dinner for this provider"), this);
 
 	activeLayout->addWidget(m_pProviderActiveCheck);
-	activeLayout->addWidget(m_pEnableDinnerCheck);
+	activeLayout->addWidget(m_pEnableTakeOrderCheck);
+	activeLayout->addWidget(m_pEnableTakeDinnerCheck);
 
 	//
 	//
@@ -113,7 +115,8 @@ void ProviderDialog::initDialog()
 	// init elements of interface
 	//
 	m_pProviderActiveCheck->setChecked(m_provider.isActive());
-	m_pEnableDinnerCheck->setChecked(m_provider.enableDinner());
+	m_pEnableTakeOrderCheck->setChecked(m_provider.enableTakeOrder());
+	m_pEnableTakeDinnerCheck->setChecked(m_provider.enableTakeDinner());
 	m_pNameEdit->setText(m_provider.name());
 	m_pAddressEdit->setText(m_provider.address());
 	m_pPhoneEdit->setText(m_provider.phone());
@@ -124,7 +127,8 @@ void ProviderDialog::initDialog()
 void ProviderDialog::onOk()
 {
 	bool active = m_pProviderActiveCheck->checkState() == Qt::Checked;
-	bool enableDinner = m_pEnableDinnerCheck->checkState() == Qt::Checked;
+	bool enableTakeOrder = m_pEnableTakeOrderCheck->checkState() == Qt::Checked;
+	bool enableTakeDinner = m_pEnableTakeDinnerCheck->checkState() == Qt::Checked;
 
 	QString nameStr = m_pNameEdit->text();
 
@@ -162,7 +166,8 @@ void ProviderDialog::onOk()
 	}
 
 	m_provider.setActive(active);
-	m_provider.setEnableDinner(enableDinner);
+	m_provider.setEnableTakeOrder(enableTakeOrder);
+	m_provider.setEnableTakeDinner(enableTakeDinner);
 	m_provider.setActiveTime(activeTime);
 	m_provider.setName(nameStr);
 	m_provider.setAddress(addresStr);

@@ -36,7 +36,8 @@ public slots:
 	void			slot_onThreadStarted();
 	void			slot_onThreadFinished();
 
-	void			removeFrendlyOrders(quint32 phone);
+	void			removeFrendlyOrdersByProviderID(quint32 providerID);
+	void			removeFrendlyOrdersByPhone(quint32 phone);
 
 private slots:
 

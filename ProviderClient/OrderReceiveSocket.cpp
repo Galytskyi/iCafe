@@ -34,12 +34,6 @@ void OrderReceiveSocket::onSocketThreadStarted()
 	connect(&m_requestGetOrderTimer, &QTimer::timeout, this, &OrderReceiveSocket::requestGetOrder, Qt::QueuedConnection);
 
 	m_requestGetOrderTimer.start(theOptions.providerData().requestProviderTime());
-
-	// init
-	//
-	m_rgo.version = REQUEST_GET_ORDER_VERSION;
-	m_rgo.providerID = theOptions.providerData().providerID();
-	m_rgo.wrapVersion = ORDER_WRAP_VERSION;
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -70,6 +64,14 @@ void OrderReceiveSocket::processReply(const Udp::Request& request)
 			replySetOrderState(request);
 			break;
 
+		case CLIENT_GET_PROVIDER_STATE:
+			replyGetProviderState(request);
+			break;
+
+		case CLIENT_SET_PROVIDER_STATE:
+			replySetProviderState(request);
+			break;
+
 		default:
 			qDebug() << "OrderReceiveSocket::processReply - Unknown request.ID() : " << request.ID();
 			assert(false);
@@ -87,7 +89,13 @@ void OrderReceiveSocket::requestGetOrder()
 		return;
 	}
 
-	sendRequest(CLIENT_GET_ORDER, (const char*) &m_rgo, sizeof(sio_RequestGetOrder));
+	sio_RequestGetOrder rgo;
+
+	rgo.version = REQUEST_GET_ORDER_VERSION;
+	rgo.providerID = theOptions.providerData().providerID();
+	rgo.wrapVersion = ORDER_WRAP_VERSION;
+
+	sendRequest(CLIENT_GET_ORDER, (const char*) &rgo, sizeof(sio_RequestGetOrder));
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -130,7 +138,7 @@ void OrderReceiveSocket::replyGetOrder(const Udp::Request& request)
 }
 
 // -------------------------------------------------------------------------------------------------------------------
-// PROVIDER_SET_ORDER_STATE
+// CLIENT_SET_ORDER_STATE
 
 void OrderReceiveSocket::requestSetOrderState(const Order::Item& order)
 {
@@ -153,6 +161,86 @@ void OrderReceiveSocket::replySetOrderState(const Udp::Request& request)
 }
 
 // -------------------------------------------------------------------------------------------------------------------
+// CLIENT_GET_PROVIDER_STATE
+
+void OrderReceiveSocket::requestGetProviderState()
+{
+	if (isReadyToSend() == false)
+	{
+		return;
+	}
+
+	sio_RequestProviderState rsps;
+
+	rsps.version = REQUEST_SET_PROVIDER_STATE_VERSION;
+	rsps.providerID = theOptions.providerData().providerID();
+	rsps.state = theOptions.providerData().state();
+
+	sendRequest(CLIENT_GET_PROVIDER_STATE, (const char*) &rsps, sizeof(sio_RequestGetOrder));
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void OrderReceiveSocket::replyGetProviderState(const Udp::Request& request)
+{
+	sio_RequestProviderState* ptr_rps = (sio_RequestProviderState*) const_cast<const Udp::Request&>(request).data();
+
+	if (ptr_rps->version < 1 || ptr_rps->version > REQUEST_SET_PROVIDER_STATE_VERSION)
+	{
+		return;
+	}
+
+	if (ptr_rps->providerID != theOptions.providerData().providerID())
+	{
+		return;
+	}
+
+	emit providerStateChanged(ptr_rps->state);
+
+	qDebug() << "OrderReceiveSocket::replyGetProviderState";
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+// CLIENT_SET_PROVIDER_STATE
+
+void OrderReceiveSocket::requestSetProviderState(quint32 state)
+{
+	if (isReadyToSend() == false)
+	{
+		return;
+	}
+
+	sio_RequestProviderState rsps;
+
+	rsps.version = REQUEST_SET_PROVIDER_STATE_VERSION;
+	rsps.providerID = theOptions.providerData().providerID();
+	rsps.state = state;
+
+	sendRequest(CLIENT_SET_PROVIDER_STATE, (const char*) &rsps, sizeof(sio_RequestGetOrder));
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void OrderReceiveSocket::replySetProviderState(const Udp::Request& request)
+{
+	sio_RequestProviderState* ptr_rps = (sio_RequestProviderState*) const_cast<const Udp::Request&>(request).data();
+
+	if (ptr_rps->version < 1 || ptr_rps->version > REQUEST_SET_PROVIDER_STATE_VERSION)
+	{
+		return;
+	}
+
+	if (ptr_rps->providerID != theOptions.providerData().providerID())
+	{
+		return;
+	}
+
+	emit providerStateChanged(ptr_rps->state);
+
+	qDebug() << "OrderReceiveSocket::replySetProviderState";
+}
+
+// -------------------------------------------------------------------------------------------------------------------
 
 void OrderReceiveSocket::failReply(const Udp::Request& request)
 {
@@ -163,6 +251,14 @@ void OrderReceiveSocket::failReply(const Udp::Request& request)
 			break;
 
 		case CLIENT_SET_ORDER_STATE:
+			emit failConnection();
+			break;
+
+		case CLIENT_GET_PROVIDER_STATE:
+			emit failConnection();
+			break;
+
+		case CLIENT_SET_PROVIDER_STATE:
 			emit failConnection();
 			break;
 

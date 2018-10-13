@@ -57,7 +57,9 @@ SOURCES += \
 	Options.cpp \
     OrderStateSocket.cpp \
 	OptionsDialog.cpp \
-    AppAboutDialog.cpp
+    AppAboutDialog.cpp \
+	ProviderStateSocket.cpp
+
 
 HEADERS += \
 	../lib/UdpSocket.h \
@@ -73,7 +75,9 @@ HEADERS += \
 	Options.h \
     OrderStateSocket.h \
     OptionsDialog.h \
-    AppAboutDialog.h
+    AppAboutDialog.h \
+	ProviderStateSocket.h
+
 
 
 RESOURCES += \

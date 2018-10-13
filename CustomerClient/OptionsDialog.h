@@ -30,6 +30,9 @@ private:
 	QLabel*				m_pRequestConfigTimeLabel = nullptr;
 	QLineEdit*			m_pRequestConfigTimeEdit = nullptr;
 
+	QLabel*				m_pRequestProviderTimeLabel = nullptr;
+	QLineEdit*			m_pRequestProviderTimeEdit = nullptr;
+
 	QLabel*				m_pRequestCustomerTimeLabel = nullptr;
 	QLineEdit*			m_pRequestCustomerTimeEdit = nullptr;
 
@@ -38,6 +41,9 @@ private:
 
 	QLabel*				m_pServerConfigPortLabel = nullptr;
 	QLineEdit*			m_pServerConfigPortEdit = nullptr;
+
+	QLabel*				m_pServerProviderPortLabel = nullptr;
+	QLineEdit*			m_pServerProviderPortEdit = nullptr;
 
 	QLabel*				m_pServerCustomerPortLabel = nullptr;
 	QLineEdit*			m_pServerCustomerPortEdit = nullptr;

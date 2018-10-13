@@ -28,11 +28,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 	loadBase();
 
+	startRemoveOrderThread();
+
 	startConfigUdpThread();
 	startCustomerOrderUdpThread();
 	startProviderOrderUdpThread();
-
-	startRemoveOrderThread();
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -500,6 +500,15 @@ bool MainWindow::startProviderOrderUdpThread()
 		return false;
 	}
 
+	connect(m_pProviderOrderSocket, &ProviderOrderSocket::msgBox, this, &MainWindow::msgBox);
+	connect(m_pProviderOrderSocket, &ProviderOrderSocket::providerStateChanged, this, &MainWindow::providerStateChanged, Qt::QueuedConnection);
+
+	if (m_pRemoveOrderThread != nullptr)
+	{
+		connect(m_pProviderOrderSocket, &ProviderOrderSocket::removeFrendlyOrdersByProviderID, m_pRemoveOrderThread, &RemoveOrderThread::removeFrendlyOrdersByProviderID, Qt::QueuedConnection);
+		connect(m_pProviderOrderSocket, &ProviderOrderSocket::removeFrendlyOrdersByPhone, m_pRemoveOrderThread, &RemoveOrderThread::removeFrendlyOrdersByPhone, Qt::QueuedConnection);
+	}
+
 	m_pProviderOrderSocket->moveToThread(pThread);
 
 	connect(pThread, &QThread::started, m_pProviderOrderSocket, &ProviderOrderSocket::slot_onThreadStarted);
@@ -559,11 +568,6 @@ bool MainWindow::startRemoveOrderThread()
 	connect(pThread, &QThread::finished, m_pRemoveOrderThread, &RemoveOrderThread::slot_onThreadFinished);
 
 	connect(m_pRemoveOrderThread, &RemoveOrderThread::appendMessageToArch, m_pArchThread, &ArchThread::appendMessage, Qt::QueuedConnection);
-
-	if (m_pProviderOrderSocket != nullptr)
-	{
-		connect(m_pProviderOrderSocket, &ProviderOrderSocket::removeFrendlyOrders, m_pRemoveOrderThread, &RemoveOrderThread::removeFrendlyOrders, Qt::QueuedConnection);
-	}
 
 	pThread->start();
 
@@ -817,6 +821,31 @@ void MainWindow::orderStateChanged(const Order::Item& order)
 	Q_UNUSED(order);
 
 	m_statusOrderCount->setText(tr("Orders count: %1").arg(theOrderBase.count()));
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::providerStateChanged(quint32 providerID, quint32 state)
+{
+	if (m_pView == nullptr)
+	{
+		return;
+	}
+
+	int index = theProviderBase.providerIndex(providerID);
+	if (index < 0 || index >= m_pView->table().count())
+	{
+		return;
+	}
+
+	Provider::Item provider = m_pView->table().at(index);
+
+	provider.setState(state);
+
+	// update data in View
+	//
+	m_pView->table().set(index, provider);
+	m_pView->table().updateRow(index);
 }
 
 // -------------------------------------------------------------------------------------------------------------------

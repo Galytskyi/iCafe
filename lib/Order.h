@@ -21,25 +21,28 @@ namespace Order
 						STATE_ORDER_NOT_FOUND				= 4,
 						STATE_ORDER_ALREADY_EXIST			= 5,
 						STATE_ORDER_NOT_REMOVED				= 6,
-						STATE_INCORRECT_REQUEST				= 7,
-						STATE_INCORRECT_PARSE_ORDERWRAP		= 8,
-						STATE_INCORRECT_PARSE_PROTOWRAP		= 9,
-						STATE_PROVIDER_IS_NOT_CONNECTED		= 10,
-						STATE_CUSTOMER_CREATING_ORDER		= 11,
-						STATE_CUSTOMER_REMOVING_ORDER		= 12,
-						STATE_SERVER_CREATED_ORDER			= 13,
-						STATE_SERVER_REMOVED_ORDER			= 14,
-						STATE_SERVER_SEND_TO_PROVIDER		= 15;
+						STATE_PROVIDER_NOT_FOUND			= 7,
+						STATE_PROVIDER_NOT_ACTIVE			= 8,
+						STATE_PROVIDER_DONT_TAKE_ORDER		= 9,
+						STATE_INCORRECT_REQUEST				= 10,
+						STATE_INCORRECT_PARSE_ORDERWRAP		= 11,
+						STATE_INCORRECT_PARSE_PROTOWRAP		= 12,
+						STATE_PROVIDER_IS_NOT_CONNECTED		= 13,
+						STATE_CUSTOMER_CREATING_ORDER		= 14,
+						STATE_CUSTOMER_REMOVING_ORDER		= 15,
+						STATE_SERVER_CREATED_ORDER			= 16,
+						STATE_SERVER_REMOVED_ORDER			= 17,
+						STATE_SERVER_SEND_TO_PROVIDER		= 18;
 
-	const int			STATE_COUNT							= 16;
+	const int			STATE_COUNT							= 19;
 
 	// ----------------------------------------------------------------------------------------------
 
 	const char* const		OrderTypeStr[] =
 	{
-							QT_TRANSLATE_NOOP("Order.h", "Не определен"),
-							QT_TRANSLATE_NOOP("Order.h", "Столик"),
-							QT_TRANSLATE_NOOP("Order.h", "Обед"),
+						QT_TRANSLATE_NOOP("Order.h", "Не определен"),
+						QT_TRANSLATE_NOOP("Order.h", "Столик"),
+						QT_TRANSLATE_NOOP("Order.h", "Обед"),
 	};
 
 	const int			TYPE_COUNT							= sizeof(OrderTypeStr)/sizeof(OrderTypeStr[0]);

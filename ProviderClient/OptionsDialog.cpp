@@ -132,7 +132,6 @@ void OptionsDialog::initDialog()
 {
 	// init elements of interface
 	//
-
 	m_pProviderIdEdit->setText(QString::number(m_providerData.providerID()));
 	m_pRequestProviderTimeEdit->setText(QString::number(m_providerData.requestProviderTime()));
 	m_pRequestCustomerTimeEdit->setText(QString::number(m_providerData.requestCustomerTime()));

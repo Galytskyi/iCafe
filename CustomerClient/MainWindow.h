@@ -8,6 +8,7 @@
 #include "Options.h"
 #include "ConfigSocket.h"
 #include "OrderStateSocket.h"
+#include "ProviderStateSocket.h"
 #include "ProviderView.h"
 #include "OrderDialog.h"
 #include "OptionsDialog.h"
@@ -28,6 +29,7 @@ public:
 private:
 
 	ConfigSocket*			m_pConfigSocket = nullptr;
+	ProviderStateSocket*	m_pProviderStateSocket = nullptr;
 	OrderStateSocket*		m_pOrderStateSocket = nullptr;
 
 private:
@@ -75,6 +77,9 @@ public:
 	bool					startConfigUdpThread();
 	bool					stopConfigUdpThread();
 
+	bool					startProviderStateUdpThread();
+	bool					stopProviderStateUdpThread();
+
 	bool					startOrderStateUdpThread();
 	bool					stopOrderStateUdpThread();
 
@@ -87,6 +92,8 @@ protected:
 signals:
 
 	void					setTextFilter(const QString& text);
+
+	void					requestProviderState(int index);
 
 	void					requestCreateOrder(const Order::Item& order);
 	void					requestRemoveOrder(const Order::Item& order);
@@ -119,6 +126,7 @@ private slots:
 	// Slots of sockets
 	//
 	void					cfgXmlReceived(const QByteArray& cfgXmlData, int version);
+	void					providerStateChanged(quint32 providerID, quint32 state);
 };
 
 // ==============================================================================================

@@ -28,7 +28,9 @@ ProviderDelegate::ProviderDelegate(QObject *parent) :
 
 	m_dotsBlackPixmap = QPixmap(":/icons/MenuBlack.png");
 	m_dotsGrayPixmap = QPixmap(":/icons/MenuGray.png");
-	n_tablePixmap = QPixmap(":/icons/Table.png");
+	m_unblockedPixmap = QPixmap(":/icons/Unblocked.png");
+	m_blockedPixmap = QPixmap(":/icons/Blocked.png");
+	m_tablePixmap = QPixmap(":/icons/Table.png");
 	m_dinnerPixmap = QPixmap(":/icons/Dinner.png");
 }
 
@@ -71,17 +73,19 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	}
 
 
-	int midDots_x = option.rect.right() - m_iconSmallSize - 20;
-	int midDots_y = option.rect.top() + 10;
+	int coordDots_x = option.rect.right() - m_iconSmallSize - 20;
+	int coordDots_y = option.rect.top() + 10;
 
 	if ((option.state & QStyle::State_Selected) == 0)
 	{
-		painter->drawPixmap(midDots_x, midDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsGrayPixmap);
+		painter->drawPixmap(coordDots_x, coordDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsGrayPixmap);
 	}
 	else
 	{
-		painter->drawPixmap(midDots_x, midDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsBlackPixmap);
+		painter->drawPixmap(coordDots_x, coordDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsBlackPixmap);
 	}
+
+	//provider.setEnableTakeOrder(false);
 
 	// provider data
 	//
@@ -89,7 +93,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	providerDataRect.adjust(m_dpi, 5, -m_dpi, 0);
 
 	painter->setFont(*m_providerNameFont);
-	painter->setPen(QColor(0x0, 0x0, 0x0));
+	painter->setPen(provider.enableTakeOrder() ? QColor(0x0, 0x0, 0x0) : QColor(0x70, 0x70, 0x70));
 	painter->drawText(providerDataRect, Qt::AlignLeft, provider.name());
 
 	QSize cellSize = QFontMetrics(*m_providerNameFont).size(Qt::TextSingleLine,"A");
@@ -97,13 +101,13 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	painter->setFont(*m_providerAddressFont);
 	painter->setPen(QColor(0x70, 0x70, 0x70));
-	painter->drawText(providerDataRect, Qt::AlignLeft, provider.address());
+	painter->drawText(providerDataRect, Qt::AlignLeft, provider.enableTakeOrder() ? provider.address() : tr("Заведение сейчас не приниммает заказы"));
 
 	providerDataRect.adjust(0, cellSize.height() - 4, 0, 0);
 
 	//painter->setFont(*m_providerAddressFont);
 	painter->setPen(QColor(0x70, 0x70, 0x70));
-	painter->drawText(providerDataRect, Qt::AlignLeft, provider.phone() );
+	painter->drawText(providerDataRect, Qt::AlignLeft, provider.enableTakeOrder() ? provider.phone() : QString());
 
 	// order state
 	//
@@ -124,7 +128,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		QRect codeOrder = option.rect;
 
 		codeOrder.adjust(00, 10, 0, 0);
-		codeOrder.setRight( midDots_x - 20 );
+		codeOrder.setRight( coordDots_x - 20 );
 
 		painter->setPen(QColor(0xFF, 0x80, 0x80));
 		painter->drawText(codeOrder, Qt::AlignRight, QString("%1").arg(order.cancelCode()));
@@ -133,27 +137,39 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	// Order time
 	//
 
-	if (orderState.isEmpty() == false)
+	int coordState_x = m_dpi / 2 - m_iconSize / 2;
+
+	if (provider.enableTakeOrder() == true)
 	{
-		int icon_x = m_dpi / 2 - m_iconSize / 2;
-
-		switch (order.type())
+		if (orderState.isEmpty() == false)
 		{
-			case Order::TYPE_TABLE:		painter->drawPixmap(icon_x, option.rect.y() + 3, m_iconSize, m_iconSize, n_tablePixmap);	break;
-			case Order::TYPE_DINNER:	painter->drawPixmap(icon_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_dinnerPixmap);	break;
+			switch (order.type())
+			{
+				case Order::TYPE_TABLE:		painter->drawPixmap(coordState_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_tablePixmap);		break;
+				case Order::TYPE_DINNER:	painter->drawPixmap(coordState_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_dinnerPixmap);		break;
+				default:					painter->drawPixmap(coordState_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_unblockedPixmap);	break;
+			}
+
+			QRect timeOrderRect = providerDataRect;
+
+			timeOrderRect.setLeft(0);
+			timeOrderRect.setRight(m_dpi);
+			timeOrderRect.adjust(0,-4,0,0);
+
+			Order::Time32 orderTime = order.orderTime();
+			QString orderTimeStr = QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute);
+
+			painter->setPen(QColor(0x40, 0x40, 0x40));
+			painter->drawText(timeOrderRect, Qt::AlignCenter, orderTimeStr);
 		}
-
-		QRect timeOrderRect = providerDataRect;
-
-		timeOrderRect.setLeft(0);
-		timeOrderRect.setRight(m_dpi);
-		timeOrderRect.adjust(0,-4,0,0);
-
-		Order::Time32 orderTime = order.orderTime();
-		QString orderTimeStr = QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute);
-
-		painter->setPen(QColor(0x40, 0x40, 0x40));
-		painter->drawText(timeOrderRect, Qt::AlignCenter, orderTimeStr);
+		else
+		{
+			painter->drawPixmap(coordState_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_unblockedPixmap);
+		}
+	}
+	else
+	{
+		painter->drawPixmap(coordState_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_blockedPixmap);
 	}
 
 }
@@ -331,6 +347,31 @@ QString ProviderTable::text(int row, int column, const ProviderItem& item) const
 //	}
 
 	return result;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void ProviderTable::updateProviderState(quint32 providerID, quint32 state)
+{
+	int count = m_providerList.count();
+	for(int i = 0; i < count; i++)
+	{
+		Provider::Item  provider = m_providerList[i].provider();
+
+		if (provider.providerID() == providerID)
+		{
+			if (provider.state() != state )
+			{
+				provider.setState(state);
+
+				m_providerList[i].setProvider(provider);
+
+				updateRow(i);
+			}
+
+			break;
+		}
+	}
 }
 
 // -------------------------------------------------------------------------------------------------------------------

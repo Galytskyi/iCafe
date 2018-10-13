@@ -31,9 +31,9 @@ public:
 
 	// functions: Request - Reply
 	//
-	void            replyCreateOrder(const Udp::Request& request);
-	void            replyGetOrderState(const Udp::Request& request);
-	void            replyRemoveOrder(const Udp::Request& request);
+	void            replyCreateOrder(const Udp::Request& request);				// CLIENT_CREATE_ORDER
+	void            replyGetOrderState(const Udp::Request& request);			// CLIENT_GET_ORDER_STATE
+	void            replyRemoveOrder(const Udp::Request& request);				// CLIENT_REMOVE_ORDER
 
 signals:
 

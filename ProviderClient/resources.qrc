@@ -9,5 +9,7 @@
         <file>icons/Logo.png</file>
         <file>icons/Info.png</file>
         <file>icons/Settings.png</file>
+        <file>icons/Cancel.png</file>
+        <file>icons/Ok.png</file>
     </qresource>
 </RCC>

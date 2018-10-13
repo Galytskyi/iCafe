@@ -64,17 +64,31 @@ public:
 
 private:
 
+	quint32				m_providerID = -1;
+	quint32				m_state = 0;
+
+	int					m_requestProviderTime = 2000;
+	int					m_requestCustomerTime = 2000;
+
 	QString				m_serverIP;
 	int					m_serverProviderPort = PORT_PROVIDER_ORDER_REQUEST;
 	int					m_serverCustomerPort = PORT_CUSTOMER_ORDER_REQUEST;
 
-	quint32				m_providerID = -1;
-	int					m_requestProviderTime = 1000;
-	int					m_requestCustomerTime = 1000;
-
 	bool				m_showKeyboard = true;
 
 public:
+
+	quint32				providerID() const { return m_providerID; }
+	void				setProviderID(quint32 id) { m_providerID = id; }
+
+	quint32				state() const { return m_state; }
+	void				setState(quint32 state) { m_state = state; }
+
+	int					requestProviderTime() const { return m_requestProviderTime; }
+	void				setRequestProviderTime(int time) { m_requestProviderTime = time; }
+
+	int					requestCustomerTime() const { return m_requestCustomerTime; }
+	void				setRequestCustomerTime(int time) { m_requestCustomerTime = time; }
 
 	QString				serverIP() const { return m_serverIP; }
 	void				setServerIP(const QString& ip) { m_serverIP = ip; }
@@ -85,18 +99,8 @@ public:
 	int					serverCustomerPort() const { return m_serverCustomerPort; }
 	void				setServerCustomerPort(int port) { m_serverCustomerPort = port; }
 
-	quint32				providerID() const { return m_providerID; }
-	void				setProviderID(quint32 id) { m_providerID = id; }
-
-	int					requestProviderTime() const { return m_requestProviderTime; }
-	void				setRequestProviderTime(int time) { m_requestProviderTime = time; }
-
-	int					requestCustomerTime() const { return m_requestCustomerTime; }
-	void				setRequestCustomerTime(int time) { m_requestCustomerTime = time; }
-
 	bool				showKeyboard() const { return m_showKeyboard; }
 	void				setShowKeyboard(bool show) { m_showKeyboard = show; }
-
 
 	void				load();
 	void				save();

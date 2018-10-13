@@ -56,6 +56,16 @@ void OptionsDialog::createInterface()
 
 	//
 	//
+	QVBoxLayout *requestProviderTimeLayout = new QVBoxLayout;
+
+	m_pRequestProviderTimeLabel = new QLabel(tr("Provider request time (ms):"), this);
+	m_pRequestProviderTimeEdit = new QLineEdit(this);
+
+	requestProviderTimeLayout->addWidget(m_pRequestProviderTimeLabel);
+	requestProviderTimeLayout->addWidget(m_pRequestProviderTimeEdit);
+
+	//
+	//
 	QVBoxLayout *requestCustomerTimeLayout = new QVBoxLayout;
 
 	m_pRequestCustomerTimeLabel = new QLabel(tr("Customer request time (ms):"), this);
@@ -86,6 +96,16 @@ void OptionsDialog::createInterface()
 
 	//
 	//
+	QVBoxLayout *serverProviderPortLayout = new QVBoxLayout;
+
+	m_pServerProviderPortLabel = new QLabel(tr("Server provider port:"), this);
+	m_pServerProviderPortEdit = new QLineEdit(this);
+
+	serverProviderPortLayout->addWidget(m_pServerProviderPortLabel);
+	serverProviderPortLayout->addWidget(m_pServerProviderPortEdit);
+
+	//
+	//
 	QVBoxLayout *serverCustomerPortLayout = new QVBoxLayout;
 
 	m_pServerCustomerPortLabel = new QLabel(tr("Server сustomer port:"), this);
@@ -106,9 +126,11 @@ void OptionsDialog::createInterface()
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 
 	mainLayout->addLayout(requestConfigTimeLayout);
+	mainLayout->addLayout(requestProviderTimeLayout);
 	mainLayout->addLayout(requestCustomerTimeLayout);
 	mainLayout->addLayout(serverIPLayout);
 	mainLayout->addLayout(serverConfigPortLayout);
+	mainLayout->addLayout(serverProviderPortLayout);
 	mainLayout->addLayout(serverCustomerPortLayout);
 	mainLayout->addWidget(m_buttonBox);
 
@@ -124,9 +146,11 @@ void OptionsDialog::initDialog()
 	// init elements of interface
 	//
 	m_pRequestConfigTimeEdit->setText(QString::number(m_customerData.requestConfigTime()));
+	m_pRequestProviderTimeEdit->setText(QString::number(m_customerData.requestProviderTime()));
 	m_pRequestCustomerTimeEdit->setText(QString::number(m_customerData.requestCustomerTime()));
 	m_pServerIPEdit->setText(m_customerData.serverIP());
 	m_pServerConfigPortEdit->setText(QString::number(m_customerData.serverConfigPort()));
+	m_pServerProviderPortEdit->setText(QString::number(m_customerData.serveProviderPort()));
 	m_pServerCustomerPortEdit->setText(QString::number(m_customerData.serverCustomerPort()));
 }
 
@@ -135,15 +159,19 @@ void OptionsDialog::initDialog()
 void OptionsDialog::onOk()
 {
 	QString requestConfigTime = m_pRequestConfigTimeEdit->text();
+	QString requestProviderTime = m_pRequestProviderTimeEdit->text();
 	QString requestCustomerTime = m_pRequestCustomerTimeEdit->text();
 	QString serverIP = m_pServerIPEdit->text();
 	QString serverConfigPort = m_pServerConfigPortEdit->text();
+	QString serverProviderPort = m_pServerProviderPortEdit->text();
 	QString serverCustomerPort = m_pServerCustomerPortEdit->text();
 
 	m_customerData.setRequestConfigTime(requestConfigTime.toUInt());
+	m_customerData.setRequestProviderTime(requestProviderTime.toUInt());
 	m_customerData.setRequestCustomerTime(requestCustomerTime.toUInt());
 	m_customerData.setServerIP(serverIP);
 	m_customerData.setServerConfigPort(serverConfigPort.toUInt());
+	m_customerData.setServerProviderPort(serverProviderPort.toUInt());
 	m_customerData.setServerCustomerPort(serverCustomerPort.toUInt());
 
 	theOptions.customerData() = m_customerData;

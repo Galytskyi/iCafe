@@ -68,7 +68,7 @@ SOURCES += \
     RemoveOrderThread.cpp \
     ArchThread.cpp \
     ProviderView.cpp \
-    ProviderDialog.cpp
+	ProviderDialog.cpp
 
 HEADERS += \
 	../lib/SocketIO.h \
@@ -86,7 +86,7 @@ HEADERS += \
     RemoveOrderThread.h \
     ArchThread.h \
     ProviderView.h \
-    ProviderDialog.h
+	ProviderDialog.h
 
 DISTFILES += \
     ../csv/Google.xls \

@@ -65,7 +65,25 @@ void RemoveOrderThread::onThreadFinished()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void RemoveOrderThread::removeFrendlyOrders(quint32 phone)
+void RemoveOrderThread::removeFrendlyOrdersByProviderID(quint32 providerID)
+{
+	QList<Order::Item> list = theOrderBase.orderList();
+
+	int count = list.count();
+	for(int i = 0; i < count; i++)
+	{
+		Order::Item& order = list[i];
+
+		if (order.providerID() == providerID)
+		{
+			emit removeOrder(order);
+		}
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void RemoveOrderThread::removeFrendlyOrdersByPhone(quint32 phone)
 {
 	QList<Order::Item> list = theOrderBase.orderList();
 

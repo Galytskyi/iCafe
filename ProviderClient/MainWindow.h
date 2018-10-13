@@ -13,6 +13,7 @@
 #include "OptionsDialog.h"
 #include "AppAboutDialog.h"
 
+#include "../lib/Provider.h"
 #include "../lib/Order.h"
 
 // ==============================================================================================
@@ -38,6 +39,7 @@ private:
 	//
 							// menu - Order
 							//
+	QAction*				m_pEnableOrderAction = nullptr;
 	QAction*				m_pOptionsAction = nullptr;
 	QAction*				m_pInfoAction = nullptr;
 
@@ -82,7 +84,9 @@ protected:
 
 signals:
 
-	void					sendRequestChangeState(const Order::Item& order);
+	void					sendRequestChangeOrderState(const Order::Item& order);
+	void					sendRequestGetProviderState();
+	void					sendRequestChangeProviderState(quint32 state);
 
 private slots:
 
@@ -95,8 +99,9 @@ private slots:
 	void					onSetMainWidget();
 	void					onSendRequestCancelOrder();
 
-	// menu - Order
+	// menu
 	//
+	void					onEnableTakeOrder();
 	void					onOptions();
 	void					onAppAbout();
 
@@ -108,9 +113,9 @@ private slots:
 	//
 	void					onSocketConnection(bool connect);
 	void					appendOrder(const Order::Item& order);
-	void					orderStateChanged(const Order::Item& order);
 	void					removeOrder(const Order::Item& order);
-
+	void					orderStateChanged(const Order::Item& order);
+	void					providerStateChanged(quint32 state);
 };
 
 // ==============================================================================================

@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
 	createInterface();
 
 	startConfigUdpThread();
+	startProviderStateUdpThread();
 	startOrderStateUdpThread();
 }
 
@@ -31,8 +32,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-	stopConfigUdpThread();
 	stopOrderStateUdpThread();
+	stopProviderStateUdpThread();
+	stopConfigUdpThread();
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -155,7 +157,74 @@ bool MainWindow::stopConfigUdpThread()
 		return false;
 	}
 
+	disconnect(m_pConfigSocket, &ConfigSocket::cfgXmlReceived, this, &MainWindow::cfgXmlReceived);
+
 	QThread *pThread = m_pConfigSocket->thread();
+	if (pThread == nullptr)
+	{
+		return false;
+	}
+
+	pThread->quit();
+	pThread->wait();
+	pThread->deleteLater();
+
+	return true;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+bool MainWindow::startProviderStateUdpThread()
+{
+	m_pProviderStateSocket = new ProviderStateSocket(QHostAddress(theOptions.customerData().serverIP()), theOptions.customerData().serveProviderPort());
+	if (m_pProviderStateSocket == nullptr)
+	{
+		return false;
+	}
+
+	QThread *pThread = new QThread;
+	if (pThread == nullptr)
+	{
+		delete m_pProviderStateSocket;
+		m_pProviderStateSocket = nullptr;
+
+		return false;
+	}
+
+	//connect(m_pProviderStateSocket, &ProviderStateSocket::providerStateReceived, this, &MainWindow::providerStateReceived, Qt::QueuedConnection);
+
+	connect(m_pProviderStateSocket, &ProviderStateSocket::providerInitStateReceived, m_pView, &ProviderView::updateList, Qt::QueuedConnection);
+	connect(m_pProviderStateSocket, &ProviderStateSocket::providerStateChanged, this, &MainWindow::providerStateChanged, Qt::QueuedConnection);
+	connect(this, &MainWindow::requestProviderState, m_pProviderStateSocket, &ProviderStateSocket::requestGetProviderInitState, Qt::QueuedConnection);
+
+	m_pProviderStateSocket->moveToThread(pThread);
+
+	//
+	//
+	connect(pThread, &QThread::started, m_pProviderStateSocket, &Udp::ClientSocket::slot_onThreadStarted);
+	connect(pThread, &QThread::finished, m_pProviderStateSocket, &Udp::ClientSocket::slot_onThreadFinished);
+
+	//
+	//
+	pThread->start();
+
+	return true;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+bool MainWindow::stopProviderStateUdpThread()
+{
+	if (m_pProviderStateSocket == nullptr)
+	{
+		return false;
+	}
+
+	disconnect(this, &MainWindow::requestProviderState, m_pProviderStateSocket, &ProviderStateSocket::requestGetProviderInitState);
+
+	//
+	//
+	QThread *pThread = m_pProviderStateSocket->thread();
 	if (pThread == nullptr)
 	{
 		return false;
@@ -328,7 +397,7 @@ ProviderView* MainWindow::createProviderView()
 
 	connect(this, &MainWindow::setTextFilter, pView, &ProviderView::setTextFilter, Qt::QueuedConnection);
 
-	connect(&theProviderBase, &Provider::Base::cfgXmlDataLoaded, pView, &ProviderView::updateList, Qt::QueuedConnection);
+	//connect(&theProviderBase, &Provider::Base::cfgXmlDataLoaded, pView, &ProviderView::updateList, Qt::QueuedConnection);
 	connect(&theProviderBase, &Provider::Base::cfgXmlDataLoaded, pView, &ProviderView::updateOrderList, Qt::QueuedConnection);
 	connect(&theOrderBase, &Order::Base::signal_stateChanged, pView, &ProviderView::orderStateChanged, Qt::QueuedConnection);
 
@@ -612,6 +681,12 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 	ProviderItem item = m_pView->table().at(i);
 
 	Provider::Item provider = item.provider();
+
+	if (provider.enableTakeOrder() == false)
+	{
+		return;
+	}
+
 	Order::Item order = item.order();
 
 	// create context menu
@@ -626,7 +701,7 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 	{
 		pContextMenu->addAction(m_pOrderTableAction);
 
-		if (provider.enableDinner() == true)
+		if (provider.enableTakeDinner() == true)
 		{
 			pContextMenu->addAction(m_pOrderDinnerAction);
 		}
@@ -649,7 +724,24 @@ void MainWindow::cfgXmlReceived(const QByteArray& cfgXmlData, int version)
 	theProviderBase.readFromXml(cfgXmlData, version);
 	theProviderTypeBase.readFromXml(cfgXmlData, version);
 
+	if(theProviderBase.count() != 0)
+	{
+		emit requestProviderState(0);
+	}
+
 	m_connectLabel->setText(QString());
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::providerStateChanged(quint32 providerID, quint32 state)
+{
+	if (m_pView == nullptr)
+	{
+		return;
+	}
+
+	m_pView->table().updateProviderState(providerID, state);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
