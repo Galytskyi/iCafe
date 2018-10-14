@@ -40,6 +40,9 @@ private:
 	int					m_iconSize = 0;
 	int					m_iconSmallSize = 0;
 
+	QFont*				m_providerNameFont = nullptr;
+	QFont*				m_providerAddressFont = nullptr;
+
 	QPixmap				m_dotsBlackPixmap;
 	QPixmap				m_dotsGrayPixmap;
 	QPixmap				m_unblockedPixmap;
@@ -152,6 +155,7 @@ public slots:
 	//
 	void				updateList();
 	void				updateOrderList();
+	void				updateProviderList();
 	void				orderStateChanged(const Order::Item& order);
 
 	// slots for filter

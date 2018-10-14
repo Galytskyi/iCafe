@@ -12,6 +12,8 @@
 #include <QResizeEvent>
 #include <QPainter>
 
+#include "Options.h"
+
 #include "../lib/wassert.h"
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -54,107 +56,112 @@ void OrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 		}
 	}
 
-
-	QString orderState;
-	QString orderPhone;
-
-	switch(order.state())
+	if (theOptions.isWinApp() == false)
 	{
-		case Order::STATE_ORDER_OK:
 
-			orderState = tr("Заказ принят");
-			orderPhone = tr("Номер телефона: %1").arg("+380"+QString::number(order.phone()));
-			painter->fillRect(option.rect, QColor(0xA0, 0xFF, 0xA0));
-			break;
-
-		case Order::STATE_ORDER_CANCEL:
-			orderState = tr("Заказ отменен");
-			orderPhone = tr("Номер телефона: %1").arg("+380"+QString::number(order.phone()));
-			painter->fillRect(option.rect, QColor(0xFF, 0xA0, 0xA0));
-			break;
-
-		case Order::STATE_ORDER_PROCESSING:
-			orderState = tr("Ожидает ответа");
-			orderPhone= tr("Номер телефона: +38 (***) **-**-***");
-			painter->fillRect(option.rect, QColor(0xff, 0xfa, 0xd1));
-			break;
-	}
-
-	int midDots_x = option.rect.right() - m_iconSmallSize - 20;
-	int midDots_y = option.rect.top() + 10;
-
-	if ((option.state & QStyle::State_Selected) == 0)
-	{
-		painter->drawPixmap(midDots_x, midDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsGrayPixmap);
 	}
 	else
 	{
-		painter->drawPixmap(midDots_x, midDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsBlackPixmap);
-	}
+		QString orderState;
+		QString orderPhone;
 
-	// order data
-	//
-	QRect orderDataRect = option.rect;
-	orderDataRect.adjust(m_dpi, 5, -m_dpi, 0);
-
-	Order::Time32 orderTime = order.orderTime();
-
-	QString orderDataStr = tr("%1 человек(a)").arg(order.people()) + tr(", на %1").arg(QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute));
-
-	switch(order.type())
-	{
-		case Order::TYPE_TABLE:		orderDataStr.insert(0, tr("Столик для "));	break;
-		case Order::TYPE_DINNER:	orderDataStr.insert(0, tr("Обед для "));	break;
-		default:					wassert(0);									break;
-	}
-
-	painter->setFont(*m_providerNameFont);
-	painter->setPen(QColor(0x0, 0x0, 0x0));
-	painter->drawText(orderDataRect, Qt::AlignLeft, orderDataStr);
-
-	QSize cellSize = QFontMetrics(*m_providerNameFont).size(Qt::TextSingleLine,"A");
-	orderDataRect.adjust(0, cellSize.height() + 10, 0, 0);
-
-	painter->setFont(*m_providerAddressFont);
-	painter->setPen(QColor(0x70, 0x70, 0x70));
-	painter->drawText(orderDataRect, Qt::AlignLeft, orderPhone );
-
-	// order state
-	//
-	QRect stateOrderRect = orderDataRect;
-
-	stateOrderRect.adjust(0, 10,0,0);
-	stateOrderRect.setLeft(option.rect.right() - 500);
-	stateOrderRect.setRight(option.rect.right() - 30);
-
-	painter->setPen(QColor(0x40, 0x40, 0x40));
-	painter->drawText(stateOrderRect, Qt::AlignRight, orderState);
-
-	// Order time
-	//
-	if (orderState.isEmpty() == false)
-	{
-		int icon_x = m_dpi / 2 - m_iconSize / 2;
-
-		switch (order.type())
+		switch(order.state())
 		{
-			case Order::TYPE_TABLE:		painter->drawPixmap(icon_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_tablePixmap);	break;
-			case Order::TYPE_DINNER:	painter->drawPixmap(icon_x, option.rect.y() + 3 , m_iconSize, m_iconSize, m_dinnerPixmap);	break;
+			case Order::STATE_ORDER_OK:
+
+				orderState = tr("Заказ принят");
+				orderPhone = tr("Номер телефона: %1").arg("+380"+QString::number(order.phone()));
+				painter->fillRect(option.rect, QColor(0xA0, 0xFF, 0xA0));
+				break;
+
+			case Order::STATE_ORDER_CANCEL:
+				orderState = tr("Заказ отменен");
+				orderPhone = tr("Номер телефона: %1").arg("+380"+QString::number(order.phone()));
+				painter->fillRect(option.rect, QColor(0xFF, 0xA0, 0xA0));
+				break;
+
+			case Order::STATE_ORDER_PROCESSING:
+				orderState = tr("Ожидает ответа");
+				orderPhone= tr("Номер телефона: +38 (***) **-**-***");
+				painter->fillRect(option.rect, QColor(0xff, 0xfa, 0xd1));
+				break;
 		}
 
-		QRect timeOrderRect = stateOrderRect;
+		int midDots_x = option.rect.right() - m_iconSmallSize - 20;
+		int midDots_y = option.rect.top() + 10;
 
-		timeOrderRect.setLeft(0);
-		timeOrderRect.setRight(m_dpi);
+		if ((option.state & QStyle::State_Selected) == 0)
+		{
+			painter->drawPixmap(midDots_x, midDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsGrayPixmap);
+		}
+		else
+		{
+			painter->drawPixmap(midDots_x, midDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsBlackPixmap);
+		}
+
+		// order data
+		//
+		QRect orderDataRect = option.rect;
+		orderDataRect.adjust(m_dpi, 5, -m_dpi, 0);
 
 		Order::Time32 orderTime = order.orderTime();
-		QString orderTimeStr = QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute);
+
+		QString orderDataStr = tr("%1 человек(a)").arg(order.people()) + tr(", на %1").arg(QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute));
+
+		switch(order.type())
+		{
+			case Order::TYPE_TABLE:		orderDataStr.insert(0, tr("Столик для "));	break;
+			case Order::TYPE_DINNER:	orderDataStr.insert(0, tr("Обед для "));	break;
+			default:					wassert(0);									break;
+		}
+
+		painter->setFont(*m_providerNameFont);
+		painter->setPen(QColor(0x0, 0x0, 0x0));
+		painter->drawText(orderDataRect, Qt::AlignLeft, orderDataStr);
+
+		QSize cellSize = QFontMetrics(*m_providerNameFont).size(Qt::TextSingleLine,"A");
+		orderDataRect.adjust(0, cellSize.height() + 10, 0, 0);
+
+		painter->setFont(*m_providerAddressFont);
+		painter->setPen(QColor(0x70, 0x70, 0x70));
+		painter->drawText(orderDataRect, Qt::AlignLeft, orderPhone );
+
+		// order state
+		//
+		QRect stateOrderRect = orderDataRect;
+
+		stateOrderRect.adjust(0, 10,0,0);
+		stateOrderRect.setLeft(option.rect.right() - 500);
+		stateOrderRect.setRight(option.rect.right() - 30);
 
 		painter->setPen(QColor(0x40, 0x40, 0x40));
-		painter->drawText(timeOrderRect, Qt::AlignCenter, orderTimeStr);
+		painter->drawText(stateOrderRect, Qt::AlignRight, orderState);
+
+		// Order time
+		//
+		if (orderState.isEmpty() == false)
+		{
+			int icon_x = m_dpi / 2 - m_iconSize / 2;
+
+			switch (order.type())
+			{
+				case Order::TYPE_TABLE:		painter->drawPixmap(icon_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_tablePixmap);	break;
+				case Order::TYPE_DINNER:	painter->drawPixmap(icon_x, option.rect.y() + 3 , m_iconSize, m_iconSize, m_dinnerPixmap);	break;
+			}
+
+			QRect timeOrderRect = stateOrderRect;
+
+			timeOrderRect.setLeft(0);
+			timeOrderRect.setRight(m_dpi);
+
+			Order::Time32 orderTime = order.orderTime();
+			QString orderTimeStr = QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute);
+
+			painter->setPen(QColor(0x40, 0x40, 0x40));
+			painter->drawText(timeOrderRect, Qt::AlignCenter, orderTimeStr);
+		}
+
 	}
-
-
 
 }
 

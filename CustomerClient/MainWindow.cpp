@@ -192,9 +192,7 @@ bool MainWindow::startProviderStateUdpThread()
 		return false;
 	}
 
-	//connect(m_pProviderStateSocket, &ProviderStateSocket::providerStateReceived, this, &MainWindow::providerStateReceived, Qt::QueuedConnection);
-
-	connect(m_pProviderStateSocket, &ProviderStateSocket::providerInitStateReceived, m_pView, &ProviderView::updateList, Qt::QueuedConnection);
+	connect(m_pProviderStateSocket, &ProviderStateSocket::providerInitStateReceived, m_pView, &ProviderView::updateProviderList, Qt::QueuedConnection);
 	connect(m_pProviderStateSocket, &ProviderStateSocket::providerStateChanged, this, &MainWindow::providerStateChanged, Qt::QueuedConnection);
 	connect(this, &MainWindow::requestProviderState, m_pProviderStateSocket, &ProviderStateSocket::requestGetProviderInitState, Qt::QueuedConnection);
 
@@ -370,7 +368,11 @@ bool MainWindow::createToolBars()
 		//m_pOrderControlToolBar->addWidget(m_searchProvider);
 
 		m_pOrderControlToolBar->addAction(m_pInfoAction);
-		m_pOrderControlToolBar->addAction(m_pOptionsAction);
+
+		if (theOptions.isWinApp() == true)
+		{
+			m_pOrderControlToolBar->addAction(m_pOptionsAction);
+		}
 
 		m_connectLabel = new QLabel(m_pOrderControlToolBar);
 		m_connectLabel->setStyleSheet("color: rgb(255, 0, 0);");

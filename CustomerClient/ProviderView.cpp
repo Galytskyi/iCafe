@@ -9,6 +9,8 @@
 #include <QPainter>
 #include <QMessageBox>
 
+#include "Options.h"
+
 #include "../lib/wassert.h"
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -23,6 +25,9 @@ ProviderDelegate::ProviderDelegate(QObject *parent) :
 	m_dpi = QApplication::screens().at(0)->logicalDotsPerInch() / 1.5;
 	m_iconSize = m_dpi / 1.5;
 	m_iconSmallSize = m_iconSize / 2;
+
+	m_providerNameFont = new QFont("Arial", 14, 10);
+	m_providerAddressFont = new QFont("Arial", 10, 10);
 
 	m_dotsBlackPixmap = QPixmap(":/icons/MenuBlack.png");
 	m_dotsGrayPixmap = QPixmap(":/icons/MenuGray.png");
@@ -55,125 +60,243 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		}
 	}
 
-
-	QString orderState;
-
-	switch(item.order().state())
+	if (theOptions.isWinApp() == false)
 	{
-		case Order::STATE_ORDER_OK:
-			orderState = tr("Добро пожаловать!");
-			painter->fillRect(option.rect, QColor(0xDE, 0xFF, 0xB8));	break;
-			break;
+		QString orderState;
 
-		case Order::STATE_ORDER_PROCESSING:
-		case Order::STATE_SERVER_CREATED_ORDER:
-			orderState = tr("Ждите ответа");
-			painter->fillRect(option.rect, QColor(0xff, 0xfa, 0xd1));	break;
-			break;
-	}
-
-
-	int coordDots_x = option.rect.right() - m_iconSmallSize - 20;
-	int coordDots_y = option.rect.top() + cellSize.height();
-
-	if ((option.state & QStyle::State_Selected) == 0)
-	{
-		painter->drawPixmap(coordDots_x, coordDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsGrayPixmap);
-	}
-	else
-	{
-		painter->drawPixmap(coordDots_x, coordDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsBlackPixmap);
-	}
-
-	// provider data
-	//
-
-	QRect providerDataRect = option.rect;
-	providerDataRect.adjust(m_dpi*1.5, cellSize.height(), -m_dpi, 0);
-
-	QFont simpleFont = painter->font();
-	QFont boldFont = painter->font();
-	boldFont.setBold(true);
-
-	painter->setFont(boldFont);
-	painter->setPen(QColor(0x0, 0x0, 0x0));
-	painter->drawText(providerDataRect, Qt::AlignLeft, provider.name());
-
-	painter->setFont(simpleFont);
-	providerDataRect.adjust(0, cellSize.height()/2, 0, 0);
-	providerDataRect.adjust(0, cellSize.height(), 0, 0);
-
-	painter->setPen(QColor(0x70, 0x70, 0x70));
-	painter->drawText(providerDataRect, Qt::AlignLeft, provider.address());
-
-	providerDataRect.adjust(0, cellSize.height(), 0, 0);
-
-	painter->setPen(QColor(0x70, 0x70, 0x70));
-	painter->drawText(providerDataRect, Qt::AlignLeft, provider.phone());
-
-
-	// cancel code
-	//
-
-	if(item.order().state() == Order::STATE_ORDER_OK)
-	{
-		QRect codeOrder = option.rect;
-
-		codeOrder.adjust(0, cellSize.height(), 0, 0);
-		codeOrder.setRight( coordDots_x - 20 );
-
-		painter->setPen(QColor(0xFF, 0x80, 0x80));
-		painter->drawText(codeOrder, Qt::AlignRight, QString("%1").arg(order.cancelCode()));
-	}
-
-	// Order time
-	//
-
-	painter->setPen(QColor(0x00, 0x00, 0x00));
-
-	int coordState_x = m_dpi*1.5 / 2 - m_iconSize / 2;
-	int coordState_y = option.rect.y() + cellSize.height()/2;
-
-
-	if (provider.enableAcceptOrder() == true)
-	{
-		if (orderState.isEmpty() == false)
+		switch(item.order().state())
 		{
-			switch (order.type())
-			{
-				case Order::TYPE_TABLE:		painter->drawPixmap(coordState_x, coordState_y + cellSize.height()/2, m_iconSize, m_iconSize, m_tablePixmap);		break;
-				case Order::TYPE_DINNER:	painter->drawPixmap(coordState_x, coordState_y + cellSize.height()/2, m_iconSize, m_iconSize, m_dinnerPixmap);		break;
-				default:					painter->drawPixmap(coordState_x, coordState_y + cellSize.height()/2, m_iconSize, m_iconSize, m_unblockedPixmap);	break;
-			}
+			case Order::STATE_ORDER_OK:
+				orderState = tr("Добро пожаловать!");
+				painter->fillRect(option.rect, QColor(0xDE, 0xFF, 0xB8));	break;
+				break;
 
-			Order::Time32 orderTime = order.orderTime();
-			QString orderTimeStr = QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute);
+			case Order::STATE_ORDER_PROCESSING:
+			case Order::STATE_SERVER_CREATED_ORDER:
+				orderState = tr("Ждите ответа");
+				painter->fillRect(option.rect, QColor(0xff, 0xfa, 0xd1));	break;
+				break;
+		}
 
-			QRect timeOrderRect = providerDataRect;
 
-			timeOrderRect.setLeft(option.rect.left());
-			timeOrderRect.setRight(m_dpi*1.5);
+		int coordDots_x = option.rect.right() - m_iconSmallSize - 20;
+		int coordDots_y = option.rect.top() + cellSize.height();
 
-			painter->drawText(timeOrderRect, Qt::AlignCenter, orderTimeStr);
-
+		if ((option.state & QStyle::State_Selected) == 0)
+		{
+			painter->drawPixmap(coordDots_x, coordDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsGrayPixmap);
 		}
 		else
 		{
-			painter->drawPixmap(coordState_x, coordState_y, m_iconSize, m_iconSize, m_unblockedPixmap);
+			painter->drawPixmap(coordDots_x, coordDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsBlackPixmap);
 		}
+
+		// provider data
+		//
+
+		QRect providerDataRect = option.rect;
+		providerDataRect.adjust(m_dpi*1.5, cellSize.height(), -m_dpi, 0);
+
+		QFont simpleFont = painter->font();
+		QFont boldFont = painter->font();
+		boldFont.setBold(true);
+
+		painter->setFont(boldFont);
+		painter->setPen(QColor(0x0, 0x0, 0x0));
+		painter->drawText(providerDataRect, Qt::AlignLeft, provider.name());
+
+		painter->setFont(simpleFont);
+		providerDataRect.adjust(0, cellSize.height()/2, 0, 0);
+		providerDataRect.adjust(0, cellSize.height(), 0, 0);
+
+		painter->setPen(QColor(0x70, 0x70, 0x70));
+		painter->drawText(providerDataRect, Qt::AlignLeft, provider.address());
+
+		providerDataRect.adjust(0, cellSize.height(), 0, 0);
+
+		painter->setPen(QColor(0x70, 0x70, 0x70));
+		painter->drawText(providerDataRect, Qt::AlignLeft, provider.phone());
+
+
+		// cancel code
+		//
+
+		if(item.order().state() == Order::STATE_ORDER_OK)
+		{
+			QRect codeOrder = option.rect;
+
+			codeOrder.adjust(0, cellSize.height(), 0, 0);
+			codeOrder.setRight( coordDots_x - 20 );
+
+			painter->setPen(QColor(0xFF, 0x80, 0x80));
+			painter->drawText(codeOrder, Qt::AlignRight, QString("%1").arg(order.cancelCode()));
+		}
+
+		// Order time
+		//
+
+		painter->setPen(QColor(0x00, 0x00, 0x00));
+
+		int coordState_x = m_dpi*1.5 / 2 - m_iconSize / 2;
+		int coordState_y = option.rect.y() + cellSize.height()/2;
+
+
+		if (provider.enableAcceptOrder() == true)
+		{
+			if (orderState.isEmpty() == false)
+			{
+				switch (order.type())
+				{
+					case Order::TYPE_TABLE:		painter->drawPixmap(coordState_x, coordState_y + cellSize.height()/2, m_iconSize, m_iconSize, m_tablePixmap);		break;
+					case Order::TYPE_DINNER:	painter->drawPixmap(coordState_x, coordState_y + cellSize.height()/2, m_iconSize, m_iconSize, m_dinnerPixmap);		break;
+					default:					painter->drawPixmap(coordState_x, coordState_y + cellSize.height()/2, m_iconSize, m_iconSize, m_unblockedPixmap);	break;
+				}
+
+				Order::Time32 orderTime = order.orderTime();
+				QString orderTimeStr = QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute);
+
+				QRect timeOrderRect = providerDataRect;
+
+				timeOrderRect.setLeft(option.rect.left());
+				timeOrderRect.setRight(m_dpi*1.5);
+
+				painter->drawText(timeOrderRect, Qt::AlignCenter, orderTimeStr);
+
+			}
+			else
+			{
+				painter->drawPixmap(coordState_x, coordState_y, m_iconSize, m_iconSize, m_unblockedPixmap);
+			}
+		}
+		else
+		{
+			painter->drawPixmap(coordState_x, coordState_y, m_iconSize, m_iconSize, m_blockedPixmap);
+		}
+
+		QRect stateOrderRect = providerDataRect;
+
+		stateOrderRect.setLeft(option.rect.left());
+		stateOrderRect.adjust(0, cellSize.height()/2, 0, 0);
+
+		stateOrderRect.setRight(option.rect.right() - 30);
+		painter->drawText(stateOrderRect, Qt::AlignRight, orderState);
 	}
 	else
 	{
-		painter->drawPixmap(coordState_x, coordState_y, m_iconSize, m_iconSize, m_blockedPixmap);
+		QString orderState;
+
+		switch(item.order().state())
+		{
+			case Order::STATE_ORDER_OK:
+				orderState = tr("Добро пожаловать!");
+				painter->fillRect(option.rect, QColor(0xDE, 0xFF, 0xB8));	break;
+				break;
+
+			case Order::STATE_ORDER_PROCESSING:
+			case Order::STATE_SERVER_CREATED_ORDER:
+				orderState = tr("Ждите ответа");
+				painter->fillRect(option.rect, QColor(0xff, 0xfa, 0xd1));	break;
+				break;
+		}
+
+
+		int coordDots_x = option.rect.right() - m_iconSmallSize - 20;
+		int coordDots_y = option.rect.top() + 10;
+
+		if ((option.state & QStyle::State_Selected) == 0)
+		{
+			painter->drawPixmap(coordDots_x, coordDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsGrayPixmap);
+		}
+		else
+		{
+			painter->drawPixmap(coordDots_x, coordDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsBlackPixmap);
+		}
+
+		// provider data
+		//
+		QRect providerDataRect = option.rect;
+		providerDataRect.adjust(m_dpi, 5, -m_dpi, 0);
+
+		painter->setFont(*m_providerNameFont);
+		painter->setPen(provider.enableAcceptOrder() ? QColor(0x0, 0x0, 0x0) : QColor(0x70, 0x70, 0x70));
+		painter->drawText(providerDataRect, Qt::AlignLeft, provider.name());
+
+		QSize cellSize = QFontMetrics(*m_providerNameFont).size(Qt::TextSingleLine,"A");
+		providerDataRect.adjust(0, cellSize.height(), 0, 0);
+
+		painter->setFont(*m_providerAddressFont);
+		painter->setPen(QColor(0x70, 0x70, 0x70));
+		painter->drawText(providerDataRect, Qt::AlignLeft, provider.address());
+
+		providerDataRect.adjust(0, cellSize.height() - 4, 0, 0);
+
+		painter->setPen(QColor(0x70, 0x70, 0x70));
+		painter->drawText(providerDataRect, Qt::AlignLeft, provider.phone());
+
+		// order state
+		//
+
+		QRect stateOrderRect = providerDataRect;
+
+		stateOrderRect.setLeft(option.rect.right() - 500);
+		stateOrderRect.setRight(option.rect.right() - 30);
+
+		painter->setPen(QColor(0x40, 0x40, 0x40));
+		painter->drawText(stateOrderRect, Qt::AlignRight, orderState);
+
+		// cancel code
+		//
+
+		if(item.order().state() == Order::STATE_ORDER_OK)
+		{
+			QRect codeOrder = option.rect;
+
+			codeOrder.adjust(00, 10, 0, 0);
+			codeOrder.setRight( coordDots_x - 20 );
+
+			painter->setPen(QColor(0xFF, 0x80, 0x80));
+			painter->drawText(codeOrder, Qt::AlignRight, QString("%1").arg(order.cancelCode()));
+		}
+
+		// Order time
+		//
+
+		int coordState_x = m_dpi / 2 - m_iconSize / 2;
+
+		if (provider.enableAcceptOrder() == true)
+		{
+			if (orderState.isEmpty() == false)
+			{
+				switch (order.type())
+				{
+					case Order::TYPE_TABLE:		painter->drawPixmap(coordState_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_tablePixmap);		break;
+					case Order::TYPE_DINNER:	painter->drawPixmap(coordState_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_dinnerPixmap);		break;
+					default:					painter->drawPixmap(coordState_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_unblockedPixmap);	break;
+				}
+
+				QRect timeOrderRect = providerDataRect;
+
+				timeOrderRect.setLeft(0);
+				timeOrderRect.setRight(m_dpi);
+				timeOrderRect.adjust(0,-4,0,0);
+
+				Order::Time32 orderTime = order.orderTime();
+				QString orderTimeStr = QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute);
+
+				painter->setPen(QColor(0x40, 0x40, 0x40));
+				painter->drawText(timeOrderRect, Qt::AlignCenter, orderTimeStr);
+			}
+			else
+			{
+				painter->drawPixmap(coordState_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_unblockedPixmap);
+			}
+		}
+		else
+		{
+			painter->drawPixmap(coordState_x, option.rect.y() + 3, m_iconSize, m_iconSize, m_blockedPixmap);
+		}
+
 	}
-
-	QRect stateOrderRect = providerDataRect;
-
-	stateOrderRect.setLeft(option.rect.left());
-	stateOrderRect.adjust(0, cellSize.height()/2, 0, 0);
-
-	stateOrderRect.setRight(option.rect.right() - 30);
-	painter->drawText(stateOrderRect, Qt::AlignRight, orderState);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -487,8 +610,21 @@ ProviderView::ProviderView()
 	ProviderDelegate* textDelegate = new ProviderDelegate(this);
 	setItemDelegateForColumn(PROVIDER_COLUMN_NAME, textDelegate);
 
-	QSize cellSize = QFontMetrics(font()).size(Qt::TextSingleLine,"A");
-	verticalHeader()->setDefaultSectionSize(cellSize.height() * PROVIDER_COLUMN_STR_COUNT);
+
+
+	if (theOptions.isWinApp() == true)
+	{
+		QFont* listFont =  new QFont("Arial", 14, 2);
+		setFont(*listFont);
+
+		QSize cellSize = QFontMetrics(font()).size(Qt::TextSingleLine,"A");
+		verticalHeader()->setDefaultSectionSize(cellSize.height() * 3);
+	}
+	else
+	{
+		QSize cellSize = QFontMetrics(font()).size(Qt::TextSingleLine,"A");
+		verticalHeader()->setDefaultSectionSize(cellSize.height() * PROVIDER_COLUMN_STR_COUNT);
+	}
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -554,6 +690,20 @@ void ProviderView::updateOrderList()
 				break;
 			}
 		}
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void ProviderView::updateProviderList()
+{
+	int providerCount = theProviderBase.count();
+	for(int p = 0 ; p < providerCount; p++)
+	{
+		Provider::Item provider = theProviderBase.provider(p);
+
+		m_table.updateProviderState(provider.providerID(), provider.state());
+
 	}
 }
 
