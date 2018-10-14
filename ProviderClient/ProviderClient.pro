@@ -50,6 +50,7 @@ SOURCES += \
 	../lib/UdpSocket.cpp \
 	../lib/SocketIO.cpp \
 	../lib/Crc32.cpp \
+	../lib/wassert.cpp \
 	main.cpp \
 	MainWindow.cpp \
 	Options.cpp \
@@ -58,9 +59,7 @@ SOURCES += \
 	OrderStateSocket.cpp \
 	OrderReceiveSocket.cpp \
 	AppAboutDialog.cpp \
-    InputCodeDialog.cpp
-
-
+	InputCodeDialog.cpp
 
 HEADERS += \
 	../lib/Order.h \
@@ -69,6 +68,7 @@ HEADERS += \
 	../lib/XmlHelper.h \
 	../lib/UdpSocket.h \
 	../lib/Crc32.h \
+	../lib/wassert.h \
 	MainWindow.h \
 	Options.h \
 	OrderView.h \
@@ -76,7 +76,7 @@ HEADERS += \
 	OrderStateSocket.h \
 	OrderReceiveSocket.h \
 	AppAboutDialog.h \
-    InputCodeDialog.h
+	InputCodeDialog.h
 
 RESOURCES += \
 	resources.qrc

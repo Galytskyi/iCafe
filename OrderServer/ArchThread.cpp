@@ -4,8 +4,8 @@
 #include <QThread>
 #include <QDateTime>
 #include <QDebug>
-#include <assert.h>
 
+#include "../lib/wassert.h"
 #include "../lib/SocketIO.h"
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ void ArchThread::onThreadStarted()
 	if (m_archFile.open(QIODevice::Append) == false)
 	{
 		qDebug() << "ArchThread::onThreadStarted() - arch file was not opened";
-		assert(0);
+		wassert(0);
 		return;
 	}
 
@@ -78,7 +78,7 @@ void ArchThread::appendMessage(int type, const QString& func, const QString& tex
 	if (m_archFile.isOpen() == false)
 	{
 		qDebug() << "ArchThread::onThreadStarted() - arch file was not opened";
-		assert(0);
+		wassert(0);
 		return;
 	}
 

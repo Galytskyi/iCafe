@@ -11,7 +11,8 @@
 #include <QEvent>
 #include <QResizeEvent>
 #include <QPainter>
-#include <assert.h>
+
+#include "../lib/wassert.h"
 
 // -------------------------------------------------------------------------------------------------------------------
 //
@@ -104,7 +105,7 @@ void OrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 	{
 		case Order::TYPE_TABLE:		orderDataStr.insert(0, tr("Столик для "));	break;
 		case Order::TYPE_DINNER:	orderDataStr.insert(0, tr("Обед для "));	break;
-		default:					assert(0);									break;
+		default:					wassert(0);									break;
 	}
 
 	painter->setFont(*m_providerNameFont);
@@ -288,7 +289,7 @@ QString OrderTable::text(int row, int column, const Order::Item& order) const
 			break;
 
 		default:
-			assert(0);
+			wassert(0);
 			break;
 	}
 

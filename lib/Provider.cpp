@@ -1,7 +1,6 @@
 #include "Provider.h"
 
-#include <assert.h>
-
+#include "../lib/wassert.h"
 #include "../lib/SocketIO.h"
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -147,7 +146,7 @@ namespace Provider
 			default:
 
 				qDebug() << "ProviderItem::readFromXml - Undefined version:" << version;
-				assert(0);
+				wassert(0);
 
 				break;
 		}
@@ -185,7 +184,7 @@ namespace Provider
 		default:
 
 			qDebug() << "ProviderItem::readFromXml - Undefined version:" << version;
-			assert(0);
+			wassert(0);
 
 			break;
 		}
@@ -481,7 +480,7 @@ namespace Provider
 		if (count() != providerCount)
 		{
 			qDebug() << "ProviderBase::readFromXml - Providers loading error, loaded: " << count() << " from " << providerCount;
-			assert(false);
+			wassert(false);
 			//return false;
 		}
 
@@ -513,7 +512,7 @@ namespace Provider
 
 				if (provider->isEmpty() == true)
 				{
-					assert(provider->isEmpty() == false);
+					wassert(provider->isEmpty() == false);
 					continue;
 				}
 
@@ -538,7 +537,7 @@ namespace Provider
 
 				if (provider->isEmpty() == true)
 				{
-					assert(provider->isEmpty() == false);
+					wassert(provider->isEmpty() == false);
 					continue;
 				}
 
@@ -656,7 +655,7 @@ namespace Provider
 			default:
 
 				qDebug() << "ProviderType::readFromXml - Undefined version";
-				assert(0);
+				wassert(0);
 
 				break;
 		}
@@ -690,7 +689,7 @@ namespace Provider
 		default:
 
 			qDebug() << "ProviderType::readFromXml - Undefined version";
-			assert(0);
+			wassert(0);
 
 			break;
 		}
@@ -870,7 +869,7 @@ namespace Provider
 		if (count() != typeCount)
 		{
 			qDebug() << "ProviderTypeBase::readFromXml - ProviderTypes loading error, loaded: " << count() << " from " << typeCount;
-			assert(false);
+			wassert(false);
 			return false;
 		}
 
@@ -903,7 +902,7 @@ namespace Provider
 
 				if (type->isEmpty() == true)
 				{
-					assert(type->isEmpty() == false);
+					wassert(type->isEmpty() == false);
 					continue;
 				}
 

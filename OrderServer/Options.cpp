@@ -153,11 +153,10 @@ bool Options::readFromXml()
 
 Options& Options::operator=(const Options& from)
 {
-	m_mutex.lock();
+	QMutexLocker locker(&m_mutex);
 
-		m_database = from.m_database;
-
-	m_mutex.unlock();
+	m_isWinApp = from.m_isWinApp;
+	m_database = from.m_database;
 
 	return *this;
 }

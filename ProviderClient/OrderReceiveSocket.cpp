@@ -1,9 +1,10 @@
 #include "OrderReceiveSocket.h"
 
 #include <QTime>
-#include <assert.h>
 
 #include "Options.h"
+
+#include "../lib/wassert.h"
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -51,7 +52,7 @@ void OrderReceiveSocket::processReply(const Udp::Request& request)
 	if (request.errorCode() != SIO_ERROR_NONE)
 	{
 		qDebug() << "OrderStateSocket::processReply - Request has error : " << request.errorCode();
-		assert(false);
+		wassert(false);
 	}
 
 	switch(request.ID())
@@ -74,7 +75,7 @@ void OrderReceiveSocket::processReply(const Udp::Request& request)
 
 		default:
 			qDebug() << "OrderReceiveSocket::processReply - Unknown request.ID() : " << request.ID();
-			assert(false);
+			wassert(false);
 			break;
 	}
 }
@@ -108,7 +109,7 @@ void OrderReceiveSocket::replyGetOrder(const Udp::Request& request)
 	if (result == false)
 	{
 		qDebug() << "OrderReceiveSocket::replyGetOrder - incorrect orderWrap" << wo.state;
-		assert(0);
+		wassert(0);
 		return;
 	}
 
@@ -123,7 +124,7 @@ void OrderReceiveSocket::replyGetOrder(const Udp::Request& request)
 	if (wo.state != Order::STATE_SERVER_SEND_TO_PROVIDER)
 	{
 		qDebug() << "OrderReceiveSocket::replyGetOrder - wo.state() != Order::STATE_SERVER_SEND_TO_PROVIDER";
-		assert(0);
+		wassert(0);
 		return;
 	}
 
@@ -264,7 +265,7 @@ void OrderReceiveSocket::failReply(const Udp::Request& request)
 
 		default:
 			qDebug() << "ConfigSocket::processReply - Unknown request.ID() : " << request.ID();
-			assert(false);
+			wassert(false);
 			break;
 	}
 }

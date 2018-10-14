@@ -58,6 +58,7 @@ SOURCES += \
 	../lib/XmlHelper.cpp \
 	../lib/Order.cpp \
 	../lib/Crc32.cpp \
+	../lib/wassert.cpp \
 	main.cpp \
 	MainWindow.cpp \
 	Options.cpp \
@@ -77,6 +78,7 @@ HEADERS += \
 	../lib/XmlHelper.h \
 	../lib/Order.h \
 	../lib/Crc32.h \
+	../lib/wassert.h \
 	MainWindow.h \
 	Options.h \
 	Database.h \
@@ -86,7 +88,7 @@ HEADERS += \
     RemoveOrderThread.h \
     ArchThread.h \
     ProviderView.h \
-	ProviderDialog.h
+	ProviderDialog.h \
 
 DISTFILES += \
     ../csv/Google.xls \

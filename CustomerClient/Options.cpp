@@ -270,9 +270,6 @@ Options::~Options()
 
 void Options::load()
 {
-	//m_database.load();
-	//m_database.create();
-
 	m_connection.load();
 
 	m_customerData.load();
@@ -285,8 +282,6 @@ void Options::save()
 	m_customerData.save();
 
 	m_connection.save();
-
-	//m_database.save();
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -310,7 +305,7 @@ Options& Options::operator=(const Options& from)
 {
 	QMutexLocker locker(&m_mutex);
 
-	m_database = from.m_database;
+	m_isWinApp = from.m_isWinApp;
 	m_connection = from.m_connection;
 	m_customerData = from.m_customerData;
 

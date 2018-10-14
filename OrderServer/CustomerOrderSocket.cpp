@@ -1,7 +1,6 @@
 #include "CustomerOrderSocket.h"
 
-#include <assert.h>
-
+#include "../lib/wassert.h"
 #include "../lib/SocketIO.h"
 #include "../lib/Provider.h"
 
@@ -92,7 +91,7 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 		wo.state = Order::STATE_INCORRECT_PARSE_ORDERWRAP;
 		sendReply(request, wo);
 
-		assert(0);
+		wassert(0);
 		return;
 	}
 
@@ -194,7 +193,7 @@ void CustomerOrderSocket::replyGetOrderState(const Udp::Request& request)
 		wo.state = Order::STATE_INCORRECT_PARSE_ORDERWRAP;
 		sendReply(request, wo);
 
-		assert(0);
+		wassert(0);
 		return;
 	}
 
@@ -225,7 +224,7 @@ void CustomerOrderSocket::replyRemoveOrder(const Udp::Request& request)
 		wo.state = Order::STATE_INCORRECT_PARSE_ORDERWRAP;
 		sendReply(request, wo);
 
-		assert(0);
+		wassert(0);
 		return;
 	}
 

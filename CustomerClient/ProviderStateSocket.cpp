@@ -1,8 +1,8 @@
 #include "ProviderStateSocket.h"
 
 #include <QDebug>
-#include <assert.h>
 
+#include "../lib/wassert.h"
 #include "../lib/Provider.h"
 #include "../lib/SocketIO.h"
 
@@ -50,7 +50,7 @@ void ProviderStateSocket::processReply(const Udp::Request& request)
 	if (request.errorCode() != SIO_ERROR_NONE)
 	{
 		qDebug() << "ProviderStateSocket::processReply - Request has error : " << request.errorCode();
-		assert(false);
+		wassert(false);
 	}
 
 	switch(request.ID())
@@ -65,7 +65,7 @@ void ProviderStateSocket::processReply(const Udp::Request& request)
 
 		default:
 			qDebug() << "ProviderStateSocket::processReply - Unknown request.ID() : " << request.ID();
-			assert(false);
+			wassert(false);
 			break;
 	}
 }
@@ -205,7 +205,7 @@ void ProviderStateSocket::failReply(const Udp::Request& request)
 
 		default:
 			qDebug() << "ProviderStateSocket::failAck - Unknown request.ID() : " << request.ID();
-			assert(false);
+			wassert(false);
 			break;
 	}
 }

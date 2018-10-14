@@ -2,10 +2,10 @@
 
 #include <QApplication>
 #include <QFile>
-#include <assert.h>
 
 #include "Options.h"
 
+#include "../lib/wassert.h"
 #include "../lib/Provider.h"
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ void ConfigSocket::processReply(const Udp::Request& request)
 	if (request.errorCode() != SIO_ERROR_NONE)
 	{
 		qDebug() << "OrderStateSocket::processReply - Request has error : " << request.errorCode();
-		assert(false);
+		wassert(false);
 	}
 
 	switch(request.ID())
@@ -105,7 +105,7 @@ void ConfigSocket::processReply(const Udp::Request& request)
 
 		default:
 			qDebug() << "ConfigSocket::processReply - Unknown request.ID() : " << request.ID();
-			assert(false);
+			wassert(false);
 			break;
 	}
 }
@@ -137,7 +137,7 @@ void ConfigSocket::replyGetConfigXmlCrc(const Udp::Request& request)
 	quint32 cfgXmlCrc32 = *(quint32*) request.data();
 	if (cfgXmlCrc32 == 0xFFFFFFFF)
 	{
-		assert(0);
+		wassert(0);
 
 		m_rcxi.clear();
 		m_rcxi.crc32 = getConfigFileCrc();
@@ -202,8 +202,8 @@ void ConfigSocket::replyGetConfigXmlInfo(const Udp::Request& request)
 	 {
 		 // we have empty data
 		 //
-		 assert(m_rcxi.dataSize == 0);
-		 assert(m_rcxi.partCount == 0);
+		 wassert(m_rcxi.dataSize == 0);
+		 wassert(m_rcxi.partCount == 0);
 
 		 m_rcxi.clear();
 		 m_rcxi.crc32 = getConfigFileCrc();
@@ -227,7 +227,7 @@ void ConfigSocket::requestGetConfigXml(quint32 partIndex)
 		//
 		if ( m_rcxi.dataSize != (quint32) m_cfgXmlData.count())
 		{
-			assert(m_rcxi.dataSize != (quint32) m_cfgXmlData.count());
+			wassert(m_rcxi.dataSize != (quint32) m_cfgXmlData.count());
 		}
 
 		QFile file(qApp->applicationDirPath() + "/" + xmlConfigFileName);
@@ -295,7 +295,7 @@ void ConfigSocket::failReply(const Udp::Request& request)
 			break;
 
 		default:
-			assert(false);
+			wassert(false);
 			qDebug() << "ConfigSocket::failAck - Unknown request.ID() : " << request.ID();
 			break;
 	}

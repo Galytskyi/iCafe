@@ -146,6 +146,8 @@ private:
 
 public:
 
+	//
+	//
 	QString				serverIP() const { return m_serverIP; }
 	void				setServerIP(const QString& ip) { m_serverIP = ip; }
 
@@ -210,7 +212,7 @@ private:
 
 	QMutex				m_mutex;
 
-	DatabaseOption		m_database;
+	bool				m_isWinApp = true;
 
 	ConnectionOption	m_connection;
 
@@ -218,8 +220,8 @@ private:
 
 public:
 
-	DatabaseOption&		database() { return m_database; }
-	void				setDatabase(const DatabaseOption& database) { m_database = database; }
+	bool				isWinApp() const { return m_isWinApp; }
+	void				setIsWinApp(bool isWinApp) { m_isWinApp = isWinApp; }
 
 	ConnectionOption&	connection() { return m_connection; }
 	void				setConnection(const ConnectionOption& connection) { m_connection = connection; }

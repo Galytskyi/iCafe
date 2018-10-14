@@ -1,6 +1,6 @@
 #include "XmlHelper.h"
 
-#include <assert.h>
+#include "../lib/wassert.h"
 
 // -------------------------------------------------------------------------------------
 //
@@ -195,7 +195,7 @@ bool XmlReadHelper::readIntAttribute(const QString& name, int* value)
 {
 	if(value == nullptr)
 	{
-		assert(false);
+		wassert(false);
 		return false;
 	}
 
@@ -217,7 +217,7 @@ bool XmlReadHelper::readDoubleAttribute(const QString& name, double* value)
 {
 	if(value == nullptr)
 	{
-		assert(false);
+		wassert(false);
 		return false;
 	}
 
@@ -237,7 +237,7 @@ bool XmlReadHelper::readFloatAttribute(const QString& name, float* value)
 {
 	if(value == nullptr)
 	{
-		assert(false);
+		wassert(false);
 		return false;
 	}
 
@@ -257,7 +257,7 @@ bool XmlReadHelper::readUInt64Attribute(const QString& name, qulonglong *value)
 {
 	if(value == nullptr)
 	{
-		assert(false);
+		wassert(false);
 		return false;
 	}
 
@@ -281,7 +281,7 @@ bool XmlReadHelper::readUInt32Attribute(const QString& name, quint32 *value)
 {
 	if(value == nullptr)
 	{
-		assert(false);
+		wassert(false);
 		return false;
 	}
 
@@ -305,7 +305,7 @@ bool XmlReadHelper::readBoolAttribute(const QString& name, bool* value)
 {
 	if(value == nullptr)
 	{
-		assert(false);
+		wassert(false);
 		return false;
 	}
 
@@ -330,7 +330,7 @@ bool XmlReadHelper::readBoolAttribute(const QString& name, bool* value)
 		}
 		else
 		{
-			assert(false);
+			wassert(false);
 			return false;
 		}
 	}
@@ -342,7 +342,7 @@ bool XmlReadHelper::readStringAttribute(const QString& name, QString* value)
 {
 	if(value == nullptr)
 	{
-		assert(false);
+		wassert(false);
 		return false;
 	}
 
@@ -360,7 +360,7 @@ bool XmlReadHelper::readStringElement(const QString& elementName, QString* value
 {
 	if (value == nullptr)
 	{
-		assert(false);
+		wassert(false);
 		return false;
 	}
 
@@ -388,7 +388,7 @@ bool XmlReadHelper::readIntElement(const QString& elementName, int* value, bool 
 {
 	if (value == nullptr)
 	{
-		assert(false);
+		wassert(false);
 		return false;
 	}
 
@@ -418,7 +418,7 @@ bool XmlReadHelper::readBoolElement(const QString& elementName, bool* value, boo
 {
 	if (value == nullptr)
 	{
-		assert(false);
+		wassert(false);
 		return false;
 	}
 
@@ -449,7 +449,7 @@ bool XmlReadHelper::readBoolElement(const QString& elementName, bool* value, boo
 		}
 		else
 		{
-			assert(false);
+			wassert(false);
 			return false;
 		}
 	}

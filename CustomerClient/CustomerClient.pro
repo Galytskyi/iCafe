@@ -49,6 +49,7 @@ SOURCES += \
 	../lib/XmlHelper.cpp \
 	../lib/Order.cpp \
 	../lib/Crc32.cpp \
+	../lib/wassert.cpp \
 	main.cpp \
 	MainWindow.cpp \
 	ProviderView.cpp \
@@ -60,7 +61,6 @@ SOURCES += \
     AppAboutDialog.cpp \
 	ProviderStateSocket.cpp
 
-
 HEADERS += \
 	../lib/UdpSocket.h \
 	../lib/SocketIO.h \
@@ -68,6 +68,7 @@ HEADERS += \
 	../lib/XmlHelper.h \
 	../lib/Order.h \
 	../lib/Crc32.h \
+	../lib/wassert.h \
 	MainWindow.h \
 	ProviderView.h \
 	ConfigSocket.h \
@@ -77,8 +78,6 @@ HEADERS += \
     OptionsDialog.h \
     AppAboutDialog.h \
 	ProviderStateSocket.h
-
-
 
 RESOURCES += \
     resources.qrc

@@ -1,7 +1,8 @@
 #include "Order.h"
 
 #include <QFile>
-#include <assert.h>
+
+#include "../lib/wassert.h"
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -109,7 +110,7 @@ namespace Order
 	{
 		if (m_state < 0 || m_state >= STATE_COUNT)
 		{
-			assert(0);
+			wassert(0);
 			return STATE_UNDEFINED;
 		}
 
@@ -120,7 +121,7 @@ namespace Order
 	{
 		if (state < 0 || state >= STATE_COUNT)
 		{
-			assert(0);
+			wassert(0);
 			m_state = STATE_UNDEFINED;
 			return false;
 		}
@@ -134,7 +135,7 @@ namespace Order
 	{
 		if (m_type < 0 || m_type >= TYPE_COUNT)
 		{
-			assert(0);
+			wassert(0);
 			return TYPE_UNDEFINED;
 		}
 
@@ -145,7 +146,7 @@ namespace Order
 	{
 		if (m_type < 0 || m_type >= TYPE_COUNT)
 		{
-			assert(0);
+			wassert(0);
 			return QString();
 		}
 
@@ -156,7 +157,7 @@ namespace Order
 	{
 		if (type < 0 || type >= TYPE_COUNT)
 		{
-			assert(0);
+			wassert(0);
 			m_type = TYPE_UNDEFINED;
 			return false;
 		}
@@ -198,7 +199,7 @@ namespace Order
 
 			default:
 				qDebug() << "Item::toWrap_proto - Undefined version:" << wo.version;
-				assert(0);
+				wassert(0);
 				break;
 		}
 
@@ -231,7 +232,7 @@ namespace Order
 
 			default:
 				qDebug() << "Item::toWrap_proto - Undefined version:" << pWo->version;
-				assert(0);
+				wassert(0);
 				break;
 		}
 	}
@@ -255,7 +256,7 @@ namespace Order
 
 			default:
 				qDebug() << "Item::fromWrap_proto - Undefined version:" << wo.version;
-				assert(0);
+				wassert(0);
 				break;
 		}
 	}
@@ -284,7 +285,7 @@ namespace Order
 
 			default:
 				qDebug() << "Item::fromWrap_proto - Undefined version:" << pWo->version;
-				assert(0);
+				wassert(0);
 				break;
 		}
 	}
@@ -313,7 +314,7 @@ namespace Order
 			default:
 
 				qDebug() << "OrderItem::readFromXml - Undefined version:" << version;
-				assert(0);
+				wassert(0);
 
 				break;
 		}
@@ -348,7 +349,7 @@ namespace Order
 		default:
 
 			qDebug() << "OrderItem::readFromXml - Undefined version:" << version;
-			assert(0);
+			wassert(0);
 
 			break;
 		}
@@ -542,7 +543,7 @@ namespace Order
 	{
 		if (fileName.isEmpty() == true)
 		{
-			assert(0);
+			wassert(0);
 			return false;
 		}
 
@@ -594,7 +595,7 @@ namespace Order
 		if (count() != orderCount)
 		{
 			qDebug() << "OrderBase::readFromXml - Orders loading error, loaded: " << count() << " from " << orderCount;
-			assert(false);
+			wassert(false);
 			return false;
 		}
 
@@ -609,7 +610,7 @@ namespace Order
 	{
 		if (fileName.isEmpty() == true)
 		{
-			assert(0);
+			wassert(0);
 			return;
 		}
 
@@ -639,7 +640,7 @@ namespace Order
 
 						if (order.isEmpty() == true )
 						{
-							assert(order.isEmpty() == false);
+							wassert(order.isEmpty() == false);
 							continue;
 						}
 

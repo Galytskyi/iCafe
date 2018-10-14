@@ -1,11 +1,11 @@
 #include "OrderStateSocket.h"
 
 #include <QDebug>
-#include <assert.h>
-
-#include "../lib/SocketIO.h"
 
 #include "Options.h"
+
+#include "../lib/wassert.h"
+#include "../lib/SocketIO.h"
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ void OrderStateSocket::processReply(const Udp::Request& request)
 	if (request.errorCode() != SIO_ERROR_NONE)
 	{
 		qDebug() << "OrderStateSocket::processReply - Request has error : " << request.errorCode();
-		assert(false);
+		wassert(false);
 	}
 
 	switch(request.ID())
@@ -68,7 +68,7 @@ void OrderStateSocket::processReply(const Udp::Request& request)
 
 		default:
 			qDebug() << "OrderStateSocket::processReply - Unknown request.ID() : " << request.ID();
-			assert(false);
+			wassert(false);
 			break;
 	}
 }
@@ -118,7 +118,7 @@ void OrderStateSocket::replyGetOrderState(const Udp::Request& request)
 	if (result == false)
 	{
 		qDebug() << "OrderStateSocket::replyGetOrderState - incorrect orderWrap" << wo.state;
-		assert(0);
+		wassert(0);
 		return;
 	}
 
@@ -158,7 +158,7 @@ void OrderStateSocket::requestRemoveOrder(const Order::Item& order)
 {
 	if (order.state() != Order::STATE_CUSTOMER_REMOVING_ORDER)
 	{
-		assert(0);
+		wassert(0);
 		return;
 	}
 
@@ -176,7 +176,7 @@ void OrderStateSocket::replyRemoveOrder(const Udp::Request& request)
 	if (result == false)
 	{
 		qDebug() << "OrderStateSocket::replyRemoveOrder - incorrect orderWrap" << wo.state;
-		assert(0);
+		wassert(0);
 		return;
 	}
 
@@ -215,7 +215,7 @@ void OrderStateSocket::failReply(const Udp::Request& request)
 
 		default:
 			qDebug() << "OrderStateSocket::failAck - Unknown request.ID() : " << request.ID();
-			assert(false);
+			wassert(false);
 			break;
 	}
 }

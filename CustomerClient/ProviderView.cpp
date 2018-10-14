@@ -8,7 +8,8 @@
 #include <QResizeEvent>
 #include <QPainter>
 #include <QMessageBox>
-#include <assert.h>
+
+#include "../lib/wassert.h"
 
 // -------------------------------------------------------------------------------------------------------------------
 //
@@ -343,7 +344,7 @@ QString ProviderTable::text(int row, int column, const ProviderItem& item) const
 //			break;
 
 //		default:
-//			assert(0);
+//			wassert(0);
 //			break;
 //	}
 

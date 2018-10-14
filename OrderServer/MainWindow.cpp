@@ -9,6 +9,7 @@
 #include "Database.h"
 #include "ProviderDialog.h"
 
+#include "../lib/wassert.h"
 #include "../lib/Provider.h"
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -20,6 +21,8 @@
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
+	wassert(0);
+
 	// init interface
 	//
 	createInterface();

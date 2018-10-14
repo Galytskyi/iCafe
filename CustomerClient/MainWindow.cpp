@@ -8,7 +8,8 @@
 #include <QToolBar>
 #include <QStatusBar>
 #include <QMessageBox>
-#include <assert.h>
+
+#include "../lib/wassert.h"
 
 // -------------------------------------------------------------------------------------------------------------------
 //
@@ -60,7 +61,7 @@ bool MainWindow::createInterface()
 	m_pView = createProviderView();
 	if (m_pView == nullptr)
 	{
-		assert(0);
+		wassert(0);
 	}
 
 	m_pStackedWidget->addWidget(m_pView);
@@ -70,7 +71,7 @@ bool MainWindow::createInterface()
 	m_pOrderDialog = new OrderDialog(this);
 	if (m_pOrderDialog == nullptr)
 	{
-		assert(0);
+		wassert(0);
 	}
 	else
 	{
@@ -85,7 +86,7 @@ bool MainWindow::createInterface()
 	m_pOptionsDialog = new OptionsDialog(this);
 	if (m_pOptionsDialog == nullptr)
 	{
-		assert(0);
+		wassert(0);
 	}
 	else
 	{
@@ -100,7 +101,7 @@ bool MainWindow::createInterface()
 	m_pAppAboutDialog = new AppAboutDialog(this);
 	if (m_pAppAboutDialog == nullptr)
 	{
-		assert(0);
+		wassert(0);
 	}
 	else
 	{

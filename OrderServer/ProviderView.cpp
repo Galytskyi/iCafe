@@ -8,7 +8,8 @@
 #include <QResizeEvent>
 #include <QPainter>
 #include <QMessageBox>
-#include <assert.h>
+
+#include "../lib/wassert.h"
 
 // -------------------------------------------------------------------------------------------------------------------
 //
@@ -124,7 +125,7 @@ QVariant ProviderTable::data(const QModelIndex &index, int role) const
 
 				break;
 
-			case PROVIDER_COLUMN_TAKE_ORDERS:
+			case PROVIDER_COLUMN_ACCEPT_ORDERS:
 
 				if (provider.enableAcceptOrder() == true)
 				{
@@ -133,7 +134,7 @@ QVariant ProviderTable::data(const QModelIndex &index, int role) const
 
 				break;
 
-			case PROVIDER_COLUMN_TAKE_DINNER:
+			case PROVIDER_COLUMN_ENABLE_DINNER:
 
 				if (provider.enableDinner() == true)
 				{
@@ -179,12 +180,12 @@ QString ProviderTable::text(int row, int column, const Provider::Item& provider)
 	{
 		case PROVIDER_COLUMN_ID:			result = QString::number(provider.providerID());					break;
 		case PROVIDER_COLUMN_ACTIVE:		result = provider.isActive() ? provider.activeTime() : tr("No");	break;
-		case PROVIDER_COLUMN_TAKE_ORDERS:	result = provider.enableAcceptOrder() ? "Yes" : tr("No");				break;
-		case PROVIDER_COLUMN_TAKE_DINNER:	result = provider.enableDinner() ? "Yes" : tr("No");			break;
+		case PROVIDER_COLUMN_ACCEPT_ORDERS:	result = provider.enableAcceptOrder() ? "Yes" : tr("No");			break;
+		case PROVIDER_COLUMN_ENABLE_DINNER:	result = provider.enableDinner() ? "Yes" : tr("No");				break;
 		case PROVIDER_COLUMN_NAME:			result = provider.name();											break;
 		case PROVIDER_COLUMN_ADDRESS:		result = provider.address();										break;
 		case PROVIDER_COLUMN_PHONE:			result = provider.phone();											break;
-		default:							assert(0);															break;
+		default:							wassert(0);															break;
 	}
 
 	return result;

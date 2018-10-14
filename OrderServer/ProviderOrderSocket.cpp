@@ -1,7 +1,6 @@
 #include "ProviderOrderSocket.h"
 
-#include <assert.h>
-
+#include "../lib/wassert.h"
 #include "../lib/SocketIO.h"
 #include "../lib/Provider.h"
 
@@ -112,7 +111,7 @@ void ProviderOrderSocket::replyGetOrder(const Udp::Request& request)
 			break;
 
 		default:
-			assert(0);
+			wassert(0);
 			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Wrong wrap version: %1").arg(ptr_rgo->version));
 			break;
 	}
@@ -132,7 +131,7 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 		wo.state = Order::STATE_INCORRECT_PARSE_ORDERWRAP;
 		sendReply(request, wo);
 
-		assert(0);
+		wassert(0);
 		return;
 	}
 

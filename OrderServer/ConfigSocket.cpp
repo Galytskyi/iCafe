@@ -1,7 +1,6 @@
 #include "ConfigSocket.h"
 
-#include <assert.h>
-
+#include "../lib/wassert.h"
 #include "../lib/Provider.h"
 #include "../lib/Crc32.h"
 
@@ -94,7 +93,7 @@ void ConfigSocket::updateCfgXmlInfo()
 			break;
 
 		default:
-			assert(0);
+			wassert(0);
 			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Undefined version: %1").arg(m_rcxi.version));
 			break;
 	}

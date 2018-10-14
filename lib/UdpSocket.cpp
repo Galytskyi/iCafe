@@ -1,6 +1,6 @@
 #include "UdpSocket.h"
 
-#include <assert.h>
+#include "../lib/wassert.h"
 
 namespace Udp
 {
@@ -42,7 +42,7 @@ namespace Udp
 		}
 		else
 		{
-			assert(false);
+			wassert(false);
 		}
 
 		header()->calcCRC();
@@ -65,12 +65,12 @@ namespace Udp
 
 		if (m_rawDataSize < sizeof(RequestHeader))
 		{
-			assert(m_rawDataSize >= sizeof(RequestHeader));
+			wassert(m_rawDataSize >= sizeof(RequestHeader));
 			m_rawDataSize = sizeof(RequestHeader);
 		}
 		if (m_rawDataSize > sizeof(m_rawData))
 		{
-			assert(m_rawDataSize > sizeof(m_rawData));
+			wassert(m_rawDataSize > sizeof(m_rawData));
 			m_rawDataSize = sizeof(m_rawData);
 		}
 
@@ -88,13 +88,13 @@ namespace Udp
 	{
 		if (data == nullptr || dataSize == 0)
 		{
-			assert(0);
+			wassert(0);
 			return false;
 		}
 
 		if (m_rawDataSize + dataSize > MAX_UDP_DATAGRAM_SIZE)
 		{
-			assert(0);
+			wassert(0);
 			return false;
 		}
 
@@ -124,7 +124,7 @@ namespace Udp
 
 //		if (m_rawDataSize + messageSize > MAX_UDP_DATAGRAM_SIZE)
 //		{
-//			assert(m_rawDataSize + messageSize <= MAX_UDP_DATAGRAM_SIZE);
+//			wassert(m_rawDataSize + messageSize <= MAX_UDP_DATAGRAM_SIZE);
 //			return false;
 //		}
 
@@ -146,7 +146,7 @@ namespace Udp
 	{
 		if (readDataPtr() - data() + sizeof(quint32) > header()->dataSize)
 		{
-			assert(readDataPtr() - data() + sizeof(quint32) <= header()->dataSize);
+			wassert(readDataPtr() - data() + sizeof(quint32) <= header()->dataSize);
 			return 0;
 		}
 
@@ -330,7 +330,7 @@ namespace Udp
 		//
 		if (m_state != State::ReadyToSend)
 		{
-			assert(m_state == State::ReadyToSend);
+			wassert(m_state == State::ReadyToSend);
 			return;
 		}
 
@@ -339,7 +339,7 @@ namespace Udp
 		m_request.setAddress(m_serverAddress);
 		m_request.setPort(m_port);
 
-		assert(request.ID() != 0);
+		wassert(request.ID() != 0);
 		m_request.setID(request.ID());
 
 		m_request.setVersion(m_protocolVersion);
@@ -358,7 +358,7 @@ namespace Udp
 		qint64 sent = m_socket.writeDatagram(m_request.rawData(), m_request.rawDataSize(), m_serverAddress, m_port);
 		if (sent == -1)
 		{
-			//assert(false);
+			//wassert(false);
 		}
 
 		m_requestNo++;
@@ -427,12 +427,12 @@ namespace Udp
 
 	void ClientSocket::retryRequest()
 	{
-		assert(m_state == State::WaitingForAck);
+		wassert(m_state == State::WaitingForAck);
 
 		qint64 sent = m_socket.writeDatagram(m_request.rawData(), m_request.rawDataSize(), m_serverAddress, m_port);
 		if (sent == -1)
 		{
-			//assert(false);
+			//wassert(false);
 		}
 
 		m_timer.start(m_msTimeout);
@@ -452,7 +452,7 @@ namespace Udp
 			qint64 skipedDataSize = m_socket.readDatagram(m_ack.rawData(), m_socket.pendingDatagramSize(), &clientAddress, &port);
 			qDebug() << "skipped" << skipedDataSize << ", no" << m_ack.numerator();
 
-			//assert(m_state == State::WaitingForAck);
+			//wassert(m_state == State::WaitingForAck);
 			return;
 		}
 
@@ -474,7 +474,7 @@ namespace Udp
 		m_ack.setPort(port);
 		m_ack.setRawDataSize(recevedDataSize);
 
-		assert(m_ack.dataSize() == m_ack.headerDataSize());
+		wassert(m_ack.dataSize() == m_ack.headerDataSize());
 
 		m_ack.initRead();
 
@@ -491,7 +491,7 @@ namespace Udp
 		}
 		else
 		{
-			assert(m_ack.data() == m_ack.readDataPtr());
+			wassert(m_ack.data() == m_ack.readDataPtr());
 			setConnectState(true);
 			emit ackReceived(m_ack);
 		}
@@ -599,7 +599,7 @@ namespace Udp
 
 		if (sent == -1)
 		{
-			assert(false);
+			wassert(false);
 		}
 	}
 
@@ -654,7 +654,7 @@ namespace Udp
 		m_request.setPort(port);
 		m_request.setRawDataSize(recevedDataSize);
 
-		assert(m_request.dataSize() == m_request.headerDataSize());
+		wassert(m_request.dataSize() == m_request.headerDataSize());
 
 		m_request.initRead();
 

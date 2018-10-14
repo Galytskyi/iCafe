@@ -1,10 +1,10 @@
 #include "Database.h"
 
 #include <QMessageBox>
-#include <assert.h>
 
 #include "Options.h"
 
+#include "../lib/wassert.h"
 #include "../lib/Provider.h"
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -163,12 +163,12 @@ int SqlFieldBase::init(int objectType, int)
 			break;
 
 		default:
-			assert(0);
+			wassert(0);
 			break;
 	}
 
 	int fieldCount = count();
-	assert(fieldCount);
+	wassert(fieldCount);
 
 	return fieldCount;
 }
@@ -694,7 +694,7 @@ int SqlTable::read(void* pRecord, int* key, int keyCount)
 				break;
 
 			default:
-				assert(0);
+				wassert(0);
 				break;
 		}
 
@@ -862,7 +862,7 @@ int SqlTable::write(void* pRecord, int count, int* key)
 				break;
 
 			default:
-				assert(0);
+				wassert(0);
 				break;
 		}
 
@@ -1025,7 +1025,7 @@ bool Database::open()
 			break;
 
 		default:
-			assert(0);
+			wassert(0);
 			break;
 	}
 

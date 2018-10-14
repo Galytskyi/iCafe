@@ -124,11 +124,16 @@ private:
 
 	QMutex				m_mutex;
 
+	bool				m_isWinApp = true;
+
 	ConnectionOption	m_connection;
 
 	ProviderDataOption	m_providerData;
 
 public:
+
+	bool				isWinApp() const { return m_isWinApp; }
+	void				setIsWinApp(bool isWinApp) { m_isWinApp = isWinApp; }
 
 	ConnectionOption&	connection() { return m_connection; }
 	void				setConnection(const ConnectionOption& connection) { m_connection = connection; }
