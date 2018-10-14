@@ -57,8 +57,8 @@ SOURCES += \
 	OptionsDialog.cpp \
 	OrderStateSocket.cpp \
 	OrderReceiveSocket.cpp \
-    CancelOrderDialog.cpp \
-	AppAboutDialog.cpp
+	AppAboutDialog.cpp \
+    InputCodeDialog.cpp
 
 
 
@@ -75,8 +75,8 @@ HEADERS += \
 	OptionsDialog.h \
 	OrderStateSocket.h \
 	OrderReceiveSocket.h \
-    CancelOrderDialog.h \
-	AppAboutDialog.h
+	AppAboutDialog.h \
+    InputCodeDialog.h
 
 RESOURCES += \
 	resources.qrc

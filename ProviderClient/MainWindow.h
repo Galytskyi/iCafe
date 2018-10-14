@@ -9,7 +9,7 @@
 #include "OrderReceiveSocket.h"
 #include "OrderStateSocket.h"
 #include "OrderView.h"
-#include "CancelOrderDialog.h"
+#include "InputCodeDialog.h"
 #include "OptionsDialog.h"
 #include "AppAboutDialog.h"
 
@@ -60,7 +60,7 @@ private:
 	// Elements of interface - view
 	//
 	OrderView*				m_pView= nullptr;
-	CanceOrderDialog*		m_pCancelOrderDialog = nullptr;
+	InputCodeDialog*		m_pCancelOrderDialog = nullptr;
 	OptionsDialog*			m_pOptionsDialog = nullptr;
 	AppAboutDialog*			m_pAppAboutDialog = nullptr;
 

@@ -65,15 +65,15 @@ bool MainWindow::createInterface()
 
 	// CancelCodeDialog
 	//
-	m_pCancelOrderDialog = new CanceOrderDialog(this);
+	m_pCancelOrderDialog = new InputCodeDialog(this);
 	if (m_pCancelOrderDialog == nullptr)
 	{
 		assert(0);
 	}
 	else
 	{
-		connect(m_pCancelOrderDialog, &CanceOrderDialog::accepted, this, &MainWindow::onSendRequestCancelOrder, Qt::QueuedConnection);
-		connect(m_pCancelOrderDialog, &CanceOrderDialog::rejected, this, &MainWindow::onSetMainWidget, Qt::QueuedConnection);
+		connect(m_pCancelOrderDialog, &InputCodeDialog::accepted, this, &MainWindow::onSendRequestCancelOrder, Qt::QueuedConnection);
+		connect(m_pCancelOrderDialog, &InputCodeDialog::rejected, this, &MainWindow::onSetMainWidget, Qt::QueuedConnection);
 	}
 
 	m_pStackedWidget->addWidget(m_pCancelOrderDialog);

@@ -22,6 +22,10 @@ const int				PROVIDER_COLUMN_NAME		= 0;
 
 // ==============================================================================================
 
+const int				PROVIDER_COLUMN_STR_COUNT	= 5;
+
+// ==============================================================================================
+
 class ProviderDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
@@ -35,9 +39,6 @@ private:
 	int					m_dpi = 0;
 	int					m_iconSize = 0;
 	int					m_iconSmallSize = 0;
-
-	QFont*				m_providerNameFont = nullptr;
-	QFont*				m_providerAddressFont = nullptr;
 
 	QPixmap				m_dotsBlackPixmap;
 	QPixmap				m_dotsGrayPixmap;

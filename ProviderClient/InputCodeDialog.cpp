@@ -1,4 +1,4 @@
-#include "CancelOrderDialog.h"
+#include "InputCodeDialog.h"
 
 #include <QMessageBox>
 #include <QValidator>
@@ -9,7 +9,7 @@
 //
 // -------------------------------------------------------------------------------------------------------------------
 
-CanceOrderDialog::CanceOrderDialog(QWidget* parent)
+InputCodeDialog::InputCodeDialog(QWidget* parent)
 	: QDialog(parent)
 {
 	createInterface();
@@ -17,7 +17,7 @@ CanceOrderDialog::CanceOrderDialog(QWidget* parent)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-CanceOrderDialog::CanceOrderDialog(int code, QWidget* parent)
+InputCodeDialog::InputCodeDialog(int code, QWidget* parent)
 	: QDialog(parent)
 	, m_cancelCode(code)
 {
@@ -26,13 +26,13 @@ CanceOrderDialog::CanceOrderDialog(int code, QWidget* parent)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-CanceOrderDialog::~CanceOrderDialog()
+InputCodeDialog::~InputCodeDialog()
 {
 }
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void CanceOrderDialog::createInterface()
+void InputCodeDialog::createInterface()
 {
 	QFont* listFont = new QFont("Arial", 14, 2);
 
@@ -52,7 +52,7 @@ void CanceOrderDialog::createInterface()
 
 	m_pKeyboardButton->setCheckable(true);
 	m_pKeyboardButton->setChecked(theOptions.providerData().showKeyboard());
-	connect(m_pKeyboardButton, &QPushButton::clicked, this, &CanceOrderDialog::onShowKeyboard);
+	connect(m_pKeyboardButton, &QPushButton::clicked, this, &InputCodeDialog::onShowKeyboard);
 
 	codeLayout->addWidget(m_pCodeLabel);
 	codeLayout->addWidget(m_pCodeEdit);
@@ -72,7 +72,7 @@ void CanceOrderDialog::createInterface()
 			{
 				QPushButton* pButton = new QPushButton(coKeys[c + r*3], this);
 				pButton->setFont(*listFont);
-				connect(pButton, &QPushButton::clicked, this, &CanceOrderDialog::onPressKey);
+				connect(pButton, &QPushButton::clicked, this, &InputCodeDialog::onPressKey);
 
 				keyRowLayout->addWidget(pButton);
 			}
@@ -86,8 +86,8 @@ void CanceOrderDialog::createInterface()
 	//
 	m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, this);
 
-	connect(m_buttonBox, &QDialogButtonBox::accepted, this, &CanceOrderDialog::onOk);
-	connect(m_buttonBox, &QDialogButtonBox::rejected, this, &CanceOrderDialog::reject);
+	connect(m_buttonBox, &QDialogButtonBox::accepted, this, &InputCodeDialog::onOk);
+	connect(m_buttonBox, &QDialogButtonBox::rejected, this, &InputCodeDialog::reject);
 
 	//
 	//
@@ -105,7 +105,7 @@ void CanceOrderDialog::createInterface()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void CanceOrderDialog::initDialog()
+void InputCodeDialog::initDialog()
 {
 	if (m_pCodeEdit == nullptr)
 	{
@@ -122,7 +122,7 @@ void CanceOrderDialog::initDialog()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void CanceOrderDialog::onShowKeyboard()
+void InputCodeDialog::onShowKeyboard()
 {
 	if (m_pVirtualKeyboad == nullptr)
 	{
@@ -145,7 +145,7 @@ void CanceOrderDialog::onShowKeyboard()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void CanceOrderDialog::onPressKey()
+void InputCodeDialog::onPressKey()
 {
 	QPushButton* pButton = (QPushButton*) sender();
 	if (pButton == nullptr)
@@ -179,7 +179,7 @@ void CanceOrderDialog::onPressKey()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void CanceOrderDialog::onOk()
+void InputCodeDialog::onOk()
 {
 	int code = m_pCodeEdit->text().toInt();
 

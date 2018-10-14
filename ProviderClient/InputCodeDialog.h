@@ -27,15 +27,15 @@ const char* const coKeys[] =
 
 // ==============================================================================================
 
-class CanceOrderDialog : public QDialog
+class InputCodeDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
 
-	CanceOrderDialog(QWidget* parent = 0);
-	explicit CanceOrderDialog(int code, QWidget* parent = 0);
-	virtual ~CanceOrderDialog();
+	InputCodeDialog(QWidget* parent = 0);
+	explicit InputCodeDialog(int code, QWidget* parent = 0);
+	virtual ~InputCodeDialog();
 
 private:
 
