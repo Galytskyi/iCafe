@@ -60,7 +60,7 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		}
 	}
 
-	if (theOptions.isWinApp() == false)
+	if (theOptions.platformType() == PLATFORM_TYPE_ANDROID)
 	{
 		QString orderState;
 
@@ -173,12 +173,14 @@ void ProviderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 			painter->drawPixmap(coordState_x, coordState_y, m_iconSize, m_iconSize, m_blockedPixmap);
 		}
 
+		// order state
+		//
 		QRect stateOrderRect = providerDataRect;
 
-		stateOrderRect.setLeft(option.rect.left());
 		stateOrderRect.adjust(0, cellSize.height()/2, 0, 0);
-
+		stateOrderRect.setLeft(option.rect.left());
 		stateOrderRect.setRight(option.rect.right() - 30);
+
 		painter->drawText(stateOrderRect, Qt::AlignRight, orderState);
 	}
 	else
@@ -610,20 +612,19 @@ ProviderView::ProviderView()
 	ProviderDelegate* textDelegate = new ProviderDelegate(this);
 	setItemDelegateForColumn(PROVIDER_COLUMN_NAME, textDelegate);
 
+	if (theOptions.platformType() == PLATFORM_TYPE_ANDROID)
+	{
+		QSize cellSize = QFontMetrics(font()).size(Qt::TextSingleLine,"A");
+		verticalHeader()->setDefaultSectionSize(cellSize.height() * PROVIDER_COLUMN_STR_COUNT);
 
-
-	if (theOptions.isWinApp() == true)
+	}
+	else
 	{
 		QFont* listFont =  new QFont("Arial", 14, 2);
 		setFont(*listFont);
 
 		QSize cellSize = QFontMetrics(font()).size(Qt::TextSingleLine,"A");
 		verticalHeader()->setDefaultSectionSize(cellSize.height() * 3);
-	}
-	else
-	{
-		QSize cellSize = QFontMetrics(font()).size(Qt::TextSingleLine,"A");
-		verticalHeader()->setDefaultSectionSize(cellSize.height() * PROVIDER_COLUMN_STR_COUNT);
 	}
 }
 

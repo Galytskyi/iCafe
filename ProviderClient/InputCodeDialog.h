@@ -55,7 +55,7 @@ private:
 public:
 
 	int					cancelCode() const { return m_cancelCode; }
-	void				setCancelCode(int code) { m_cancelCode = code; }
+	void				setInputCode(int code) { m_cancelCode = code; }
 
 	void				initDialog();
 

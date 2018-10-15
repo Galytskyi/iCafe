@@ -214,7 +214,7 @@ Options& Options::operator=(const Options& from)
 {
 	QMutexLocker locker(&m_mutex);
 
-	m_isWinApp = from.m_isWinApp;
+	m_platformType = from.m_platformType;
 	m_connection = from.m_connection;
 	m_providerData = from.m_providerData;
 

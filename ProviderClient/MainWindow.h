@@ -60,7 +60,7 @@ private:
 	// Elements of interface - view
 	//
 	OrderView*				m_pView= nullptr;
-	InputCodeDialog*		m_pCancelOrderDialog = nullptr;
+	InputCodeDialog*		m_pInputCodeDialog = nullptr;
 	OptionsDialog*			m_pOptionsDialog = nullptr;
 	AppAboutDialog*			m_pAppAboutDialog = nullptr;
 

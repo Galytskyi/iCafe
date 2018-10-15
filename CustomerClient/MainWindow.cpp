@@ -369,7 +369,7 @@ bool MainWindow::createToolBars()
 
 		m_pOrderControlToolBar->addAction(m_pInfoAction);
 
-		if (theOptions.isWinApp() == true)
+		if (theOptions.platformType() == PLATFORM_TYPE_WINDOWS)
 		{
 			m_pOrderControlToolBar->addAction(m_pOptionsAction);
 		}
@@ -381,8 +381,13 @@ bool MainWindow::createToolBars()
 
 		m_pOrderControlToolBar->addWidget(m_connectLabel);
 
-
 		m_pOrderControlToolBar->setLayoutDirection(Qt::RightToLeft);
+
+		if (theOptions.platformType() == PLATFORM_TYPE_ANDROID)
+		{
+			int size = QApplication::screens().at(0)->logicalDotsPerInch() / 3;
+			m_pOrderControlToolBar->setIconSize(QSize(size, size));
+		}
 	}
 
 	return true;

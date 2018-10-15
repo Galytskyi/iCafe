@@ -44,6 +44,8 @@ void OrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 {
 	Order::Item order = qvariant_cast<Order::Item>(index.data(Qt::UserRole));
 
+	QSize cellSize = QFontMetrics(painter->font()).size(Qt::TextSingleLine,"A");
+
 	if ((option.state & QStyle::State_Selected) != 0)
 	{
 		if ((option.state & QStyle::State_HasFocus) != 0)
@@ -56,9 +58,114 @@ void OrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 		}
 	}
 
-	if (theOptions.isWinApp() == false)
+	if (theOptions.platformType() == PLATFORM_TYPE_ANDROID)
 	{
+		QString orderState;
+		QString orderPhone;
 
+		switch(order.state())
+		{
+			case Order::STATE_ORDER_OK:
+
+				orderState = tr("Заказ принят");
+				orderPhone = tr("Номер телефона: %1").arg("+380"+QString::number(order.phone()));
+				painter->fillRect(option.rect, QColor(0xDE, 0xFF, 0xB8));
+				break;
+
+			case Order::STATE_ORDER_CANCEL:
+				orderState = tr("Заказ отменен");
+				orderPhone = tr("Номер телефона: %1").arg("+380"+QString::number(order.phone()));
+				painter->fillRect(option.rect, QColor(0xFF, 0xA0, 0xA0));
+				break;
+
+			case Order::STATE_ORDER_PROCESSING:
+				orderState = tr("Ожидает ответа");
+				orderPhone= tr("Номер телефона: +38 (***) **-**-***");
+				painter->fillRect(option.rect, QColor(0xff, 0xfa, 0xd1));
+				break;
+		}
+
+		int midDots_x = option.rect.right() - m_iconSmallSize - 20;
+		int midDots_y = option.rect.top() + cellSize.height();
+
+		if ((option.state & QStyle::State_Selected) == 0)
+		{
+			painter->drawPixmap(midDots_x, midDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsGrayPixmap);
+		}
+		else
+		{
+			painter->drawPixmap(midDots_x, midDots_y, m_iconSmallSize, m_iconSmallSize, m_dotsBlackPixmap);
+		}
+
+
+		// order data
+		//
+		QRect orderDataRect = option.rect;
+		orderDataRect.adjust(m_dpi*1.5, cellSize.height(), -m_dpi, 0);
+
+		QFont simpleFont = painter->font();
+		QFont boldFont = painter->font();
+		boldFont.setBold(true);
+
+		Order::Time32 orderTime = order.orderTime();
+
+		QString orderDataStr = tr("%1 человек(a)").arg(order.people()) + tr(", на %1").arg(QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute));
+
+		switch(order.type())
+		{
+			case Order::TYPE_TABLE:		orderDataStr.insert(0, tr("Столик для "));	break;
+			case Order::TYPE_DINNER:	orderDataStr.insert(0, tr("Обед для "));	break;
+			default:					wassert(0);									break;
+		}
+
+		painter->setFont(boldFont);
+		painter->setPen(QColor(0x0, 0x0, 0x0));
+		painter->drawText(orderDataRect, Qt::AlignLeft, orderDataStr);
+
+		painter->setFont(simpleFont);
+		//orderDataRect.adjust(0, cellSize.height()/2, 0, 0);
+		orderDataRect.adjust(0, cellSize.height()*1.5, 0, 0);
+
+		painter->setPen(QColor(0x70, 0x70, 0x70));
+		painter->drawText(orderDataRect, Qt::AlignLeft, orderPhone );
+
+		// Order time
+		//
+		painter->setPen(QColor(0x00, 0x00, 0x00));
+
+		int coordState_x = m_dpi*1.5 / 2 - m_iconSize / 2;
+		int coordState_y = option.rect.y() + cellSize.height()/2;
+
+		if (orderState.isEmpty() == false)
+		{
+			switch (order.type())
+			{
+				case Order::TYPE_TABLE:		painter->drawPixmap(coordState_x, coordState_y + cellSize.height()/2, m_iconSize, m_iconSize, m_tablePixmap);	break;
+				case Order::TYPE_DINNER:	painter->drawPixmap(coordState_x, coordState_y + cellSize.height()/2, m_iconSize, m_iconSize, m_dinnerPixmap);	break;
+			}
+
+			Order::Time32 orderTime = order.orderTime();
+			QString orderTimeStr = QString().sprintf("%02d:%02d", orderTime.hour, orderTime.minute);
+
+			QRect timeOrderRect = orderDataRect;
+
+			timeOrderRect.adjust(0, cellSize.height()/2, 0, 0);
+			timeOrderRect.setLeft(option.rect.left());
+			timeOrderRect.setRight(m_dpi*1.5);
+
+			painter->drawText(timeOrderRect, Qt::AlignCenter, orderTimeStr);
+		}
+
+
+		// order state
+		//
+		QRect stateOrderRect = orderDataRect;
+
+		stateOrderRect.adjust(0, cellSize.height()*1.5, 0, 0);
+		stateOrderRect.setLeft(option.rect.left());
+		stateOrderRect.setRight(option.rect.right() - 30);
+
+		painter->drawText(stateOrderRect, Qt::AlignRight, orderState);
 	}
 	else
 	{
@@ -71,7 +178,7 @@ void OrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
 				orderState = tr("Заказ принят");
 				orderPhone = tr("Номер телефона: %1").arg("+380"+QString::number(order.phone()));
-				painter->fillRect(option.rect, QColor(0xA0, 0xFF, 0xA0));
+				painter->fillRect(option.rect, QColor(0xDE, 0xFF, 0xB8));
 				break;
 
 			case Order::STATE_ORDER_CANCEL:
@@ -446,11 +553,19 @@ OrderView::OrderView()
 	OrderDelegate* textDelegate = new OrderDelegate(this);
 	setItemDelegateForColumn(ORDER_COLUMN_NAME, textDelegate);
 
-	QFont* listFont = new QFont("Arial", 14, 2);
-	setFont(*listFont);
+	if (theOptions.platformType() == PLATFORM_TYPE_ANDROID)
+	{
+		QSize cellSize = QFontMetrics(font()).size(Qt::TextSingleLine,"A");
+		verticalHeader()->setDefaultSectionSize(cellSize.height() * ORDER_COLUMN_STR_COUNT);
+	}
+	else
+	{
+		QFont* listFont = new QFont("Arial", 14, 2);
+		setFont(*listFont);
 
-	QSize cellSize = QFontMetrics(font()).size(Qt::TextSingleLine,"A");
-	verticalHeader()->setDefaultSectionSize(cellSize.height()*3);
+		QSize cellSize = QFontMetrics(font()).size(Qt::TextSingleLine,"A");
+		verticalHeader()->setDefaultSectionSize(cellSize.height()*3);
+	}
 
 	m_table.set(theOrderBase.orderList());
 }

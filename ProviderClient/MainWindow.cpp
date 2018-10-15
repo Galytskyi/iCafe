@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 #include <QApplication>
+#include <QScreen>
 #include <QDesktopWidget>
 #include <QHeaderView>
 #include <QThread>
@@ -66,18 +67,18 @@ bool MainWindow::createInterface()
 
 	// CancelCodeDialog
 	//
-	m_pCancelOrderDialog = new InputCodeDialog(this);
-	if (m_pCancelOrderDialog == nullptr)
+	m_pInputCodeDialog = new InputCodeDialog(this);
+	if (m_pInputCodeDialog == nullptr)
 	{
 		wassert(0);
 	}
 	else
 	{
-		connect(m_pCancelOrderDialog, &InputCodeDialog::accepted, this, &MainWindow::onSendRequestCancelOrder, Qt::QueuedConnection);
-		connect(m_pCancelOrderDialog, &InputCodeDialog::rejected, this, &MainWindow::onSetMainWidget, Qt::QueuedConnection);
+		connect(m_pInputCodeDialog, &InputCodeDialog::accepted, this, &MainWindow::onSendRequestCancelOrder, Qt::QueuedConnection);
+		connect(m_pInputCodeDialog, &InputCodeDialog::rejected, this, &MainWindow::onSetMainWidget, Qt::QueuedConnection);
 	}
 
-	m_pStackedWidget->addWidget(m_pCancelOrderDialog);
+	m_pStackedWidget->addWidget(m_pInputCodeDialog);
 
 
 	// OptionsDialog
@@ -291,7 +292,12 @@ bool MainWindow::createToolBars()
 		addToolBar(m_pOrderControlToolBar);
 
 		m_pOrderControlToolBar->addAction(m_pInfoAction);
-		m_pOrderControlToolBar->addAction(m_pOptionsAction);
+
+		//if (theOptions.platformType() == PLATFORM_TYPE_WINDOWS)
+		{
+			m_pOrderControlToolBar->addAction(m_pOptionsAction);
+		}
+
 		m_pOrderControlToolBar->addAction(m_pEnableOrderAction);
 
 		m_connectLabel = new QLabel(m_pOrderControlToolBar);
@@ -303,6 +309,12 @@ bool MainWindow::createToolBars()
 
 
 		m_pOrderControlToolBar->setLayoutDirection(Qt::RightToLeft);
+
+		if (theOptions.platformType() == PLATFORM_TYPE_ANDROID)
+		{
+			int size = QApplication::screens().at(0)->logicalDotsPerInch() / 3;
+			m_pOrderControlToolBar->setIconSize(QSize(size, size));
+		}
 	}
 
 	return true;
@@ -402,6 +414,8 @@ void MainWindow::onOptions()
 		return;
 	}
 
+	m_pOrderControlToolBar->removeAction(m_pOptionsAction);
+
 	m_pOptionsDialog->setProviderData(theOptions.providerData());
 	m_pOptionsDialog->initDialog();
 
@@ -466,19 +480,19 @@ void MainWindow::onOrderListClick(const QModelIndex& index)
 					break;
 				}
 
-				if (m_pCancelOrderDialog == nullptr)
+				if (m_pInputCodeDialog == nullptr)
 				{
-					return;
+					break;
 				}
 
-				int widgetIndex = m_pStackedWidget->indexOf(m_pCancelOrderDialog);
+				int widgetIndex = m_pStackedWidget->indexOf(m_pInputCodeDialog);
 				if (widgetIndex < 0 || widgetIndex >= m_pStackedWidget->count())
 				{
 					break;
 				}
 
-				m_pCancelOrderDialog->setCancelCode(order.cancelCode());
-				m_pCancelOrderDialog->initDialog();
+				m_pInputCodeDialog->setInputCode(order.cancelCode());
+				m_pInputCodeDialog->initDialog();
 
 				m_pStackedWidget->setCurrentIndex(widgetIndex);
 			}

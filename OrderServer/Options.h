@@ -70,6 +70,14 @@ public:
 
 // ==============================================================================================
 
+const int			PLATFORM_TYPE_WINDOWS	= 0,
+					PLATFORM_TYPE_LINUX		= 1,
+					PLATFORM_TYPE_ANDROID	= 2;
+
+const int			PLATFORM_TYPE_COUNT		= 3;
+
+// ==============================================================================================
+
 class Options : public QObject
 {
 	Q_OBJECT
@@ -84,14 +92,14 @@ private:
 
 	QMutex				m_mutex;
 
-	bool				m_isWinApp = true;
+	int					m_platformType = PLATFORM_TYPE_WINDOWS;
 
 	DatabaseOption		m_database;
 
 public:
 
-	bool				isWinApp() const { return m_isWinApp; }
-	void				setIsWinApp(bool isWinApp) { m_isWinApp = isWinApp; }
+	int					platformType() const { return m_platformType; }
+	void				setPlatformType(int type) { m_platformType = type; }
 
 	DatabaseOption&		database() { return m_database; }
 	void				setDatabase(const DatabaseOption& database) { m_database = database; }

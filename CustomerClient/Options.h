@@ -198,6 +198,14 @@ public:
 
 // ==============================================================================================
 
+const int			PLATFORM_TYPE_WINDOWS	= 0,
+					PLATFORM_TYPE_LINUX		= 1,
+					PLATFORM_TYPE_ANDROID	= 2;
+
+const int			PLATFORM_TYPE_COUNT		= 3;
+
+// ==============================================================================================
+
 class Options : public QObject
 {
 	Q_OBJECT
@@ -212,7 +220,7 @@ private:
 
 	QMutex				m_mutex;
 
-	bool				m_isWinApp = true;
+	int					m_platformType = PLATFORM_TYPE_ANDROID;
 
 	ConnectionOption	m_connection;
 
@@ -220,8 +228,8 @@ private:
 
 public:
 
-	bool				isWinApp() const { return m_isWinApp; }
-	void				setIsWinApp(bool isWinApp) { m_isWinApp = isWinApp; }
+	int					platformType() const { return m_platformType; }
+	void				setPlatformType(int type) { m_platformType = type; }
 
 	ConnectionOption&	connection() { return m_connection; }
 	void				setConnection(const ConnectionOption& connection) { m_connection = connection; }

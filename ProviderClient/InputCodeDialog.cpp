@@ -42,7 +42,11 @@ void InputCodeDialog::createInterface()
 
 	m_pCodeLabel = new QLabel(tr("Код отмены:"), this);
 	m_pCodeEdit = new QLineEdit(this);
-	m_pKeyboardButton = new QPushButton(QIcon(":/icons/Keyboard.png"), QString(), this);
+
+	QPixmap keyboardPix(":/icons/Keyboard.png");
+	m_pKeyboardButton = new QPushButton(QString(), this);
+	m_pKeyboardButton->setIcon(keyboardPix);
+	m_pKeyboardButton->setIconSize(keyboardPix.size());
 
 	m_pCodeEdit->setFont(*listFont);
 	m_pCodeEdit->setAlignment(Qt::AlignCenter);
