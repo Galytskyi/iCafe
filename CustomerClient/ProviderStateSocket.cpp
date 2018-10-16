@@ -12,6 +12,7 @@
 
 ProviderStateSocket::ProviderStateSocket(const QHostAddress &serverAddress, quint16 port)
 	: Udp::ClientSocket(serverAddress, port)
+	, m_optionReceived(false)
 	, m_requestGetProviderStateTimer(this)
 	, m_getProviderStateIndex(0)
 {
@@ -33,7 +34,9 @@ void ProviderStateSocket::onSocketThreadStarted()
 	connect(this, &Udp::ClientSocket::ackReceived, this, &ProviderStateSocket::processReply, Qt::QueuedConnection);
 	connect(this, &Udp::ClientSocket::ackTimeout, this, &ProviderStateSocket::failReply, Qt::QueuedConnection);
 
-	connect(&m_requestGetProviderStateTimer, &QTimer::timeout, this, &ProviderStateSocket::requestGetProviderState, Qt::QueuedConnection);
+	connect(&m_requestGetProviderStateTimer, &QTimer::timeout, this, &ProviderStateSocket::timeout, Qt::QueuedConnection);
+
+	m_requestGetProviderStateTimer.start(theOptions.customerData().requestProviderTime());
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -41,6 +44,20 @@ void ProviderStateSocket::onSocketThreadStarted()
 void ProviderStateSocket::onSocketThreadFinished()
 {
 	m_requestGetProviderStateTimer.stop();
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void ProviderStateSocket::timeout()
+{
+	if (m_optionReceived == false)
+	{
+		requestUdpOption();
+	}
+	else
+	{
+		requestGetProviderState();
+	}
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -55,6 +72,10 @@ void ProviderStateSocket::processReply(const Udp::Request& request)
 
 	switch(request.ID())
 	{
+		case CLIENT_GET_PROVIDER_UDP_OPTION:
+			replyUdpOption(request);
+			break;
+
 		case CLIENT_GET_PROVIDER_INIT_STATE:
 			replyGetProviderInitState(request);
 			break;
@@ -68,6 +89,45 @@ void ProviderStateSocket::processReply(const Udp::Request& request)
 			wassert(false);
 			break;
 	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+// CLIENT_GET_PROVIDER_UDP_OPTION
+
+void ProviderStateSocket::requestUdpOption()
+{
+	if (isReadyToSend() == false)
+	{
+		return;
+	}
+
+	if (m_optionReceived == true)
+	{
+		return;
+	}
+
+	sendRequest(CLIENT_GET_PROVIDER_UDP_OPTION);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void ProviderStateSocket::replyUdpOption(const Udp::Request& request)
+{
+	sio_UdpOption* ptr_uo = (sio_UdpOption*) const_cast<const Udp::Request&>(request).data();
+
+	if (ptr_uo->version < 1 || ptr_uo->version > REPLY_UDP_OPTION_VERSION)
+	{
+		return;
+	}
+
+	m_optionReceived = true;
+
+	m_requestGetProviderStateTimer.stop();
+
+	theOptions.customerData().setRequestProviderTime(ptr_uo->requestTime);
+	setWaitAckTimeout(ptr_uo->waitReplyTime);
+
+	m_requestGetProviderStateTimer.start(theOptions.customerData().requestProviderTime());
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -199,8 +259,16 @@ void ProviderStateSocket::failReply(const Udp::Request& request)
 {
 	switch(request.ID())
 	{
-		case CLIENT_GET_PROVIDER_STATE:
+		case CLIENT_GET_PROVIDER_UDP_OPTION:
 			emit failConnection();
+			break;
+
+		case CLIENT_GET_PROVIDER_INIT_STATE:
+			emit failConnection();
+			break;
+
+		case CLIENT_GET_PROVIDER_STATE:
+			replyGetProviderState(request);
 			break;
 
 		default:

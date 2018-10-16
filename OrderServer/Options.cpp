@@ -4,6 +4,8 @@
 
 #include "Database.h"
 
+#include "../lib/SocketIO.h"
+
 // -------------------------------------------------------------------------------------------------------------------
 
 Options theOptions;
@@ -96,6 +98,70 @@ DatabaseOption& DatabaseOption::operator=(const DatabaseOption& from)
 
 // -------------------------------------------------------------------------------------------------------------------
 //
+// UdpOption class implementation
+//
+// -------------------------------------------------------------------------------------------------------------------
+
+UdpOption::UdpOption(QObject *parent) :
+	QObject(parent)
+{
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+UdpOption::UdpOption(const UdpOption& from, QObject *parent) :
+	QObject(parent)
+{
+	*this = from;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+UdpOption::~UdpOption()
+{
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void UdpOption::load()
+{
+	QSettings s;
+
+	m_requestCustomerTime = s.value(QString("%1RequestCustomerTime").arg(UDP_OPTIONS_REG_KEY), REQUEST_CUSTOMER_TIMEOUT).toInt();
+	m_waitReplyCustomerTime = s.value(QString("%1WaitReplyCustomerTime").arg(UDP_OPTIONS_REG_KEY), WAIT_REPLY_CUSTOMER_TIMEOUT).toInt();
+
+	m_requestProviderTime = s.value(QString("%1RequestProviderTime").arg(UDP_OPTIONS_REG_KEY), REQUEST_PROVIDER_TIMEOUT).toInt();
+	m_waitReplyProviderTime = s.value(QString("%1WaitReplyProviderTime").arg(UDP_OPTIONS_REG_KEY), WAIT_REPLY_PROVIDER_TIMEOUT).toInt();
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void UdpOption::save()
+{
+	QSettings s;
+
+	s.setValue(QString("%1RequestCustomerTime").arg(UDP_OPTIONS_REG_KEY), m_requestCustomerTime);
+	s.setValue(QString("%1WaitReplyCustomerTime").arg(UDP_OPTIONS_REG_KEY), m_waitReplyCustomerTime);
+
+	s.setValue(QString("%1RequestProviderTime").arg(UDP_OPTIONS_REG_KEY), m_requestProviderTime);
+	s.setValue(QString("%1WaitReplyProviderTime").arg(UDP_OPTIONS_REG_KEY), m_waitReplyProviderTime);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+UdpOption& UdpOption::operator=(const UdpOption& from)
+{
+	m_requestCustomerTime = from.m_requestCustomerTime;
+	m_waitReplyCustomerTime = from.m_waitReplyCustomerTime;
+
+	m_requestProviderTime = from.m_requestProviderTime;
+	m_waitReplyProviderTime = from.m_waitReplyProviderTime;
+
+	return *this;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+//
 // Options class implementation
 //
 // -------------------------------------------------------------------------------------------------------------------
@@ -157,6 +223,7 @@ Options& Options::operator=(const Options& from)
 
 	m_platformType = from.m_platformType;
 	m_database = from.m_database;
+	m_udp = from.m_udp;
 
 	return *this;
 }

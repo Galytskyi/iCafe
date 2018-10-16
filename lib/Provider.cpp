@@ -69,6 +69,8 @@ namespace Provider
 
 	void Item::clear()
 	{
+		m_connect = false;
+
 		m_id = INVALID_ID;
 		m_googleID.clear();
 
@@ -88,7 +90,8 @@ namespace Provider
 		m_geoLat = 0;
 		m_geoLng = 0;
 
-		m_connect = false;
+		m_requestTime = REQUEST_PROVIDER_TIMEOUT;
+		m_waitReplyTime = WAIT_REPLY_PROVIDER_TIMEOUT;
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------
@@ -194,6 +197,8 @@ namespace Provider
 
 	Item& Item::operator=(const Item& from)
 	{
+		m_connect = from.m_connect;
+
 		m_id = from.m_id;
 		m_googleID = from.m_googleID;
 
@@ -213,7 +218,8 @@ namespace Provider
 		m_geoLat = from.m_geoLat;
 		m_geoLng = from.m_geoLng;
 
-		m_connect = from.m_connect;
+		m_requestTime = from.m_requestTime;
+		m_waitReplyTime = from.m_waitReplyTime;
 
 		return *this;
 	}

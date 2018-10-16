@@ -22,6 +22,7 @@ private:
 
 public:
 
+	void			replyCustomerUdpOption(const Udp::Request& request);
 	void			replyCreateOrder(const Udp::Request& request);
 	void			replyGetOrderState(const Udp::Request& request);
 	void			replyRemoveOrder(const Udp::Request& request);

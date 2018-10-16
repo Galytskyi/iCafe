@@ -22,6 +22,7 @@ private:
 	virtual void	onSocketThreadStarted();
 	virtual void	onSocketThreadFinished();
 
+	bool			m_optionReceived = false;
 	QTimer			m_requestGetProviderStateTimer;
 
 	int				m_getProviderStateIndex = 0;
@@ -30,7 +31,13 @@ public:
 
 	// functions: Request - Reply
 	//
+	void            requestUdpOption();											// CLIENT_GET_PROVIDER_UDP_OPTION
+	void            replyUdpOption(const Udp::Request& request);				// CLIENT_GET_PROVIDER_UDP_OPTION
+
+	void			requestGetProviderInitState(int index);						// CLIENT_GET_PROVIDER_STATE
 	void			replyGetProviderInitState(const Udp::Request& request);		// CLIENT_GET_PROVIDER_STATE
+
+	void            requestGetProviderState();									// CLIENT_GET_PROVIDER_STATE
 	void            replyGetProviderState(const Udp::Request& request);			// CLIENT_GET_PROVIDER_STATE
 
 signals:
@@ -42,8 +49,7 @@ signals:
 
 public slots:
 
-	void			requestGetProviderInitState(int index);						// CLIENT_GET_PROVIDER_STATE
-	void            requestGetProviderState();									// CLIENT_GET_PROVIDER_STATE
+	void			timeout();
 
 	void			processReply(const Udp::Request& request);
 	void			failReply(const Udp::Request& request);

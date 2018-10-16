@@ -21,8 +21,6 @@
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
-	wassert(0);
-
 	// init interface
 	//
 	createInterface();

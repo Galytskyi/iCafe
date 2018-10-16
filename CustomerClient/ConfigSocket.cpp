@@ -157,6 +157,8 @@ void ConfigSocket::replyGetConfigXmlCrc(const Udp::Request& request)
 		emit cfgXmlReceived(m_cfgXmlData, xmlTagProviderLastVersion);
 		m_cfgXmlData.clear();
 
+		m_requestGetXmlInfoTimer.stop();
+
 		qDebug() << "ConfigSocket::replyGetConfigXmlCrc - loaded from file by CRC";
 
 		return;
@@ -237,11 +239,10 @@ void ConfigSocket::requestGetConfigXml(quint32 partIndex)
 			file.close();
 		}
 
-		//theProviderBase.readFromXml(m_cfgXmlData, xmlTagProviderLastVersion);
-		//theProviderTypeBase.readFromXml(m_cfgXmlData, xmlTagProviderLastVersion);
-
 		emit cfgXmlReceived(m_cfgXmlData, xmlTagProviderLastVersion);
 		m_cfgXmlData.clear();
+
+		m_requestGetXmlInfoTimer.stop();
 
 		qDebug() << "ConfigSocket::requestGetConfigXml - received bytes : " << m_rcxi.dataSize;
 

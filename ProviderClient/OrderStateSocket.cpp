@@ -11,6 +11,7 @@
 
 OrderStateSocket::OrderStateSocket(const QHostAddress &serverAddress, quint16 port)
 	: Udp::ClientSocket(serverAddress, port)
+	, m_optionReceived(false)
 	, m_requestGetOrderStateTimer(this)
 	, m_getOrderStateIndex(0)
 {
@@ -34,9 +35,9 @@ void OrderStateSocket::onSocketThreadStarted()
 	connect(this, &Udp::ClientSocket::ackReceived, this, &OrderStateSocket::processReply, Qt::QueuedConnection);
 	connect(this, &Udp::ClientSocket::ackTimeout, this, &OrderStateSocket::failReply, Qt::QueuedConnection);
 
-	connect(&m_requestGetOrderStateTimer, &QTimer::timeout, this, &OrderStateSocket::requestGetOrderState, Qt::QueuedConnection);
+	connect(&m_requestGetOrderStateTimer, &QTimer::timeout, this, &OrderStateSocket::timeout, Qt::QueuedConnection);
 
-	m_requestGetOrderStateTimer.start(theOptions.providerData().requestProviderTime());
+	m_requestGetOrderStateTimer.start(theOptions.providerData().requestCustomerTime());
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -44,6 +45,20 @@ void OrderStateSocket::onSocketThreadStarted()
 void OrderStateSocket::onSocketThreadFinished()
 {
 	m_requestGetOrderStateTimer.stop();
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void OrderStateSocket::timeout()
+{
+	if (m_optionReceived == false)
+	{
+		requestUdpOption();
+	}
+	else
+	{
+		requestGetOrderState();
+	}
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -58,6 +73,10 @@ void OrderStateSocket::processReply(const Udp::Request& request)
 
 	switch(request.ID())
 	{
+		case CLIENT_GET_CUSTOMER_UDP_OPTION:
+			replyUdpOption(request);
+			break;
+
 		case CLIENT_GET_ORDER_STATE:
 			replyGetOrderState(request);
 			break;
@@ -73,6 +92,44 @@ void OrderStateSocket::processReply(const Udp::Request& request)
 	}
 }
 
+// -------------------------------------------------------------------------------------------------------------------
+// CLIENT_GET_CUSTOMER_UDP_OPTION
+
+void OrderStateSocket::requestUdpOption()
+{
+	if (isReadyToSend() == false)
+	{
+		return;
+	}
+
+	if (m_optionReceived == true)
+	{
+		return;
+	}
+
+	sendRequest(CLIENT_GET_CUSTOMER_UDP_OPTION);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void OrderStateSocket::replyUdpOption(const Udp::Request& request)
+{
+	sio_UdpOption* ptr_uo = (sio_UdpOption*) const_cast<const Udp::Request&>(request).data();
+
+	if (ptr_uo->version < 1 || ptr_uo->version > REPLY_UDP_OPTION_VERSION)
+	{
+		return;
+	}
+
+	m_optionReceived = true;
+
+	m_requestGetOrderStateTimer.stop();
+
+	theOptions.providerData().setRequestCustomerTime(ptr_uo->requestTime);
+	setWaitAckTimeout(ptr_uo->waitReplyTime);
+
+	m_requestGetOrderStateTimer.start(theOptions.providerData().requestCustomerTime());
+}
 
 // -------------------------------------------------------------------------------------------------------------------
 // CLIENT_GET_ORDER_STATE
@@ -205,6 +262,10 @@ void OrderStateSocket::failReply(const Udp::Request& request)
 {
 	switch(request.ID())
 	{
+		case CLIENT_GET_CUSTOMER_UDP_OPTION:
+			emit failConnection();
+			break;
+
 		case CLIENT_GET_ORDER_STATE:
 			emit failConnection();
 			break;

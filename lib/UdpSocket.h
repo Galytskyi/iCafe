@@ -182,6 +182,12 @@ namespace Udp
 	// Client send Request and wait Ack
 	//
 
+	// ==============================================================================================
+
+	const int WAIT_ACK_TIMEOUT = 300; // ms
+
+	// ==============================================================================================
+
 	class ClientSocket : public Socket
 	{
 		Q_OBJECT
@@ -208,7 +214,7 @@ namespace Udp
 		quint32				m_requestNo = 1;
 		quint32				m_protocolVersion = 1;
 
-		int					m_msTimeout = 300;
+		int					m_waitAckTimeout = WAIT_ACK_TIMEOUT;
 		int					m_retryCount = 0;
 		int					m_retryCtr = 0;
 		quint32				m_ackTimeoutCtr = 0;
@@ -245,7 +251,7 @@ namespace Udp
 		//
 		//
 		void				setProtocolVersion(quint32 version) { m_protocolVersion = version; }
-		void				setTimeout(int msTimeout) { m_msTimeout = msTimeout; }
+		void				setWaitAckTimeout(int ms) { m_waitAckTimeout = ms; }
 		void				setRetryCount(int retryCount) { m_retryCount = retryCount; }
 
 		void				sendRequest(const Request& udpRequest);

@@ -1,5 +1,7 @@
 #include "CustomerOrderSocket.h"
 
+#include "Options.h"
+
 #include "../lib/wassert.h"
 #include "../lib/SocketIO.h"
 #include "../lib/Provider.h"
@@ -57,6 +59,10 @@ void CustomerOrderSocket::processRequest(Udp::Request request)
 
 	switch(request.ID())
 	{
+		case CLIENT_GET_CUSTOMER_UDP_OPTION:
+			replyCustomerUdpOption(request);
+			break;
+
 		case CLIENT_CREATE_ORDER:
 			replyCreateOrder(request);
 			break;
@@ -75,6 +81,19 @@ void CustomerOrderSocket::processRequest(Udp::Request request)
 			sendAck(request);
 			break;
 	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void CustomerOrderSocket::replyCustomerUdpOption(const Udp::Request& request)
+{
+	sio_UdpOption uo;
+
+	uo.version = REPLY_UDP_OPTION_VERSION;
+	uo.requestTime = theOptions.udp().requestCustomerTime();
+	uo.waitReplyTime = theOptions.udp().waitReplyCustomerTime();
+
+	sendReply(request, (const char*) &uo, sizeof(sio_UdpOption));
 }
 
 // -------------------------------------------------------------------------------------------------------------------

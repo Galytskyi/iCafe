@@ -1,5 +1,7 @@
 #include "ProviderOrderSocket.h"
 
+#include "Options.h"
+
 #include "../lib/wassert.h"
 #include "../lib/SocketIO.h"
 #include "../lib/Provider.h"
@@ -57,6 +59,10 @@ void ProviderOrderSocket::processRequest(Udp::Request request)
 
 	switch(request.ID())
 	{
+		case CLIENT_GET_PROVIDER_UDP_OPTION:
+			replyProviderUdpOption(request);
+			break;
+
 		case CLIENT_GET_ORDER:
 			replyGetOrder(request);
 			break;
@@ -80,6 +86,19 @@ void ProviderOrderSocket::processRequest(Udp::Request request)
 			sendAck(request);
 			break;
 	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void ProviderOrderSocket::replyProviderUdpOption(const Udp::Request& request)
+{
+	sio_UdpOption uo;
+
+	uo.version = REPLY_UDP_OPTION_VERSION;
+	uo.requestTime = theOptions.udp().requestProviderTime();
+	uo.waitReplyTime = theOptions.udp().waitReplyProviderTime();
+
+	sendReply(request, (const char*) &uo, sizeof(sio_UdpOption));
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -115,7 +134,6 @@ void ProviderOrderSocket::replyGetOrder(const Udp::Request& request)
 			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Wrong wrap version: %1").arg(ptr_rgo->version));
 			break;
 	}
-
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -134,6 +152,10 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 		wassert(0);
 		return;
 	}
+
+
+	//remove;
+
 
 	Order::Item* pOrder = theOrderBase.orderPtr(wo.orderID);
 	if (pOrder == nullptr)

@@ -134,9 +134,9 @@ private:
 	int					m_serverProviderPort = PORT_PROVIDER_ORDER_REQUEST;
 	int					m_serverCustomerPort = PORT_CUSTOMER_ORDER_REQUEST;
 
-	int					m_requestConfigTime = 2000;
-	int					m_requestProviderTime = 2000;
-	int					m_requestCustomerTime = 2000;
+	int					m_requestConfigTime = REQUEST_CONFIG_TIMEOUT;
+	int					m_requestProviderTime = REQUEST_PROVIDER_TIMEOUT;
+	int					m_requestCustomerTime = REQUEST_CUSTOMER_TIMEOUT;
 
 	int					m_orderType = 0;
 	quint32				m_providerID = -1;
@@ -220,7 +220,7 @@ private:
 
 	QMutex				m_mutex;
 
-	int					m_platformType = PLATFORM_TYPE_ANDROID;
+	int					m_appType = PLATFORM_TYPE_WINDOWS;
 
 	ConnectionOption	m_connection;
 
@@ -228,8 +228,8 @@ private:
 
 public:
 
-	int					platformType() const { return m_platformType; }
-	void				setPlatformType(int type) { m_platformType = type; }
+	int					platformType() const { return m_appType; }
+	void				setPlatformType(int type) { m_appType = type; }
 
 	ConnectionOption&	connection() { return m_connection; }
 	void				setConnection(const ConnectionOption& connection) { m_connection = connection; }

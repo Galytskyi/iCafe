@@ -97,8 +97,8 @@ void ProviderDataOption::load()
 
 	m_providerID = s.value(QString("%1ProviderID").arg(PROVIDER_DATA_REG_KEY), -1).toUInt();
 
-	m_requestProviderTime = s.value(QString("%1RequestProviderTime").arg(PROVIDER_DATA_REG_KEY), 2000).toUInt();
-	m_requestCustomerTime = s.value(QString("%1RequestCustomerTime").arg(PROVIDER_DATA_REG_KEY), 2000).toUInt();
+	m_requestProviderTime = s.value(QString("%1RequestProviderTime").arg(PROVIDER_DATA_REG_KEY), REQUEST_PROVIDER_TIMEOUT).toUInt();
+	m_requestCustomerTime = s.value(QString("%1RequestCustomerTime").arg(PROVIDER_DATA_REG_KEY), REQUEST_CUSTOMER_TIMEOUT).toUInt();
 
 	m_serverIP = s.value(QString("%1ServerIP").arg(PROVIDER_DATA_REG_KEY), "193.0.61.244").toString();
 	m_serverProviderPort = s.value(QString("%1ServerProviderPort").arg(PROVIDER_DATA_REG_KEY), PORT_PROVIDER_ORDER_REQUEST).toUInt();

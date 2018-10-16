@@ -6,6 +6,7 @@
 #include <QDebug>
 
 #include "../lib/XmlHelper.h"
+#include "../lib/Order.h"
 
 class XmlWriteHelper;
 class XmlReadHelper;
@@ -58,6 +59,9 @@ namespace Provider
 
 	private:
 
+		QTimer				m_timer;
+		bool				m_connect = false;
+
 		quint32				m_id = INVALID_ID;
 		QString				m_googleID;
 
@@ -77,14 +81,18 @@ namespace Provider
 		double				m_geoLat = 0;
 		double				m_geoLng = 0;
 
-		bool				m_connect = false;
+		quint32				m_requestTime = 0;
+		quint32				m_waitReplyTime = 0;
 
-		QTimer				m_timer;
+		Order::Base			m_orderBase;
 
 	public:
 
 		bool				isEmpty() const;
 		void				clear();
+
+		bool				isConnected() const { return m_connect; }
+		void				setConnectState(bool connect);
 
 		quint32				providerID() const { return m_id; }
 		void				setProviderID(quint32 id) { m_id = id; }
@@ -134,8 +142,11 @@ namespace Provider
 		double				geoLng() const { return m_geoLng; }
 		void				setGeoLng(double lng) { m_geoLng = lng; }
 
-		bool				isConnected() const { return m_connect; }
-		void				setConnectState(bool connect);
+		quint32				requestTime() const { return m_requestTime; }
+		void				setRequestTime(quint32 ms) { m_requestTime = ms; }
+
+		quint32				waitReplyTime() const { return m_waitReplyTime; }
+		void				setWaitReplyTime(quint32 ms) { m_waitReplyTime = ms; }
 
 		bool				readFromXml(XmlReadHelper& xml, int version);
 		void				writeToXml(XmlWriteHelper& xml, int version);

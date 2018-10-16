@@ -21,26 +21,25 @@ const int		PORT_PROVIDER_ORDER_REQUEST = 15300;
 //
 				// PORT_CONFIG_XML_REQUEST = 15100
 				//
-const quint32	CLIENT_GET_CONFIG_XML_CRC = 1100;
-const quint32	CLIENT_GET_CONFIG_XML_INFO = 1101;
-const quint32	CLIENT_GET_CONFIG_XML = 1102;
+const quint32	CLIENT_GET_CONFIG_XML_CRC		= 1100;
+const quint32	CLIENT_GET_CONFIG_XML_INFO		= 1101;
+const quint32	CLIENT_GET_CONFIG_XML			= 1102;
 
 				// PORT_CUSTOMER_ORDER_REQUEST = 15200
 				//
-const quint32	CLIENT_CREATE_ORDER = 1200;
-const quint32	CLIENT_GET_ORDER_STATE = 1201;
-const quint32	CLIENT_REMOVE_ORDER = 1202;
+const quint32	CLIENT_GET_CUSTOMER_UDP_OPTION	= 1200;
+const quint32	CLIENT_CREATE_ORDER				= 1201;
+const quint32	CLIENT_GET_ORDER_STATE			= 1202;
+const quint32	CLIENT_REMOVE_ORDER				= 1203;
 
 				// PORT_PROVIDER_ORDER_REQUEST = 15300
 				//
-const quint32	CLIENT_GET_ORDER = 1300;
-const quint32	CLIENT_SET_ORDER_STATE = 1301;
-const quint32	CLIENT_GET_PROVIDER_INIT_STATE = 1302;
-const quint32	CLIENT_GET_PROVIDER_STATE = 1303;
-const quint32	CLIENT_SET_PROVIDER_STATE = 1304;
-
-
-
+const quint32	CLIENT_GET_PROVIDER_UDP_OPTION	= 1300;
+const quint32	CLIENT_GET_ORDER				= 1301;
+const quint32	CLIENT_SET_ORDER_STATE			= 1302;
+const quint32	CLIENT_GET_PROVIDER_INIT_STATE	= 1303;
+const quint32	CLIENT_GET_PROVIDER_STATE		= 1304;
+const quint32	CLIENT_SET_PROVIDER_STATE		= 1305;
 
 // ==============================================================================================
 // Errors
@@ -52,6 +51,18 @@ const int		SIO_ERROR_NONE = 0,
 				SIO_ERROR_INCCORECT_PART_NUMBER = 3;
 
 const int		SIO_ERROR_COUNT = 3;
+
+// ==============================================================================================
+// timeouts
+//
+
+const int		REQUEST_CONFIG_TIMEOUT			= 2000;		// ms
+const int		REQUEST_CUSTOMER_TIMEOUT		= 2000;		// ms
+const int		REQUEST_PROVIDER_TIMEOUT		= 2000;		// ms
+
+const int		WAIT_REPLY_CONFIG_TIMEOUT		= 300;		// ms
+const int		WAIT_REPLY_CUSTOMER_TIMEOUT		= 300;		// ms
+const int		WAIT_REPLY_PROVIDER_TIMEOUT		= 300;		// ms
 
 // ==============================================================================================
 // Limiters
@@ -68,6 +79,7 @@ const int		MAX_SECONDS_ORDER_LIVE_AFTER_OK	= 20 * 60;			// 20 min in seconds
 // ==============================================================================================
 // request struct
 //
+
 // ----------------------------------------------------------------------------------------------
 // CLIENT_GET_CONFIG_XML_INFO
 //
@@ -114,6 +126,31 @@ struct sio_ReplyCfgXml
 
 	quint32 dataSize = 0;
 	char data[MAX_UDP_DATAGRAM_SIZE];
+};
+
+#pragma pack(pop)
+
+// ----------------------------------------------------------------------------------------------
+// CLIENT_GET_UDP_OPTION
+//
+const quint32	REPLY_UDP_OPTION_VERSION = 1;
+
+#pragma pack(push, 1)
+
+struct sio_UdpOption
+{
+	quint32 version = REPLY_UDP_OPTION_VERSION;
+
+	quint32 requestTime = 0;
+	quint32 waitReplyTime = 0;
+
+	void clear()
+	{
+		version = REPLY_UDP_OPTION_VERSION;
+
+		requestTime = 0;
+		waitReplyTime = 0;
+	}
 };
 
 #pragma pack(pop)

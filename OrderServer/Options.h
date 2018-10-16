@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QMutex>
 
+#include "../lib/SocketIO.h"
+
 // ==============================================================================================
 
 #define					DATABASE_OPTIONS_REG_KEY		"Options/Database/"
@@ -70,6 +72,51 @@ public:
 
 // ==============================================================================================
 
+#define					UDP_OPTIONS_REG_KEY		"Options/Udp/"
+
+// ----------------------------------------------------------------------------------------------
+
+class UdpOption : public QObject
+{
+	Q_OBJECT
+
+public:
+
+	explicit UdpOption(QObject *parent = 0);
+	explicit UdpOption(const UdpOption& from, QObject *parent = 0);
+	virtual ~UdpOption();
+
+private:
+
+	quint32				m_requestCustomerTime = REQUEST_CUSTOMER_TIMEOUT;
+	quint32				m_waitReplyCustomerTime = WAIT_REPLY_CUSTOMER_TIMEOUT;
+
+	quint32				m_requestProviderTime = REQUEST_PROVIDER_TIMEOUT;
+	quint32				m_waitReplyProviderTime = WAIT_REPLY_PROVIDER_TIMEOUT;
+
+public:
+
+	quint32				requestCustomerTime() const { return m_requestCustomerTime; }
+	void				setRequestCustomerTime(quint32 ms) { m_requestCustomerTime = ms; }
+
+	quint32				waitReplyCustomerTime() const { return m_waitReplyCustomerTime; }
+	void				setWaitReplyCustomerTime(quint32 ms) { m_waitReplyCustomerTime = ms; }
+
+	quint32				requestProviderTime() const { return m_requestProviderTime; }
+	void				setRequestProviderTime(quint32 ms) { m_requestProviderTime = ms; }
+
+	quint32				waitReplyProviderTime() const { return m_waitReplyProviderTime; }
+	void				setWaitReplyProviderTime(quint32 ms) { m_waitReplyProviderTime = ms; }
+
+	void				load();
+	void				save();
+
+	UdpOption&			operator=(const UdpOption& from);
+};
+
+
+// ==============================================================================================
+
 const int			PLATFORM_TYPE_WINDOWS	= 0,
 					PLATFORM_TYPE_LINUX		= 1,
 					PLATFORM_TYPE_ANDROID	= 2;
@@ -96,6 +143,8 @@ private:
 
 	DatabaseOption		m_database;
 
+	UdpOption			m_udp;
+
 public:
 
 	int					platformType() const { return m_platformType; }
@@ -103,6 +152,9 @@ public:
 
 	DatabaseOption&		database() { return m_database; }
 	void				setDatabase(const DatabaseOption& database) { m_database = database; }
+
+	UdpOption&			udp() { return m_udp; }
+	void				setUdp(const UdpOption& udp) { m_udp = udp; }
 
 	void				load();
 	void				save();

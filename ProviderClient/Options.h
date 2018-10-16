@@ -67,8 +67,8 @@ private:
 	quint32				m_providerID = -1;
 	quint32				m_state = 0;
 
-	int					m_requestProviderTime = 2000;
-	int					m_requestCustomerTime = 2000;
+	int					m_requestProviderTime = REQUEST_PROVIDER_TIMEOUT;
+	int					m_requestCustomerTime = REQUEST_CUSTOMER_TIMEOUT;
 
 	QString				m_serverIP;
 	int					m_serverProviderPort = PORT_PROVIDER_ORDER_REQUEST;

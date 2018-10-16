@@ -187,9 +187,9 @@ void CustomerDataOption::load()
 	m_serverProviderPort = s.value(QString("%1ServerProviderPort").arg(CUSTOMER_DATA_REG_KEY), PORT_PROVIDER_ORDER_REQUEST).toUInt();
 	m_serverCustomerPort = s.value(QString("%1ServerCustomerPort").arg(CUSTOMER_DATA_REG_KEY), PORT_CUSTOMER_ORDER_REQUEST).toUInt();
 
-	m_requestConfigTime = s.value(QString("%1RequestConfigTime").arg(CUSTOMER_DATA_REG_KEY), 2000).toUInt();
-	m_requestProviderTime = s.value(QString("%1RequestProviderTime").arg(CUSTOMER_DATA_REG_KEY), 2000).toUInt();
-	m_requestCustomerTime = s.value(QString("%1RequestCustomerTime").arg(CUSTOMER_DATA_REG_KEY), 2000).toUInt();
+	m_requestConfigTime = s.value(QString("%1RequestConfigTime").arg(CUSTOMER_DATA_REG_KEY), REQUEST_CONFIG_TIMEOUT).toUInt();
+	m_requestProviderTime = s.value(QString("%1RequestProviderTime").arg(CUSTOMER_DATA_REG_KEY), REQUEST_PROVIDER_TIMEOUT).toUInt();
+	m_requestCustomerTime = s.value(QString("%1RequestCustomerTime").arg(CUSTOMER_DATA_REG_KEY), REQUEST_CUSTOMER_TIMEOUT).toUInt();
 
 	m_phone = s.value(QString("%1Phone").arg(CUSTOMER_DATA_REG_KEY), 501002030).toULongLong();
 	m_orderTime = s.value(QString("%1OrderTime").arg(CUSTOMER_DATA_REG_KEY), 49152).toUInt();
@@ -305,7 +305,7 @@ Options& Options::operator=(const Options& from)
 {
 	QMutexLocker locker(&m_mutex);
 
-	m_platformType = from.m_platformType;
+	m_appType = from.m_appType;
 	m_connection = from.m_connection;
 	m_customerData = from.m_customerData;
 

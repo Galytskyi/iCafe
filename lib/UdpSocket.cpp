@@ -367,7 +367,7 @@ namespace Udp
 
 		m_retryCtr = 0;
 
-		m_timer.start(m_msTimeout);
+		m_timer.start(m_waitAckTimeout);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------
@@ -435,7 +435,7 @@ namespace Udp
 			//wassert(false);
 		}
 
-		m_timer.start(m_msTimeout);
+		m_timer.start(m_waitAckTimeout);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------

@@ -10,6 +10,7 @@
 
 OrderReceiveSocket::OrderReceiveSocket(const QHostAddress &serverAddress, quint16 port)
 	: Udp::ClientSocket(serverAddress, port)
+	, m_optionReceived(false)
 	, m_requestGetOrderTimer(this)
 {
 	qDebug() << "OrderReceiveSocket::OrderReceiveSocket" << serverAddress << port;
@@ -32,7 +33,7 @@ void OrderReceiveSocket::onSocketThreadStarted()
 	connect(this, &Udp::ClientSocket::ackReceived, this, &OrderReceiveSocket::processReply, Qt::QueuedConnection);
 	connect(this, &Udp::ClientSocket::ackTimeout, this, &OrderReceiveSocket::failReply, Qt::QueuedConnection);
 
-	connect(&m_requestGetOrderTimer, &QTimer::timeout, this, &OrderReceiveSocket::requestGetOrder, Qt::QueuedConnection);
+	connect(&m_requestGetOrderTimer, &QTimer::timeout, this, &OrderReceiveSocket::timeout, Qt::QueuedConnection);
 
 	m_requestGetOrderTimer.start(theOptions.providerData().requestProviderTime());
 }
@@ -44,6 +45,19 @@ void OrderReceiveSocket::onSocketThreadFinished()
 	m_requestGetOrderTimer.stop();
 }
 
+// -------------------------------------------------------------------------------------------------------------------
+
+void OrderReceiveSocket::timeout()
+{
+	if (m_optionReceived == false)
+	{
+		requestUdpOption();
+	}
+	else
+	{
+		requestGetOrder();
+	}
+}
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -57,6 +71,10 @@ void OrderReceiveSocket::processReply(const Udp::Request& request)
 
 	switch(request.ID())
 	{
+		case CLIENT_GET_PROVIDER_UDP_OPTION:
+			replyUdpOption(request);
+			break;
+
 		case CLIENT_GET_ORDER:
 			replyGetOrder(request);
 			break;
@@ -78,6 +96,45 @@ void OrderReceiveSocket::processReply(const Udp::Request& request)
 			wassert(false);
 			break;
 	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+// CLIENT_GET_PROVIDER_UDP_OPTION
+
+void OrderReceiveSocket::requestUdpOption()
+{
+	if (isReadyToSend() == false)
+	{
+		return;
+	}
+
+	if (m_optionReceived == true)
+	{
+		return;
+	}
+
+	sendRequest(CLIENT_GET_PROVIDER_UDP_OPTION);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void OrderReceiveSocket::replyUdpOption(const Udp::Request& request)
+{
+	sio_UdpOption* ptr_uo = (sio_UdpOption*) const_cast<const Udp::Request&>(request).data();
+
+	if (ptr_uo->version < 1 || ptr_uo->version > REPLY_UDP_OPTION_VERSION)
+	{
+		return;
+	}
+
+	m_optionReceived = true;
+
+	m_requestGetOrderTimer.stop();
+
+	theOptions.providerData().setRequestProviderTime(ptr_uo->requestTime);
+	setWaitAckTimeout(ptr_uo->waitReplyTime);
+
+	m_requestGetOrderTimer.start(theOptions.providerData().requestProviderTime());
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -177,7 +234,7 @@ void OrderReceiveSocket::requestGetProviderState()
 	rsps.providerID = theOptions.providerData().providerID();
 	rsps.state = theOptions.providerData().state();
 
-	sendRequest(CLIENT_GET_PROVIDER_STATE, (const char*) &rsps, sizeof(sio_RequestGetOrder));
+	sendRequest(CLIENT_GET_PROVIDER_STATE, (const char*) &rsps, sizeof(sio_RequestProviderState));
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -217,7 +274,7 @@ void OrderReceiveSocket::requestSetProviderState(quint32 state)
 	rsps.providerID = theOptions.providerData().providerID();
 	rsps.state = state;
 
-	sendRequest(CLIENT_SET_PROVIDER_STATE, (const char*) &rsps, sizeof(sio_RequestGetOrder));
+	sendRequest(CLIENT_SET_PROVIDER_STATE, (const char*) &rsps, sizeof(sio_RequestProviderState));
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -247,6 +304,10 @@ void OrderReceiveSocket::failReply(const Udp::Request& request)
 {
 	switch(request.ID())
 	{
+		case CLIENT_GET_PROVIDER_UDP_OPTION:
+			emit failConnection();
+			break;
+
 		case CLIENT_GET_ORDER:
 			emit failConnection();
 			break;

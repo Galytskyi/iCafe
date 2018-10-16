@@ -22,6 +22,7 @@ private:
 
 public:
 
+	void			replyProviderUdpOption(const Udp::Request& request);
 	void			replyGetOrder(const Udp::Request& request);
 	void			replySetOrderState(const Udp::Request& request);
 	void			replyGetProviderState(const Udp::Request& request);

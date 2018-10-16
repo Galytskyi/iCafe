@@ -24,15 +24,26 @@ private:
 	virtual void	onSocketThreadStarted();
 	virtual void	onSocketThreadFinished();
 
+	bool			m_optionReceived = false;
 	QTimer			m_requestGetOrderTimer;
 
 public:
 
 	// functions: Request - Reply
 	//
-	void            replyGetOrder(const Udp::Request& request);					// CLIENT_GET_ORDER
+	void            requestUdpOption();											// CLIENT_GET_PROVIDER_UDP_OPTION
+	void            replyUdpOption(const Udp::Request& request);				// CLIENT_GET_PROVIDER_UDP_OPTION
+
+	void            requestGetOrder();											// PROVIDER_GET_ORDER
+	void            replyGetOrder(const Udp::Request& request);					// PROVIDER_GET_ORDER
+
+	void            requestSetOrderState(const Order::Item& order);				// CLIENT_SET_ORDER_STATE
 	void            replySetOrderState(const Udp::Request& request);			// CLIENT_SET_ORDER_STATE
+
+	void            requestGetProviderState();									// CLIENT_GET_PROVIDER_STATE
 	void            replyGetProviderState(const Udp::Request& request);			// CLIENT_GET_PROVIDER_STATE
+
+	void            requestSetProviderState(quint32 state);						// CLIENT_SET_PROVIDER_STATE
 	void            replySetProviderState(const Udp::Request& request);			// CLIENT_SET_PROVIDER_STATE
 
 signals:
@@ -44,10 +55,7 @@ signals:
 
 public slots:
 
-	void            requestGetOrder();											// CLIENT_GET_ORDER
-	void            requestSetOrderState(const Order::Item& order);				// CLIENT_SET_ORDER_STATE
-	void            requestGetProviderState();									// CLIENT_GET_PROVIDER_STATE
-	void            requestSetProviderState(quint32 state);						// CLIENT_SET_PROVIDER_STATE
+	void			timeout();
 
 	void			processReply(const Udp::Request& request);
 	void			failReply(const Udp::Request& request);
