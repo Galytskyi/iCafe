@@ -210,53 +210,63 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 
 void CustomerOrderSocket::replyGetOrderState(const Udp::Request& request)
 {
-	sio_OrderWrap wo = *(sio_OrderWrap*) const_cast<const Udp::Request&>(request).data();
+	sio_RequestGetOrderState* ptr_rgos_in = (sio_RequestGetOrderState*) const_cast<const Udp::Request&>(request).data();
 
-	bool result = wo.isValid();
-	if (result == false)
+	if (ptr_rgos_in->version < 1 || ptr_rgos_in->version > REQUEST_GET_ORDER_STATE_VERSION)
 	{
-
-		wo.state = Order::STATE_INCORRECT_PARSE_ORDERWRAP;
-		sendReply(request, wo);
-
-		wassert(0);
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Wrong reply version: %1").arg(ptr_rgos_in->version));
 		return;
 	}
 
-	quint32 providerID = ((Order::Handle) wo.orderID).providerID;
-	if (providerID == -1)
+	sio_RequestGetOrderState rgos_out;
+
+	rgos_out.version = REQUEST_GET_ORDER_STATE_VERSION;
+	rgos_out.count = 0;
+
+	int orderCount = ptr_rgos_in->count;
+	for(int i  = 0; i < orderCount; i++)
 	{
-		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+		quint64 orderID = ptr_rgos_in->orderState[i].orderID;
 
-		wo.state = Order::STATE_PROVIDER_NOT_FOUND;
-		sendReply(request, wo);
+		rgos_out.orderState[rgos_out.count].orderID = orderID;
 
-		return;
+		quint32 providerID = ((Order::Handle) orderID).providerID;
+		if (providerID == -1)
+		{
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+
+			rgos_out.orderState[rgos_out.count].state = Order::STATE_PROVIDER_NOT_FOUND;
+			rgos_out.count++;
+
+			continue;
+		}
+
+		Provider::Item* pProvider = theProviderBase.providerPtr(providerID);
+		if (pProvider == nullptr)
+		{
+			emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+
+			rgos_out.orderState[rgos_out.count].state = Order::STATE_PROVIDER_NOT_FOUND;
+			rgos_out.count++;
+
+			continue;
+		}
+
+		if (pProvider->orderBase().isExist(orderID) == false)
+		{
+			emit appendMessageToArch(ARCH_MSG_TYPE_WARNING, __FUNCTION__, "Order::STATE_ORDER_NOT_FOUND");
+
+			rgos_out.orderState[rgos_out.count].state = Order::STATE_ORDER_NOT_FOUND;
+			rgos_out.count++;
+
+			continue;
+		}
+
+		rgos_out.orderState[rgos_out.count].state = pProvider->orderBase().orderState(orderID);
+		rgos_out.count++;
 	}
 
-	Provider::Item* pProvider = theProviderBase.providerPtr( providerID );
-	if (pProvider == nullptr)
-	{
-		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
-
-		wo.state = Order::STATE_PROVIDER_NOT_FOUND;
-		sendReply(request, wo);
-
-		return;
-	}
-
-	if (pProvider->orderBase().isExist(wo.orderID) == false)
-	{
-		emit appendMessageToArch(ARCH_MSG_TYPE_WARNING, __FUNCTION__, "Order::STATE_ORDER_NOT_FOUND");
-
-		wo.state = Order::STATE_ORDER_NOT_FOUND;
-		sendReply(request, wo);
-
-		return;
-	}
-
-	wo.state = pProvider->orderBase().orderState(wo.orderID);
-	sendReply(request, wo);
+	sendReply(request, (const char*) &rgos_out, sizeof(sio_RequestGetOrderState));
 }
 
 // -------------------------------------------------------------------------------------------------------------------

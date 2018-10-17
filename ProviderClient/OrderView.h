@@ -119,7 +119,7 @@ public:
 
 	void			appentToList(const Order::Item& order);
 	void			changeState(const Order::Item& order);
-	void			removeFromList(const Order::Item& order);
+	void			removeFromList(quint64 orderID);
 };
 
 // ==============================================================================================

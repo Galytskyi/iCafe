@@ -715,33 +715,32 @@ namespace Order
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Base::slot_changeState(const Item &order)
+	void Base::slot_changeState(quint64 orderID, quint32 state)
 	{
 		QMutexLocker locker(&m_mutex);
 
-		if (m_orderMap.contains(order.handle().ID) == false)
+		if (m_orderMap.contains(orderID) == false)
 		{
 			return;
 		}
 
-		Item& aOrder = m_orderMap[order.handle().ID];
+		Item& aOrder = m_orderMap[orderID];
 
-
-		if (aOrder.state() == order.state())
+		if (aOrder.state() == state)
 		{
 			return;
 		}
 
-		aOrder.setState(order.state());
+		aOrder.setState(state);
 
-		emit signal_stateChanged(order);
+		emit signal_stateChanged(aOrder);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	void Base::slot_removeOrder(const Item& order)
+	void Base::slot_removeOrder(quint64 orderID)
 	{
-		remove(order.handle().ID);
+		remove(orderID);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------

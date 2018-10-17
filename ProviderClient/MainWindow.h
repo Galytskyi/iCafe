@@ -113,7 +113,7 @@ private slots:
 	//
 	void					onSocketConnection(bool connect);
 	void					appendOrder(const Order::Item& order);
-	void					removeOrder(const Order::Item& order);
+	void					removeOrder(quint64 orderID);
 	void					orderStateChanged(const Order::Item& order);
 	void					providerStateChanged(quint32 state);
 };

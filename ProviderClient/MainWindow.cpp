@@ -560,9 +560,9 @@ void MainWindow::appendOrder(const Order::Item& order)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void MainWindow::removeOrder(const Order::Item& order)
+void MainWindow::removeOrder(quint64 orderID)
 {
-	bool result = theOrderBase.remove(order.handle().ID);
+	bool result = theOrderBase.remove(orderID);
 	if (result == false)
 	{
 		return;
@@ -573,7 +573,7 @@ void MainWindow::removeOrder(const Order::Item& order)
 		return;
 	}
 
-	m_pView->removeFromList(order);
+	m_pView->removeFromList(orderID);
 }
 
 // -------------------------------------------------------------------------------------------------------------------

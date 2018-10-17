@@ -56,9 +56,9 @@ const int		SIO_ERROR_COUNT = 3;
 // timeouts
 //
 
-const int		REQUEST_CONFIG_TIMEOUT			= 2000;		// ms
-const int		REQUEST_CUSTOMER_TIMEOUT		= 2000;		// ms
-const int		REQUEST_PROVIDER_TIMEOUT		= 2000;		// ms
+const int		REQUEST_CONFIG_TIMEOUT			= 1000;		// ms
+const int		REQUEST_CUSTOMER_TIMEOUT		= 1000;		// ms
+const int		REQUEST_PROVIDER_TIMEOUT		= 1000;		// ms
 
 const int		WAIT_REPLY_CONFIG_TIMEOUT		= 300;		// ms
 const int		WAIT_REPLY_CUSTOMER_TIMEOUT		= 300;		// ms
@@ -69,6 +69,7 @@ const int		WAIT_REPLY_PROVIDER_TIMEOUT		= 300;		// ms
 //
 
 const int		MAX_FAIL_ACK_COUNT				= 3;
+const int		MAX_GET_ORDER_STATE				= 10;
 
 const int		MAX_CUSTOMER_ORDER_COUNT		= 5;
 const int		MAX_PROVIDER_ORDER_COUNT		= 10;
@@ -181,6 +182,31 @@ struct sio_OrderWrap
 };
 
 #pragma pack(pop)
+
+// ----------------------------------------------------------------------------------------------
+// CLIENT_GET_ORDER_STATE
+//
+const quint32	REQUEST_GET_ORDER_STATE_VERSION = 1;
+
+#pragma pack(push, 1)
+
+struct sio_OrderState
+{
+	quint64 orderID;
+	quint32 state;
+};
+
+struct sio_RequestGetOrderState
+{
+	quint32 version = REQUEST_GET_ORDER_STATE_VERSION;
+
+	int count = 0;
+
+	sio_OrderState orderState[MAX_GET_ORDER_STATE];
+};
+
+#pragma pack(pop)
+
 
 // ----------------------------------------------------------------------------------------------
 // CLIENT_GET_ORDER

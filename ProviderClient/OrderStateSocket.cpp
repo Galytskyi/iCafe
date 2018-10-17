@@ -13,7 +13,6 @@ OrderStateSocket::OrderStateSocket(const QHostAddress &serverAddress, quint16 po
 	: Udp::ClientSocket(serverAddress, port)
 	, m_optionReceived(false)
 	, m_requestGetOrderStateTimer(this)
-	, m_getOrderStateIndex(0)
 {
 	qDebug() << "OrderStateSocket::OrderStateSocket" << serverAddress << port;
 
@@ -36,6 +35,8 @@ void OrderStateSocket::onSocketThreadStarted()
 	connect(this, &Udp::ClientSocket::ackTimeout, this, &OrderStateSocket::failReply, Qt::QueuedConnection);
 
 	connect(&m_requestGetOrderStateTimer, &QTimer::timeout, this, &OrderStateSocket::timeout, Qt::QueuedConnection);
+
+	requestUdpOption();
 
 	m_requestGetOrderStateTimer.start(theOptions.providerData().requestCustomerTime());
 }
@@ -129,6 +130,8 @@ void OrderStateSocket::replyUdpOption(const Udp::Request& request)
 	setWaitAckTimeout(ptr_uo->waitReplyTime);
 
 	m_requestGetOrderStateTimer.start(theOptions.providerData().requestCustomerTime());
+
+	requestGetOrderState();
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -146,66 +149,79 @@ void OrderStateSocket::requestGetOrderState()
 		return;
 	}
 
+	sio_RequestGetOrderState rgos;
+
+	rgos.version = REQUEST_GET_ORDER_STATE_VERSION;
+	rgos.count = 0;
+
 	QList<Order::Item> list = theOrderBase.orderList();
 
-	if (m_getOrderStateIndex >= list.count())
+	int orderCount = list.count();
+	for(int i = 0; i < orderCount; i++)
 	{
-		m_getOrderStateIndex = 0;
+		Order::Item order = list[i];
+
+		if (order.isEmpty() == true)
+		{
+			continue;
+		}
+
+		if (i > MAX_GET_ORDER_STATE)
+		{
+			break;
+		}
+
+		rgos.orderState[rgos.count].orderID = order.handle().ID;
+		rgos.orderState[rgos.count].state = order.state();
+
+		rgos.count++;
 	}
 
-	Order::Item order = list[m_getOrderStateIndex];
-	if (order.isValid() == false)
-	{
-		return;
-	}
-
-	m_getOrderStateIndex++;
-
-	sio_OrderWrap wo = order.toWrap();
-	sendRequest(CLIENT_GET_ORDER_STATE, wo);
+	sendRequest(CLIENT_GET_ORDER_STATE, (const char*) &rgos, sizeof(sio_RequestGetOrderState));
 }
 
 // -------------------------------------------------------------------------------------------------------------------
 
 void OrderStateSocket::replyGetOrderState(const Udp::Request& request)
 {
-	sio_OrderWrap wo = *(sio_OrderWrap*) const_cast<const Udp::Request&>(request).data();
+	sio_RequestGetOrderState* ptr_rgos = (sio_RequestGetOrderState*) const_cast<const Udp::Request&>(request).data();
 
-	bool result = wo.isValid();
-	if (result == false)
+	if (ptr_rgos->version < 1 || ptr_rgos->version > REQUEST_GET_ORDER_STATE_VERSION)
 	{
-		qDebug() << "OrderStateSocket::replyGetOrderState - incorrect orderWrap" << wo.state;
-		wassert(0);
 		return;
 	}
 
-	theOrderBase.slot_changeState(wo);
-
-	switch(wo.state)
+	int orderCount = ptr_rgos->count;
+	for(int i  = 0; i < orderCount; i++)
 	{
-		case Order::STATE_ORDER_NOT_FOUND:
-			{
-				qDebug() << "OrderStateSocket::replyGetOrderState - Order::STATE_ORDER_NOT_FOUND";
-				emit removeOrderFromBase(wo);
+		sio_OrderState os = ptr_rgos->orderState[i];
+
+		theOrderBase.slot_changeState(os.orderID, os.state);
+
+		switch(os.state)
+		{
+				case Order::STATE_ORDER_NOT_FOUND:
+					{
+						qDebug() << "OrderStateSocket::replyGetOrderState - Order::STATE_ORDER_NOT_FOUND";
+						emit removeOrderFromBase(os.orderID);
+					}
+					break;
+
+				case Order::STATE_ORDER_CANCEL:
+					{
+						qDebug() << "OrderStateSocket::replyGetOrderState - Order::STATE_ORDER_CANCEL";
+
+						Order::Item order = theOrderBase.order(os.orderID);
+						order.setState(Order::STATE_CUSTOMER_REMOVING_ORDER);
+						requestRemoveOrder(order);
+					}
+					break;
+
+				default:
+					qDebug() << "OrderStateSocket::replyGetOrderState - ID : " << os.orderID << ", state: " << os.state;
+					break;
 			}
-			break;
-
-		case Order::STATE_ORDER_CANCEL:
-			{
-				qDebug() << "OrderStateSocket::replyGetOrderState - Order::STATE_ORDER_CANCEL";
-
-				wo.state = Order::STATE_CUSTOMER_REMOVING_ORDER;
-				requestRemoveOrder(wo);
-			}
-			break;
-
-		default:
-			Order::Item order(wo);
-			qDebug() << "OrderStateSocket::replyGetOrderState - ID : " << order.handle().ID << ", state: " << order.state();
-			break;
 	}
-
-
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -246,7 +262,7 @@ void OrderStateSocket::replyRemoveOrder(const Udp::Request& request)
 		case Order::STATE_SERVER_REMOVED_ORDER:
 			{
 				qDebug() << "OrderStateSocket::replyRemoveOrder - Order::STATE_SERVER_REMOVED_ORDER";
-				emit removeOrderFromBase(wo);
+				emit removeOrderFromBase(wo.orderID);
 			}
 			break;
 

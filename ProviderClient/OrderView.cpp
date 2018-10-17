@@ -602,12 +602,12 @@ void OrderView::changeState(const Order::Item& order)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void OrderView::removeFromList(const Order::Item& order)
+void OrderView::removeFromList(quint64 orderID)
 {
 	int count = m_table.count();
 	for(int i = 0; i < count; i++)
 	{
-		if (m_table.order(i).handle().ID == order.handle().ID)
+		if (m_table.order(i).handle().ID == orderID)
 		{
 			m_table.remove(i);
 

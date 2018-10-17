@@ -25,8 +25,6 @@ private:
 	bool			m_optionReceived = false;
 	QTimer			m_requestGetOrderStateTimer;
 
-	int				m_getOrderStateIndex = 0;
-
 public:
 
 	// functions: Request - Reply
