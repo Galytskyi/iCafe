@@ -263,9 +263,7 @@ namespace Order
 
 	public slots:
 
-		void				slot_appendOrder(const Item& order);
 		void				slot_changeState(quint64 orderID, quint32 state);
-		void				slot_removeOrder(quint64 orderID);
 	};
 }
 

@@ -173,7 +173,7 @@ void OrderStateSocket::replyCreateOrder(const Udp::Request& request)
 		default:										qDebug() << "OrderStateSocket::replyCreateOrder - Order::???" << wo.state;						break;
 	}
 
-	theOrderBase.slot_appendOrder(wo);
+	theOrderBase.append(wo);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -265,7 +265,7 @@ void OrderStateSocket::replyGetOrderState(const Udp::Request& request)
 			requestRemoveOrder(order);
 		}
 
-		qDebug() << "OrderStateSocket::replyGetOrderState - ID : " << os.orderID << ", state: " << os.state;
+		//qDebug() << "OrderStateSocket::replyGetOrderState - ID : " << os.orderID << ", state: " << os.state;
 	}
 }
 

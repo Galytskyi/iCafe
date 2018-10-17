@@ -219,7 +219,7 @@ private:
 
 	QMutex				m_mutex;
 
-	int					m_appType = PLATFORM_TYPE_DESKTOP;
+	int					m_appType = PLATFORM_TYPE_ANDROID;
 
 	ConnectionOption	m_connection;
 

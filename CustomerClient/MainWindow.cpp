@@ -20,8 +20,7 @@
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
-	theOrderBase.readFromXml(QString("customer%1").arg(xmlOrderFileName));
-
+	loadOrders();
 	createInterface();
 
 	startConfigUdpThread();
@@ -36,6 +35,15 @@ MainWindow::~MainWindow()
 	stopOrderStateUdpThread();
 	stopProviderStateUdpThread();
 	stopConfigUdpThread();
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::loadOrders()
+{
+	theOrderBase.readFromXml(QString("customer%1").arg(xmlOrderFileName));
+
+	connect(&theOrderBase, &Order::Base::signal_stateChanged, this, &MainWindow::orderStateChanged, Qt::QueuedConnection);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -738,6 +746,13 @@ void MainWindow::cfgXmlReceived(const QByteArray& cfgXmlData, int version)
 	}
 
 	m_connectLabel->setText(QString());
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::orderStateChanged(const Order::Item& order)
+{
+	qDebug() << order.state();
 }
 
 // -------------------------------------------------------------------------------------------------------------------

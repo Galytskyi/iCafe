@@ -68,6 +68,7 @@ private:
 
 public:
 
+	void					loadOrders();
 	bool					createInterface();
 
 	void					createActions();
@@ -126,6 +127,7 @@ private slots:
 	// Slots of sockets
 	//
 	void					cfgXmlReceived(const QByteArray& cfgXmlData, int version);
+	void					orderStateChanged(const Order::Item& order);
 	void					providerStateChanged(quint32 providerID, quint32 state);
 };
 
