@@ -110,11 +110,10 @@ public:
 
 // ==============================================================================================
 
-const int			PLATFORM_TYPE_WINDOWS	= 0,
-					PLATFORM_TYPE_LINUX		= 1,
-					PLATFORM_TYPE_ANDROID	= 2;
+const int			PLATFORM_TYPE_DESKTOP	= 0,
+					PLATFORM_TYPE_ANDROID	= 1;
 
-const int			PLATFORM_TYPE_COUNT		= 3;
+const int			PLATFORM_TYPE_COUNT		= 2;
 
 // ==============================================================================================
 
@@ -132,7 +131,7 @@ private:
 
 	QMutex				m_mutex;
 
-	int					m_platformType = PLATFORM_TYPE_ANDROID;
+	int					m_appType = PLATFORM_TYPE_DESKTOP;
 
 	ConnectionOption	m_connection;
 
@@ -140,8 +139,8 @@ private:
 
 public:
 
-	int					platformType() const { return m_platformType; }
-	void				setPlatformType(int type) { m_platformType = type; }
+	int					platformType() const { return m_appType; }
+	void				setPlatformType(int type) { m_appType = type; }
 
 	ConnectionOption&	connection() { return m_connection; }
 	void				setConnection(const ConnectionOption& connection) { m_connection = connection; }

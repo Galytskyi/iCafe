@@ -70,8 +70,6 @@ bool MainWindow::createInterface()
 
 //	setMeasureType(MEASURE_TYPE_LINEARITY);
 
-	connect(&theOrderBase, &Order::Base::signal_stateChanged, this, &MainWindow::orderStateChanged, Qt::QueuedConnection);
-
 	return true;
 }
 
@@ -154,7 +152,6 @@ void MainWindow::createProviderView()
 
 //	connect(&theProviderBase, &Provider::Base::cfgXmlDataLoaded, m_pView, &ProviderView::updateList, Qt::QueuedConnection);
 //	connect(&theProviderBase, &Provider::Base::cfgXmlDataLoaded,m_pView, &ProviderView::updateOrderList, Qt::QueuedConnection);
-//	connect(&theOrderBase, &Order::Base::signal_stateChanged, m_pView, &ProviderView::orderStateChanged, Qt::QueuedConnection);
 
 	connect(m_pView, &QTableView::doubleClicked, this, &MainWindow::onProviderListClick);
 
@@ -813,15 +810,6 @@ void MainWindow::onProviderListClick(const QModelIndex& index)
 void MainWindow::msgBox(const QString &title, const QString& text)
 {
 	QMessageBox::information(this, title, text);
-}
-
-// -------------------------------------------------------------------------------------------------------------------
-
-void MainWindow::orderStateChanged(const Order::Item& order)
-{
-	Q_UNUSED(order);
-
-	m_statusOrderCount->setText(tr("Orders count: %1").arg(theOrderBase.count()));
 }
 
 // -------------------------------------------------------------------------------------------------------------------

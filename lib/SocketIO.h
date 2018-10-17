@@ -71,6 +71,7 @@ const int		WAIT_REPLY_PROVIDER_TIMEOUT		= 300;		// ms
 const int		MAX_FAIL_ACK_COUNT				= 3;
 
 const int		MAX_CUSTOMER_ORDER_COUNT		= 5;
+const int		MAX_PROVIDER_ORDER_COUNT		= 10;
 
 const int		MAX_SECONDS_AUTO_REMOVE_ORDER	= 10 * 60 * 1000;	// 10 min
 const int		MAX_SECONDS_ORDER_LIVE			= 30 * 60;			// 30 min in seconds

@@ -221,7 +221,7 @@ Options& Options::operator=(const Options& from)
 {
 	QMutexLocker locker(&m_mutex);
 
-	m_platformType = from.m_platformType;
+	m_appType = from.m_appType;
 	m_database = from.m_database;
 	m_udp = from.m_udp;
 

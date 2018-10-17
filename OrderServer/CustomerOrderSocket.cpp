@@ -31,8 +31,6 @@ void CustomerOrderSocket::onSocketThreadStarted()
 
 	connect(this, &Udp::ServerSocket::requestReceived, this, &CustomerOrderSocket::processRequest, Qt::QueuedConnection);
 
-	connect(this, &CustomerOrderSocket::appendOrderToBase, &theOrderBase, &Order::Base::slot_appendOrder, Qt::QueuedConnection);
-
 	qsrand(QTime::currentTime().msecsSinceStartOfDay());
 }
 
@@ -40,8 +38,6 @@ void CustomerOrderSocket::onSocketThreadStarted()
 
 void CustomerOrderSocket::onSocketThreadFinished()
 {
-	disconnect(this, &CustomerOrderSocket::appendOrderToBase, &theOrderBase, &Order::Base::slot_appendOrder);
-
 	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "finished");
 }
 
@@ -124,18 +120,17 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 		return;
 	}
 
-	if (theOrderBase.isExist(wo.orderID) == true)
+	quint32 providerID = ((Order::Handle) wo.orderID).providerID;
+	if (providerID == -1)
 	{
-		emit appendMessageToArch(ARCH_MSG_TYPE_WARNING, __FUNCTION__, "Order::STATE_ORDER_ALREADY_EXIST");
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
 
-		wo = theOrderBase.order(wo.orderID).toWrap();
-		wo.state = Order::STATE_ORDER_ALREADY_EXIST;
+		wo.state = Order::STATE_PROVIDER_NOT_FOUND;
 		sendReply(request, wo);
 
 		return;
 	}
 
-	quint32 providerID = ((Order::Handle) wo.orderID).providerID;
 	Provider::Item* pProvider = theProviderBase.providerPtr( providerID );
 	if (pProvider == nullptr)
 	{
@@ -168,6 +163,18 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 	}
 
 
+	if (pProvider->orderBase().isExist(wo.orderID) == true)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_WARNING, __FUNCTION__, "Order::STATE_ORDER_ALREADY_EXIST");
+
+		wo = pProvider->orderBase().order(wo.orderID).toWrap();
+		wo.state = Order::STATE_ORDER_ALREADY_EXIST;
+		sendReply(request, wo);
+
+		return;
+	}
+
+
 	Order::Item order(wo);
 
 	order.setAddress(request.address());
@@ -191,7 +198,7 @@ void CustomerOrderSocket::replyCreateOrder(const Udp::Request& request)
 
 	//
 	//
-	emit appendOrderToBase(order);
+	pProvider->orderBase().append(order);
 
 	//
 	//
@@ -216,7 +223,29 @@ void CustomerOrderSocket::replyGetOrderState(const Udp::Request& request)
 		return;
 	}
 
-	if (theOrderBase.isExist(wo.orderID) == false)
+	quint32 providerID = ((Order::Handle) wo.orderID).providerID;
+	if (providerID == -1)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+
+		wo.state = Order::STATE_PROVIDER_NOT_FOUND;
+		sendReply(request, wo);
+
+		return;
+	}
+
+	Provider::Item* pProvider = theProviderBase.providerPtr( providerID );
+	if (pProvider == nullptr)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+
+		wo.state = Order::STATE_PROVIDER_NOT_FOUND;
+		sendReply(request, wo);
+
+		return;
+	}
+
+	if (pProvider->orderBase().isExist(wo.orderID) == false)
 	{
 		emit appendMessageToArch(ARCH_MSG_TYPE_WARNING, __FUNCTION__, "Order::STATE_ORDER_NOT_FOUND");
 
@@ -226,7 +255,7 @@ void CustomerOrderSocket::replyGetOrderState(const Udp::Request& request)
 		return;
 	}
 
-	wo.state = theOrderBase.orderState(wo.orderID);
+	wo.state = pProvider->orderBase().orderState(wo.orderID);
 	sendReply(request, wo);
 }
 
@@ -257,7 +286,29 @@ void CustomerOrderSocket::replyRemoveOrder(const Udp::Request& request)
 		return;
 	}
 
-	if (theOrderBase.isExist(wo.orderID) == false)
+	quint32 providerID = ((Order::Handle) wo.orderID).providerID;
+	if (providerID == -1)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+
+		wo.state = Order::STATE_PROVIDER_NOT_FOUND;
+		sendReply(request, wo);
+
+		return;
+	}
+
+	Provider::Item* pProvider = theProviderBase.providerPtr( providerID );
+	if (pProvider == nullptr)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+
+		wo.state = Order::STATE_PROVIDER_NOT_FOUND;
+		sendReply(request, wo);
+
+		return;
+	}
+
+	if (pProvider->orderBase().isExist(wo.orderID) == false)
 	{
 		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_ORDER_NOT_FOUND");
 
@@ -267,7 +318,7 @@ void CustomerOrderSocket::replyRemoveOrder(const Udp::Request& request)
 		return;
 	}
 
-	if (theOrderBase.remove(wo.orderID) == false)
+	if (pProvider->orderBase().remove(wo.orderID) == false)
 	{
 		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_ORDER_NOT_REMOVED");
 

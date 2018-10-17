@@ -148,6 +148,8 @@ namespace Provider
 		quint32				waitReplyTime() const { return m_waitReplyTime; }
 		void				setWaitReplyTime(quint32 ms) { m_waitReplyTime = ms; }
 
+		Order::Base&		orderBase() { return m_orderBase; }
+
 		bool				readFromXml(XmlReadHelper& xml, int version);
 		void				writeToXml(XmlWriteHelper& xml, int version);
 

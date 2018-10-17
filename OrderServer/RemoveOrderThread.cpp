@@ -3,6 +3,8 @@
 #include <QThread>
 #include <QDateTime>
 
+#include "../lib/Provider.h"
+#include "../lib/Order.h"
 #include "../lib/wassert.h"
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -46,8 +48,6 @@ void RemoveOrderThread::onThreadStarted()
 {
 	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "started");
 
-	connect(this, &RemoveOrderThread::removeOrder, &theOrderBase, &Order::Base::slot_removeOrder, Qt::QueuedConnection);
-
 	connect(&m_removeTimer, &QTimer::timeout, this, &RemoveOrderThread::autoRemoveTimeout, Qt::QueuedConnection);
 
 	m_removeTimer.start(MAX_SECONDS_AUTO_REMOVE_ORDER);
@@ -59,8 +59,6 @@ void RemoveOrderThread::onThreadFinished()
 {
 	m_removeTimer.stop();
 
-	disconnect(this, &RemoveOrderThread::removeOrder, &theOrderBase, &Order::Base::slot_removeOrder);
-
 	emit appendMessageToArch(ARCH_MSG_TYPE_EVENT, __FUNCTION__, "finished");
 }
 
@@ -68,17 +66,25 @@ void RemoveOrderThread::onThreadFinished()
 
 void RemoveOrderThread::removeFrendlyOrdersByProviderID(quint32 providerID)
 {
-	QList<Order::Item> list = theOrderBase.orderList();
-
-	int count = list.count();
-	for(int i = 0; i < count; i++)
+	Provider::Item* pProvider = theProviderBase.providerPtr( providerID );
+	if (pProvider == nullptr)
 	{
-		Order::Item& order = list[i];
+		return;
+	}
 
-		if (order.providerID() == providerID)
+	QList<Order::Item> list = pProvider->orderBase().orderList();
+
+	int orderCount = list.count();
+	for(int i = 0; i < orderCount; i++)
+	{
+		Order::Item order = list[i];
+
+		if (order.state() == Order::STATE_ORDER_OK)
 		{
-			emit removeOrder(order);
+			continue;
 		}
+
+		pProvider->orderBase().remove(order.handle().ID);
 	}
 }
 
@@ -86,18 +92,29 @@ void RemoveOrderThread::removeFrendlyOrdersByProviderID(quint32 providerID)
 
 void RemoveOrderThread::removeFrendlyOrdersByPhone(quint32 phone)
 {
-	QList<Order::Item> list = theOrderBase.orderList();
+	int providerCount = theProviderBase.count();
 
-	int count = list.count();
-	for(int i = 0; i < count; i++)
+	for(int p = 0; p < providerCount; p++)
 	{
-		Order::Item& order = list[i];
-
-		if (order.phone() == phone)
+		Provider::Item* pProvider = theProviderBase.providerPtr( p );
+		if (pProvider == nullptr)
 		{
-			if (order.state() == Order::STATE_ORDER_PROCESSING || order.state() == Order::STATE_SERVER_CREATED_ORDER)
+			continue;
+		}
+
+		QList<Order::Item> list = pProvider->orderBase().orderList();
+
+		int orderCount = list.count();
+		for(int i = 0; i < orderCount; i++)
+		{
+			Order::Item order = list[i];
+
+			if (order.phone() == phone)
 			{
-				emit removeOrder(order);
+				if (order.state() == Order::STATE_ORDER_PROCESSING || order.state() == Order::STATE_SERVER_CREATED_ORDER)
+				{
+					pProvider->orderBase().remove(order.handle().ID);
+				}
 			}
 		}
 	}
@@ -110,23 +127,35 @@ void RemoveOrderThread::autoRemoveTimeout()
 //	QTime t;
 //	t.start();
 
-	QList<Order::Item> list = theOrderBase.orderList();
-
 	int removedCount = 0;
 
-	int count = list.count();
-	for(int i = 0; i < count; i++)
-	{
-		Order::Item& order = list[i];
+	int providerCount = theProviderBase.count();
 
-		if (order.removeTime() > QDateTime::currentDateTime())
+	for(int p = 0; p < providerCount; p++)
+	{
+		Provider::Item* pProvider = theProviderBase.providerPtr( p );
+		if (pProvider == nullptr)
 		{
 			continue;
 		}
 
-		removedCount++;
+		QList<Order::Item> list = pProvider->orderBase().orderList();
 
-		emit removeOrder(order);
+		int orderCount = list.count();
+		for(int o = 0; o < orderCount; o++)
+		{
+			Order::Item order = list[o];
+
+			if (order.removeTime() > QDateTime::currentDateTime())
+			{
+				continue;
+			}
+
+			if (pProvider->orderBase().remove(order.handle().ID) == true)
+			{
+				removedCount++;
+			}
+		}
 	}
 
 //	qDebug("RemoveOrderThread::Time elapsed: %d ms, count: %d", t.elapsed(), count);
@@ -138,4 +167,3 @@ void RemoveOrderThread::autoRemoveTimeout()
 }
 
 // -------------------------------------------------------------------------------------------------------------------
-

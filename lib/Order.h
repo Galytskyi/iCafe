@@ -231,7 +231,7 @@ namespace Order
 		mutable QMutex		m_mutex;
 
 		QMap<quint64, Item>	m_orderMap;
-		QVector<Item>		m_orderForProviderList;
+		QVector<Item>		m_noAcceptedOrderList;
 
 	public:
 
@@ -254,7 +254,8 @@ namespace Order
 
 		Base&				operator=(const Base& from);
 
-		Item				hasOrderForProvider(quint32 providerID);
+		Item				getNoAcceptedOrder();
+		void				removeNoAcceptedOrder(quint64 orderID);
 
 	signals:
 

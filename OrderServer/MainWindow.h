@@ -108,7 +108,6 @@ public slots:
 
 	//
 	//
-	void					orderStateChanged(const Order::Item& order);
 	void					providerStateChanged(quint32 providerID, quint32 state);
 
 	// Slots of Main menu - Providers

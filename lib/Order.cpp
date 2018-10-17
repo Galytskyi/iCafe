@@ -399,7 +399,7 @@ namespace Order
 		QMutexLocker locker(&m_mutex);
 
 		m_orderMap.clear();
-		m_orderForProviderList.clear();
+		m_noAcceptedOrderList.clear();
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------
@@ -426,6 +426,11 @@ namespace Order
 	{
 		QMutexLocker locker(&m_mutex);
 
+		if (m_orderMap.count() >= MAX_PROVIDER_ORDER_COUNT)
+		{
+			return false;
+		}
+
 		if (m_orderMap.contains(order.handle().ID) == true)
 		{
 			return false;
@@ -435,7 +440,7 @@ namespace Order
 
 		if (order.state() == Order::STATE_SERVER_CREATED_ORDER)
 		{
-			m_orderForProviderList.append(order);
+			m_noAcceptedOrderList.append(order);
 		}
 
 		emit signal_stateChanged(order);
@@ -470,12 +475,12 @@ namespace Order
 			return false;
 		}
 
-		int count = m_orderForProviderList.count();
+		int count = m_noAcceptedOrderList.count();
 		for(int i = 0; i < count; i ++)
 		{
-			if (m_orderForProviderList[i].handle().ID == orderID)
+			if (m_noAcceptedOrderList[i].handle().ID == orderID)
 			{
-				m_orderForProviderList.remove(i);
+				m_noAcceptedOrderList.remove(i);
 
 				break;
 			}
@@ -671,44 +676,41 @@ namespace Order
 		QMutexLocker locker(&m_mutex);
 
 		m_orderMap = from.m_orderMap;
-		m_orderForProviderList = from.m_orderForProviderList;
+		m_noAcceptedOrderList = from.m_noAcceptedOrderList;
 
 		return *this;
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------
 
-	Item Base::hasOrderForProvider(quint32 providerID)
+	Item Base::getNoAcceptedOrder()
 	{
 		QMutexLocker locker(&m_mutex);
 
-		Item resultOrder;
-
-		int count = m_orderForProviderList.count();
-		for(int i = 0; i < count; i ++)
+		if (m_noAcceptedOrderList.isEmpty() == true)
 		{
-			Item& order = m_orderForProviderList[i];
-
-			if (order.state() != Order::STATE_SERVER_CREATED_ORDER)
-			{
-				continue;
-			}
-
-			if (order.providerID() != providerID)
-			{
-				continue;
-			}
-
-			m_orderForProviderList.remove(i);
-
-			order.setState(STATE_SERVER_SEND_TO_PROVIDER);
-
-			resultOrder = order;
-
-			break;
+			return Item();
 		}
 
-		return resultOrder;
+		m_noAcceptedOrderList[0].setState(STATE_SERVER_SEND_TO_PROVIDER);
+
+		return m_noAcceptedOrderList[0];
+	}
+
+	// -------------------------------------------------------------------------------------------------------------------
+
+	void Base::removeNoAcceptedOrder(quint64 orderID)
+	{
+		int count = m_noAcceptedOrderList.count();
+		for(int i  = 0; i < count; i++)
+		{
+			if (m_noAcceptedOrderList[i].handle().ID == orderID)
+			{
+				m_noAcceptedOrderList.remove(i);
+
+				break;
+			}
+		}
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------

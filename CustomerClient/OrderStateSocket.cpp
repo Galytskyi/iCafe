@@ -222,6 +222,14 @@ void OrderStateSocket::replyGetOrderState(const Udp::Request& request)
 		return;
 	}
 
+	if(wo.state == Order::STATE_PROVIDER_NOT_FOUND)
+	{
+		qDebug() << "OrderStateSocket::replyGetOrderState - Order::STATE_PROVIDER_NOT_FOUND";
+
+		theOrderBase.remove(wo.orderID);
+		return;
+	}
+
 	if(wo.state == Order::STATE_ORDER_NOT_FOUND)
 	{
 		qDebug() << "OrderStateSocket::replyGetOrderState - Order::STATE_ORDER_NOT_FOUND";

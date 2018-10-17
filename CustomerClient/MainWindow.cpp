@@ -369,7 +369,7 @@ bool MainWindow::createToolBars()
 
 		m_pOrderControlToolBar->addAction(m_pInfoAction);
 
-		if (theOptions.platformType() == PLATFORM_TYPE_WINDOWS)
+		if (theOptions.platformType() == PLATFORM_TYPE_DESKTOP)
 		{
 			m_pOrderControlToolBar->addAction(m_pOptionsAction);
 		}

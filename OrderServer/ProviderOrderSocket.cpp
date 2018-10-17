@@ -116,9 +116,38 @@ void ProviderOrderSocket::replyGetOrder(const Udp::Request& request)
 		return;
 	}
 
+	Provider::Item* pProvider = theProviderBase.providerPtr( ptr_rgo->providerID );
+	if (pProvider == nullptr)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+
+		//
+		//
+		switch (ptr_rgo->wrapVersion)
+		{
+			case 1:
+				{
+					sio_OrderWrap wo;
+					wo.state = Order::STATE_PROVIDER_NOT_FOUND;
+					sendReply(request, wo);
+				}
+				break;
+
+			default:
+				wassert(0);
+				emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, QString("Wrong wrap version: %1").arg(ptr_rgo->version));
+				break;
+		}
+
+		//
+		//
+		return;
+	}
+
+
 	emit setProviderConnected(true, ptr_rgo->providerID, ptr_rgo->wrapVersion);
 
-	Order::Item order = theOrderBase.hasOrderForProvider(ptr_rgo->providerID);
+	Order::Item order = pProvider->orderBase().getNoAcceptedOrder();
 
 	switch (ptr_rgo->wrapVersion)
 	{
@@ -154,10 +183,31 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 	}
 
 
-	//remove;
+	quint32 providerID = ((Order::Handle) wo.orderID).providerID;
+	if (providerID == -1)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+
+		wo.state = Order::STATE_PROVIDER_NOT_FOUND;
+		sendReply(request, wo);
+
+		return;
+	}
 
 
-	Order::Item* pOrder = theOrderBase.orderPtr(wo.orderID);
+	Provider::Item* pProvider = theProviderBase.providerPtr( providerID );
+	if (pProvider == nullptr)
+	{
+		emit appendMessageToArch(ARCH_MSG_TYPE_ERROR, __FUNCTION__, "Order::STATE_PROVIDER_NOT_FOUND");
+
+		wo.state = Order::STATE_PROVIDER_NOT_FOUND;
+		sendReply(request, wo);
+
+		return;
+	}
+
+
+	Order::Item* pOrder = pProvider->orderBase().orderPtr(wo.orderID);
 	if (pOrder == nullptr)
 	{
 		wo.state = Order::STATE_ORDER_NOT_FOUND;
@@ -167,6 +217,11 @@ void ProviderOrderSocket::replySetOrderState(const Udp::Request& request)
 	}
 
 	pOrder->setState(wo.state);
+
+	if (pOrder->state() == Order::STATE_ORDER_PROCESSING)
+	{
+		pProvider->orderBase().removeNoAcceptedOrder(pOrder->handle().ID);
+	}
 
 	if (wo.state == Order::STATE_ORDER_OK)
 	{

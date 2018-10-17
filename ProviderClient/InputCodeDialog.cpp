@@ -44,9 +44,12 @@ void InputCodeDialog::createInterface()
 	m_pCodeEdit = new QLineEdit(this);
 
 	QPixmap keyboardPix(":/icons/Keyboard.png");
-	m_pKeyboardButton = new QPushButton(QString(), this);
-	m_pKeyboardButton->setIcon(keyboardPix);
-	m_pKeyboardButton->setIconSize(keyboardPix.size());
+	m_pKeyboardButton = new QPushButton(keyboardPix, QString(), this);
+
+	if (theOptions.platformType() == PLATFORM_TYPE_ANDROID)
+	{
+		m_pKeyboardButton->setIconSize(keyboardPix.size());
+	}
 
 	m_pCodeEdit->setFont(*listFont);
 	m_pCodeEdit->setAlignment(Qt::AlignCenter);
