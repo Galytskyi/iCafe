@@ -28,12 +28,13 @@ const int				DBO_PARAM_PATH	= 0,
 const char* const		DatabaseType[] =
 {
 						QT_TRANSLATE_NOOP("Options.h", "SQLite"),
+						QT_TRANSLATE_NOOP("Options.h", "PSQL"),
 };
 
 const int				DATABASE_TYPE_COUNT		= sizeof(DatabaseType)/sizeof(DatabaseType[0]);
 
-const int				DATABASE_TYPE_SQLITE	= 0;
-
+const int				DATABASE_TYPE_SQLITE	= 0,
+						DATABASE_TYPE_PSQL		= 1;
 
 // ----------------------------------------------------------------------------------------------
 

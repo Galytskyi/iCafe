@@ -55,7 +55,7 @@ int SqlFieldBase::init(int objectType, int)
 
 			append("ObjectID",						QVariant::Int);
 			append("ProviderID",					QVariant::Int);
-			append("GoogleID",						QVariant::String, 16);
+			append("GoogleID",						QVariant::String, 32);
 
 			append("State",							QVariant::Int);
 			append("ActiveTime",					QVariant::String, 32);
@@ -199,7 +199,7 @@ void SqlFieldBase::append(QString name, QVariant::Type type, int length)
 
 	if (type == QVariant::Double)
 	{
-		field.setPrecision(9);
+		field.setPrecision(6);
 	}
 
 	if (type == QVariant::String)
@@ -227,7 +227,7 @@ QString SqlFieldBase::extFieldName(int index)
 	{
 		case QVariant::Bool:	result = QString("%1 BOOL").arg(f.name());									break;
 		case QVariant::Int:		result = QString("%1 INTEGER").arg(f.name());								break;
-		case QVariant::Double:	result = QString("%1 DOUBLE(0, %2)").arg(f.name()).arg(f.precision());		break;
+		case QVariant::Double:	result = QString("%1 DECIMAL(10, %2)").arg(f.name()).arg(f.precision());	break;
 		case QVariant::String:	result = QString("%1 VARCHAR(%2)").arg(f.name()).arg(f.length());			break;
 		default:				result.clear();
 	}
@@ -441,7 +441,7 @@ bool SqlTable::isExist() const
 	int existTableCount = m_pDatabase->tables().count();
 	for(int et = 0; et < existTableCount; et++)
 	{
-		if (m_pDatabase->tables().at(et).compare(SqlTabletName[type]) == 0)
+		if (m_pDatabase->tables().at(et).compare(SqlTabletName[type], Qt::CaseInsensitive) == 0)
 		{
 			tableIsExist = true;
 			break;
@@ -514,12 +514,6 @@ bool SqlTable::create()
 	//
 	switch(m_info.objectType())
 	{
-		case SQL_TABLE_PROVIDER:
-
-			request.append(QString(", FOREIGN KEY (TypeID) REFERENCES %1(TypeID)").arg(SqlTabletName[SQL_TABLE_PROVIDER_TYPE]));
-
-			break;
-
 		case SQL_TABLE_PROVIDER_WORK_TIME:
 		case SQL_TABLE_PROVIDER_DINNER_TIME:
 
@@ -529,6 +523,8 @@ bool SqlTable::create()
 	}
 
 	request.append(");");
+
+	qDebug() << request;
 
 	return query.exec(request);
 }
@@ -610,6 +606,10 @@ int SqlTable::read(void* pRecord, int* key, int keyCount)
 			}
 		}
 	}
+
+	request.append(QString(" ORDER By %1").arg(m_fieldBase.field(SQL_FIELD_KEY).name()));
+
+	qDebug() << request;
 
 	// exec select
 	//
@@ -780,19 +780,12 @@ int SqlTable::write(void* pRecord, int count, int* key)
 
 	QSqlQuery query;
 
-	if (query.exec("BEGIN TRANSACTION") == false)
-	{
-		return 0;
-	}
-
 	for (int r = 0; r < count; r++)
 	{
 		if (query.prepare(key == nullptr ? request :  request + QString("%1").arg(key[r])) == false)
 		{
 			continue;
 		}
-
-		//qDebug() << request + QString("%1").arg(key[r]);
 
 		field = 0;
 
@@ -872,11 +865,6 @@ int SqlTable::write(void* pRecord, int count, int* key)
 		}
 
 		writedCount ++;
-	}
-
-	if (query.exec("COMMIT") == false)
-	{
-		return 0;
 	}
 
 	return writedCount;
@@ -1013,14 +1001,56 @@ bool Database::open()
 	switch(theOptions.database().type())
 	{
 		case DATABASE_TYPE_SQLITE:
-
-			m_database = QSqlDatabase::addDatabase("QSQLITE");
-			if (m_database.lastError().isValid() == true)
 			{
-				return false;
-			}
+				m_database = QSqlDatabase::addDatabase("QSQLITE");
+				if (m_database.lastError().isValid() == true)
+				{
+					return false;
+				}
 
-			m_database.setDatabaseName(path + QDir::separator() + DATABASE_NAME);
+				m_database.setDatabaseName(path + QDir::separator() + DATABASE_NAME + ".db");
+
+
+				if (m_database.open() == false)
+				{
+					QMessageBox::critical(nullptr, tr("Database"), tr("Cannot open database"));
+					return false;
+				}
+
+				QSqlQuery query;
+
+				if (query.exec("PRAGMA foreign_keys=on") == false)
+				{
+					QMessageBox::critical(nullptr, tr("Database"), tr("Error set option of database: [foreign keys=on]"));
+				}
+
+				if (query.exec("PRAGMA synchronous=normal") == false)
+				{
+					QMessageBox::critical(nullptr, tr("Database"), tr("Error set option of database: [synchronous=normal]"));
+				}
+			}
+			break;
+
+		case DATABASE_TYPE_PSQL:
+			{
+				m_database = QSqlDatabase::addDatabase("QPSQL");
+				if (m_database.lastError().isValid() == true)
+				{
+					return false;
+				}
+
+				m_database.setHostName("127.0.0.1");
+				m_database.setPort(5432);
+				m_database.setDatabaseName(DATABASE_NAME);
+				m_database.setUserName(DATABASE_USER_ADMIN);
+				m_database.setPassword(DATABASE_USER_ADMIN_PASSWD);
+
+				if (m_database.open() == false)
+				{
+					QMessageBox::critical(nullptr, tr("Database"), tr("Cannot open database"));
+					return false;
+				}
+			}
 
 			break;
 
@@ -1029,23 +1059,7 @@ bool Database::open()
 			break;
 	}
 
-	if (m_database.open() == false)
-	{
-		QMessageBox::critical(nullptr, tr("Database"), tr("Cannot open database"));
-		return false;
-	}
 
-	QSqlQuery query;
-
-	if (query.exec("PRAGMA foreign_keys=on") == false)
-	{
-		QMessageBox::critical(nullptr, tr("Database"), tr("Error set option of database: [foreign keys=on]"));
-	}
-
-	if (query.exec("PRAGMA synchronous=normal") == false)
-	{
-		QMessageBox::critical(nullptr, tr("Database"), tr("Error set option of database: [synchronous=normal]"));
-	}
 
 	initVersion();
 	createTables();

@@ -7,8 +7,15 @@
 
 // ==============================================================================================
 
-#define					DATABASE_NAME		"iCafe.db"
-#define					DATABASE_VERSION	1
+#define					DATABASE_NAME				"icafe"
+#define					DATABASE_VERSION			1
+
+// ==============================================================================================
+
+#define					DATABASE_USER_ADMIN			"bra"
+#define					DATABASE_USER_ADMIN_PASSWD	"br20082018"
+
+#define					DATABASE_USER				"bru"
 
 // ==============================================================================================
 //

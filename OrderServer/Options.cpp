@@ -73,7 +73,7 @@ void DatabaseOption::load()
 	QSettings s;
 
 	m_path = s.value(QString("%1Path").arg(DATABASE_OPTIONS_REG_KEY), qApp->applicationDirPath()).toString();
-	m_type = s.value(QString("%1Type").arg(DATABASE_OPTIONS_REG_KEY), DATABASE_TYPE_SQLITE).toInt();
+	m_type = s.value(QString("%1Type").arg(DATABASE_OPTIONS_REG_KEY), DATABASE_TYPE_PSQL).toInt();
 }
 
 // -------------------------------------------------------------------------------------------------------------------

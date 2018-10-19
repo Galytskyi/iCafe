@@ -62,13 +62,8 @@ bool MainWindow::createInterface()
 	createMenu();
 	createToolBars();
 	createProviderView();
-//	createPanels();
 	createStatusBar();
 	createContextMenu();
-
-//	loadSettings();
-
-//	setMeasureType(MEASURE_TYPE_LINEARITY);
 
 	return true;
 }
