@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	a.setOrganizationName("BookingRest");
 	a.setOrganizationDomain("BookingRest.com.ua");
 
-	a.setApplicationVersion(QString("1.0"));
+	a.setApplicationVersion(QString("1.0.1"));
 
 	bool hasLanguageFiles = false;
 	if (hasLanguageFiles == true)
